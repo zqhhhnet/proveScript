@@ -1,0 +1,13 @@
+start:
+    MOV R0, #A
+    VMOV Q3, # B
+    VMOV Q2, Q3
+end
+
+preCond:
+    -2^31 <= A < 2^31
+    -2^127 <= B < 2^126
+
+postCond:
+    0 <= A < 2^31
+    -2^127 <= B < 2^126

@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="proveScript:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/proveScript_jar</output-path>
+    <root id="archive" name="proveScript.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="proveScript" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../JavaTool/Maven_house/org/projectlombok/lombok/1.18.16/lombok-1.18.16.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
