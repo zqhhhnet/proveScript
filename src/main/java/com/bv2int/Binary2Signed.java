@@ -1,6 +1,6 @@
 package com.bv2int;
 
-import sun.plugin2.util.SystemUtil;
+//import sun.plugin2.util.SystemUtil;
 
 /**
  * 算子 二进制转有符号整型
@@ -124,6 +124,31 @@ public class Binary2Signed {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * 符号位扩展二进制串
+     * @param s
+     * @param len
+     * @return
+     */
+    public static String signExtend(String s, int len) {
+        StringBuilder res = new StringBuilder();
+        int lenS = s.length();
+        if (s.charAt(0) == '-') {
+            int rest = len - lenS + 1;
+            for (int i = 0; i < rest; i++) {
+                res.append('1');
+            }
+            res.append(s.substring(1, lenS));
+        } else {
+            int rest = len - lenS;
+            for (int i = 0; i < rest; i++) {
+                res.append('0');
+            }
+            res.append(s);
+        }
+        return res.toString();
     }
 }
 

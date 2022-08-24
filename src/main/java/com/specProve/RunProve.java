@@ -54,24 +54,56 @@ public class RunProve {
             postCondState.setInstruction(instructionStruct);
             // 将解析的指令信息输入程序设定适配器，用于设定验证程序
             programState.setInstruction(instructionStruct);
+            if ("VMAXV".equals(instructionStruct.getOpcode())) {
+                // 根据数据类型，获取需要分解为多少个子问题
+                int count = 128 / Integer.parseInt(instructionStruct.getDatatype().substring(1));
+                programState.setSubOpcode("cmp");
+                for (int i = 0; i < count; i++) {
+                    // 创建spec目录，用于存储指令解析的结果
+                    SpecContext specContext = new SpecContext();
+                    // 将VMAXV指令分解为多个子问题，循环依次解决每个子问题
+                    preCondState.setBeat(i);
+                    postCondState.setBeat(i);
+                    programState.setBeat(i);
+                    // 每个子问题都更新目标寄存器的值，设置前置、程序、后置条件
+                    specContext = specConfig.specSet(specContext);
+                    if (specContext == null)
+                        return false;
+                    File specFile = specConfig.setSpecFile(specContext, i);
+                    if (specFile == null)
+                        throw new RuntimeException("spec构建异常，请重新检查");
+                    System.out.println("-----------  current instruction to prove: " + instruction + " 第" + i + "个子问题"
+                            + " ----------- ");
+                    System.out.println("----------- " + specFile.getName() + " begin prove ----------- ");
+                    result = specProve.executeSpecProve("kprove " + specFile.getName(), null);
+                    if (result == null)
+                        return false;
+                    System.out.println("============= Result : " + result.split("\\n")[0]);
+                    if (!result.matches("^#True\\n[\\d\\D]*")) {
+                        return false;
+                    }
+                }
+                continue;
+            }
             // 创建spec目录，用于存储指令解析的结果
             SpecContext specContext = new SpecContext();
             // spec解析入口，解析的结果存储于specContext
             specContext = specConfig.specSet(specContext);
-            if (specConfig == null)
+            if (specContext == null)
                 return false;
             // 设定spec文件
-            File specFile = specConfig.setSpecFile(specContext);
+            File specFile = specConfig.setSpecFile(specContext, 0);
             if (specFile == null)
                 throw new RuntimeException();
             //String[] split = specFile.getName().split(System.getProperty("file.separator"));
             System.out.println("-----------  current instruction to prove: " + instruction + " ----------- ");
-            System.out.println("----------- " + specFile.getName() + "begin prove ----------- ");
+            System.out.println("----------- " + specFile.getName() + " begin prove ----------- ");
             result = specProve.executeSpecProve("kprove " + specFile.getName(), null);
             if (result == null)
                 return false;
-            System.out.println("============= Result : " + result);
-            if (!result.matches("^#True\\n")) {
+            System.out.println("============= Result : " + result.split("\\n")[0]);
+
+            if (!result.matches("^#True\\n[\\d\\D]*")) {
                 return false;
             }
         }

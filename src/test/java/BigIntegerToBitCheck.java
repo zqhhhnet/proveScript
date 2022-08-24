@@ -6,7 +6,7 @@ import java.math.BigInteger;
 public class BigIntegerToBitCheck {
     @Test
     public static void main(String[] args) {
-        BigInteger num = new BigInteger("-115");
+        BigInteger num = new BigInteger("4294967295");
         byte[] bytes = num.toByteArray();
         for (byte aByte : bytes) {
             System.out.println(aByte + ":");
@@ -22,7 +22,7 @@ public class BigIntegerToBitCheck {
         BigInteger noExNum = new BigInteger(s.substring(1, s.length()), 2);
         System.out.println("扩展位：" + signExtendNum);
         System.out.println("无扩展" + noExNum);
-        String s2 = Binary2Signed.AddBinToDec(s1.substring(33), true);
+        String s2 = Binary2Signed.AddBinToDec(s1.substring(32), true);
         System.out.println("s1 低32位 ：" + s2);
     }
 

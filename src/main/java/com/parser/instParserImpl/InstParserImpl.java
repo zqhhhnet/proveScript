@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class InstParserImpl implements InstParser {
     //                                  1           2         3     4                   5                         6                         7                             8                        9
-    private String instPattern = "^[ ]*([A-Z]+)[ ]*([\\.][ ]*([SUF](8|16|32|64)+))*[ ]*([RQSD][0-9]{1,2})[ ]*,[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))[ ]*,?[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))?[ ]*";
+    private final String instPattern = "^[ ]*([A-Z]+)[ ]*([\\.][ ]*([SUF](8|16|32|64)+))*[ ]*([RQSD][0-9]{1,2})[ ]*,[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))[ ]*,?[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))?[ ]*";
 
     private final Set<String> instTable = new HashSet<>(Arrays.asList("MOV", "VMOV", "VMAX", "VMAXA", "VMAXV", "VMAXAV", "VMAXNM", "VMAXNMV", "VMAXNMA", "VMAXNMAV",
             "VMIN", "VMINV", "VMINA", "VMINAV", "VMINNM", "VMINNMA", "VMINNMV", "VMINNMAV", "VMLAV"));
@@ -32,7 +32,7 @@ public class InstParserImpl implements InstParser {
                 if (!instTable.contains(matcher.group(1)))
                     throw new InputMismatchException();
                 instruction.setOpcode(matcher.group(1));
-                // 判断数据类型是否位空，并是否有效
+                // 判断数据类型是否为空，并是否有效
                 if (matcher.group(3) != null && !dataTypeTable.contains(matcher.group(3)))
                     throw new InputMismatchException();
                 else if (matcher.group(3) != null)

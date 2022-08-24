@@ -15,19 +15,20 @@ import java.util.regex.Pattern;
 public class FileParserImpl implements FileParser {
 
     // 用于类似 -23 <= ABD < 1566，此处需要判断整个范围是否为true，即 -1 < A < -2 是非法的
-    private String pattern1 = "^[ ]*(-?\\d+|-?\\d+\\^?\\d+)[ ]*(<=|<|>|>=)[ ]*([A-Za-z]+\\d*[ ]*([\\+\\*\\/\\-]*[ ]*[A-Za-z]*\\d*[ ]*)*)(<=|<|>|>=)[ ]*(-?\\d+\\^?\\d+|-?\\d+)";
+    private final String pattern1 = "^[ ]*(-?\\d+|-?\\d+\\^?\\d+)[ ]*(<=|<|>|>=)[ ]*([A-Za-z]+\\d*[ ]*([\\+\\*\\/\\-]*[ ]*[A-Za-z]*\\d*[ ]*)*)(<=|<|>|>=)[ ]*(-?\\d+\\^?\\d+|-?\\d+)";
 
     // A321 = -213213
-    private String pattern2 = "^[ ]*([A-Za-z]+\\d*[ ]*([\\+\\*\\/\\-]*[ ]*[A-Za-z]*\\d*[ ]*)*)[ ]*(=|<=|>=|<|>)[ ]*(-?\\d+\\^?\\d+|-?\\d+)";
+    private final String pattern2 = "^[ ]*([A-Za-z]+\\d*[ ]*([\\+\\*\\/\\-]*[ ]*[A-Za-z]*\\d*[ ]*)*)[ ]*(=|<=|>=|<|>)[ ]*(-?\\d+\\^?\\d+|-?\\d+)";
 
     // 无穷小
-    private BigInteger minValue = new BigInteger("-2").pow(128).subtract(BigInteger.ONE);
+    private final BigInteger minValue = new BigInteger("-2").pow(128).subtract(BigInteger.ONE);
     // 无穷大
-    private BigInteger maxValue = new BigInteger("2").pow(128).add(BigInteger.ONE);
+    private final BigInteger maxValue = new BigInteger("2").pow(128).add(BigInteger.ONE);
 
     /**
      * 获取文档中的初始信息
      * 设定 程序、前置条件、后置条件
+     * 后置条件设定为寄存器，最终验证该寄存器是否满足条件
      * @param filename
      * @return
      */
@@ -129,9 +130,9 @@ public class FileParserImpl implements FileParser {
                 String[] num1Group = num1.split("\\^");
                 BigInteger base = new BigInteger(num1Group[0]);
                 int index = Integer.parseInt(num1Group[1]);
-                if (base.compareTo(BigInteger.ZERO) == -1) {
-                    big1 = base.pow(index);
-                    //big1 = base.pow(index).multiply(BigInteger.valueOf(-1));
+                if (base.compareTo(BigInteger.ZERO) == -1 && index % 2 == 0) {
+                    //big1 = base.pow(index);
+                    big1 = base.pow(index).multiply(BigInteger.valueOf(-1));
                 } else {
                     big1 = base.pow(index);
                 }
@@ -142,9 +143,9 @@ public class FileParserImpl implements FileParser {
                 String[] num2Group = num2.split("\\^");
                 BigInteger base = new BigInteger(num2Group[0]);
                 int index = Integer.parseInt(num2Group[1]);
-                if (base.compareTo(BigInteger.ZERO) == -1) {
-                    big2 = base.pow(index);
-                    //big2 = base.pow(index).multiply(BigInteger.valueOf(-1));
+                if (base.compareTo(BigInteger.ZERO) == -1 && index % 2 == 0) {
+                    //big2 = base.pow(index);
+                    big2 = base.pow(index).multiply(BigInteger.valueOf(-1));
                 } else {
                     big2 = base.pow(index);
                 }
@@ -195,7 +196,7 @@ public class FileParserImpl implements FileParser {
             String symbol = m.group(3);
             String num = m.group(4);
             BigInteger big = null;
-            if (num.contains("^")) {
+            if (num.contains("\\^")) {
                 String[] bigGroup = num.split("\\^");
                 BigInteger base = new BigInteger(bigGroup[0]);
                 int index = Integer.parseInt(bigGroup[1]);

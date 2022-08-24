@@ -12,6 +12,9 @@ import java.util.regex.Pattern;
 @Data
 public class ProgramState {
     private Instruction instruction;
+    private int beat;
+    // 当指令是需要组合验证处理的指令，子问题的opcode是新设定的
+    private String subOpcode;
 
     /**
      * MOV、VMOV等单次可以验证成功的指令设定
@@ -25,6 +28,7 @@ public class ProgramState {
             if (instList == null || instList.isEmpty()) {
                 instList = new ArrayList<>();
                 char[] destinationRegister = instruction.getDestinationRegister().toCharArray();
+                // 将寄存器的大写字母转为小写字母
                 destinationRegister[0] = (char)(destinationRegister[0] + 32);
                 String lowDestinationRegister = String.valueOf(destinationRegister);
                 String inst = "\t\t\tmemloc(mi(32, 0)) |-> storedInstr( " + instruction.getOpcode() + " " + lowDestinationRegister
@@ -71,6 +75,28 @@ public class ProgramState {
             return instList;
         } catch (RuntimeException ex) {
             System.err.println("输入的验证程序出错，请重新输入");
+            return null;
+        }
+    }
+
+    public List<String> vvIntProgramSet(SpecContext specContext) {
+        try {
+            if (instruction == null || instruction.getOpcode() == null)
+                throw new RuntimeException();
+            List<String> instList = new ArrayList<>();
+            char[] destinationRegister = instruction.getDestinationRegister().toCharArray();
+            // 将寄存器的大写字母转为小写字母
+            destinationRegister[0] = (char)(destinationRegister[0] + 32);
+            StringBuilder inst = new StringBuilder();
+            char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
+            sourceRegister[0] = (char)(sourceRegister[0] + 32);
+            inst.append("\t\t\tmemloc(mi(32, 0)) |-> storedInstr( cmp . ").append(instruction.getDatatype()).append(' ')
+                    .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister))
+                    .append(", # 0, # ").append(beat).append(", # 0, .Operands)\n");
+            instList.add(inst.toString());
+            return instList;
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
             return null;
         }
     }

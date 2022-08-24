@@ -27,19 +27,27 @@ public class SpecConfigImpl implements SpecConfig {
         this.programState = programState;
     }
 
+    /**
+     * spec中，code text的设置
+     * @param specContext
+     * @return
+     */
     @Override
     public List<String> programSet(SpecContext specContext) {
         try {
+            List<String> programSet = null;
             String opcode = programState.getInstruction().getOpcode();
             if (opcode == null)
                 throw new RuntimeException();
             if ("MOV".equals(opcode) || "VMOV".equals(opcode)) {
-                List<String> programSet = programState.simpleProgramSet(specContext);
+                programSet = programState.simpleProgramSet(specContext);
                 return programSet;
+            } else if ("VMAXV".equals(opcode)) {
+                programSet = programState.vvIntProgramSet(specContext);
             }
 
             // TODO: 其他指令相应处理
-            return null;
+            return programSet;
         } catch (RuntimeException ex) {
             System.err.println("输入程序设定异常，请重试或检查");
             return null;
@@ -55,18 +63,18 @@ public class SpecConfigImpl implements SpecConfig {
     public String preConditionSet() {
         try {
             String opcode = preCondState.getInstruction().getOpcode();
+            String preCondition = null;
             if (opcode == null)
                 throw new InputMismatchException();
             if ("MOV".equals(opcode)) {
-                String preCondtion = preCondState.simplePreSet();
-                return preCondtion;
-            } else if ("VMOV".equals(opcode)) {   // TODO: 其他指令相应处理
-                String preCondition = preCondState.vecSimplePreSet();
-                return preCondition;
-            }/* else if (opcode.equals("VMAX") || opcode.equals("VMAXA")) {
-
-            }*/
-            return null;
+                preCondition = preCondState.simplePreSet();
+            } else if ("VMOV".equals(opcode)) {
+                preCondition = preCondState.vecSimplePreSet();
+            } else if (opcode.equals("VMAXV")) {
+                preCondition = preCondState.vvIntPreSet();
+            }
+            // TODO: 其他指令相应处理
+            return preCondition;
         } catch (InputMismatchException ex) {
             System.err.println("指令信息出错，请检查输入");
             return null;
@@ -82,18 +90,19 @@ public class SpecConfigImpl implements SpecConfig {
     public List<String> postConditionSet() {
         try {
             String opcode = postCondState.getInstruction().getOpcode();
+            List<String> postCondition = null;
             if (opcode == null)
                 throw new InputMismatchException();
             if ("MOV".equals(opcode)) {
-                List<String> postCondition = postCondState.simplePostSet();
-                return postCondition;
+                postCondition = postCondState.simplePostSet();
             } else if ("VMOV".equals(opcode)) {
-                List<String> postCondition = postCondState.vecSimplePostSet();
-                return postCondition;
+                postCondition = postCondState.vecSimplePostSet();
+            } else if ("VMAXV".equals(opcode)) {
+                postCondition = postCondState.vvIntPostSet();
             }
             // TODO: 其他指令相应处理
             // 都不匹配
-            return null;
+            return postCondition;
         } catch (InputMismatchException ex) {
             System.err.println("后置条件出错，请检查");
             return null;
@@ -129,33 +138,32 @@ public class SpecConfigImpl implements SpecConfig {
     private String fileRef = "require \"armv8-semantics.k\"\n";
     private String moduleImportRuleTillInstList = "\timports ARMV8-SEMANTICS\n\n\trule <k>\n\t\t\tscan => End\n\t\t</k>\n\t\t<begin>\n\t\t\t.K\n\t\t</begin>\n\t\t<currentstate>\n\t\t\t\"text\"\n\t\t</currentstate>\n\t\t<nextloc>    \n\t\t\t_:MInt\n\t\t</nextloc>\n\t\t<functarget>\n\t\t\tstart |-> mi(32, 0)\n\t\t</functarget>\n\t\t<instructiontext>\n";
     private String endInstListAndRegStateBegin = "\t\t</instructiontext>\n\t\t<regstate>\n";
-    private String defaultReg = "\t\t\t\"R15\" |-> (memloc(mi(32, 0)) => memloc(mi(32, 1)))\n\t\t\t\"RESULT\" |-> mi(32, 0)\n\t\t\t\"RESULT64\" |-> mi(64, 0)\n\t\t</regstate>\n";
+    private String tempReg = "\t\t\t\"RESULT\" |-> mi(32, 0)\n\t\t\t\"RESULT64\" |-> mi(64, 0)\n";
+    private String defaultReg = "\t\t\t\"R15\" |-> (memloc(mi(32, 0)) => memloc(mi(32, 1)))\n\t\t</regstate>\n";
     private String endModule = "endmodule\n";
 
     /**
-     * 设定specFile
+     * 根据不同指令设定specFile
      * @param specContext
+     * @param count     作为组合验证处理时，处理子问题的序号，用于生成多个子文件spec
      * @return  返回file
      */
     @Override
-    public File setSpecFile(SpecContext specContext) {
+    public File setSpecFile(SpecContext specContext, int count) {
         FileOutputStream fos = null;
         try {
             String opcode = preCondState.getInstruction().getOpcode();
             if (opcode == null)
                 throw new IOException();
+            String curPath = System.getProperty("user.dir");
             if ("MOV".equals(opcode) || "VMOV".equals(opcode)) {
                 String moduleName = "MOV".equals(opcode) ? "module SPEC-MOV-MODE\n" : "module SPEC-VMOV-MODE\n";
-                List<String> instList = specContext.getInstList();
                 // 将code中，目标操作数和源操作数的寄存器的大写字母变为小写字母
-                String codeMap = "\t\t\tcode (\n" + instList.stream().collect(Collectors.joining()) + "\t\t\t)\n";
-                List<String> postCondition = specContext.getPostCondition();
-                String regStateSet = postCondition.stream().collect(Collectors.joining());
-                String preCondition = specContext.getPreCondition();
-                preCondition = "\t\t\trequires " + preCondition;
+                String codeMap = "\t\t\tcode (\n" + specContext.getInstList().stream().collect(Collectors.joining()) + "\t\t\t)\n";
+                String regStateSet = specContext.getPostCondition().stream().collect(Collectors.joining());
+                String preCondition = "\t\t\trequires " + specContext.getPreCondition();
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
-                        regStateSet + defaultReg + preCondition + endModule;
-                String curPath = System.getProperty("user.dir");
+                        regStateSet + tempReg + defaultReg + preCondition + endModule;
                 File file = new File(curPath + System.getProperty("file.separator") + ("MOV".equals(opcode) ?
                         "spec-mov-mode.k" : "spec-vmov-mode.k"));
                 System.out.println(file.getName());
@@ -165,6 +173,21 @@ public class SpecConfigImpl implements SpecConfig {
                 //System.out.println(file.getName() + " before");
                 fos.flush();
                 //System.out.println(file.getName() + " after");
+                return file;
+            } else if ("VMAXV".equals(opcode)) {
+                StringBuilder moduleName = new StringBuilder();
+                moduleName.append("module SPEC-VMAXV-MODE").append('-').append(count).append('\n');
+                String codeMap = "\t\t\tcode (\n" + specContext.getInstList().stream().collect(Collectors.joining()) + "\t\t\t)\n";
+                String regStateSet = specContext.getPostCondition().stream().collect(Collectors.joining());
+                String preCondition = specContext.getPreCondition();
+                String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
+                        regStateSet + defaultReg + preCondition + endModule;
+                File file = new File(curPath + System.getProperty("file.separator") + "spec-vmaxv-mode-" + count + ".k");
+                System.out.println(file.getName());
+                fos = new FileOutputStream(file);
+                byte[] bytes = total.getBytes(StandardCharsets.UTF_8);
+                fos.write(bytes);
+                fos.flush();
                 return file;
             }
             // TODO：其他指令的相应配置
@@ -182,4 +205,5 @@ public class SpecConfigImpl implements SpecConfig {
         }
         return null;
     }
+
 }
