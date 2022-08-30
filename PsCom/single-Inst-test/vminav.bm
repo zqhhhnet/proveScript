@@ -1,0 +1,5 @@
+start:
+  MOV r0, #0
+  VMOV q0, #158461160842489849988807393282 // q0: 0x0 0x2 0x4 0x6 0x8 0xA 0x0 0x2, 16b per element
+  VMINAV.S16 r0, q0	// r0: 0
+end

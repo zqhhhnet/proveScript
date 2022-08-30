@@ -1,0 +1,275 @@
+Parse command line options                                   =  0.000s
+
+Importing: Source(/home/hhh1/PsCom/././test-spec-vminv-s32.k)
+Importing: Source(/home/hhh1/PsCom/test-spec-vminv-s32.k)
+Importing: Source(/home/hhh1/PsCom/armv8-semantics.k)
+Importing: Source(/home/hhh1/PsCom/armv8-loader.k)
+Importing: Source(/home/hhh1/PsCom/armv8-configuration.k)
+Importing: Source(/home/hhh1/PsCom/armv8-syntax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-syntax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-mint.k)
+Importing: Source(/home/hhh1/PsCom/armv8-conversions.k)
+Importing: Source(/home/hhh1/PsCom/vmax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-semantic.k)
+Importing: Source(/home/hhh1/PsCom/armv8-verification.k)
+Importing: Source(/home/hhh1/PsCom/exit.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnm.k)
+Importing: Source(/home/hhh1/PsCom/vmov.k)
+Importing: Source(/home/hhh1/PsCom/vmaxa.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnma.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnmv.k)
+Importing: Source(/home/hhh1/PsCom/mov.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnmav.k)
+Importing: Source(/home/hhh1/PsCom/vmaxv.k)
+Importing: Source(/home/hhh1/PsCom/vmaxav.k)
+Importing: Source(/home/hhh1/PsCom/vmin.k)
+Importing: Source(/home/hhh1/PsCom/vmina.k)
+Importing: Source(/home/hhh1/PsCom/vminv.k)
+Importing: Source(/home/hhh1/PsCom/vminav.k)
+Importing: Source(/home/hhh1/PsCom/vminnm.k)
+Importing: Source(/home/hhh1/PsCom/vminnma.k)
+Importing: Source(/home/hhh1/PsCom/vminnmv.k)
+Importing: Source(/home/hhh1/PsCom/vminnmav.k)
+Importing: Source(/home/hhh1/PsCom/vmlav.k)
+Importing: Source(/home/hhh1/PsCom/add-for-test.k)
+Importing: Source(/home/hhh1/PsCom/max-for-test.k)
+Importing: Source(/home/hhh1/PsCom/sst.k)
+Importing: Source(/home/hhh1/PsCom/ext.k)
+Importing: Source(/home/hhh1/PsCom/dtc.k)
+Importing: Source(/home/hhh1/PsCom/cmp.k)
+Importing: Source(/home/hhh1/PsCom/sto.k)
+
+
+Parse spec modules [1/571 rules]                             =  0.013s
+
+// The queries of SMT input about pre-condition:
+
+
+// query 1:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N|) true)
+	(= (> 340282366920938463463374607431768211456 |N|) true))
+  (not (and
+	(= (>= |N| 340282366920938463463374607431768211456) true)))
+))
+
+// query 2:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N|) true)
+	(= (> 340282366920938463463374607431768211456 |N|) true))
+  (not (and
+	(= (< |N| 340282366920938463463374607431768211456) true)))
+))
+
+// query 3:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N|) true)
+	(= (> 340282366920938463463374607431768211456 |N|) true))
+  (not (and
+	(= 0 |N|)))
+))
+
+// query 4:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N|) true)
+	(= (> 340282366920938463463374607431768211456 |N|) true))
+  (not (and
+	(= (< |N| 0) true)))
+))
+
+// query 5:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N|) true)
+	(= (> 340282366920938463463374607431768211456 |N|) true))
+  (not (and
+	(= (>= |N| 0) true)))
+))
+
+// query 6:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N|) true)
+	(= (> 340282366920938463463374607431768211456 |N|) true))
+  (not (and
+	(= (< |N| 4294967296) true)))
+))
+
+
+// The queries of SMT input about postcondition.
+
+// query 7:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_727| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_727|) true)
+	(= (> 340282366920938463463374607431768211456 |N_727|) true))
+  (not (and
+	(= 0 |N_727|)))
+))
+
+// query 8:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_727| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_727|) true)
+	(= (> 340282366920938463463374607431768211456 |N_727|) true))
+  (not (and
+	(= (< |N_727| 0) true)))
+))
+
+// query 9:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_727| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_727|) true)
+	(= (> 340282366920938463463374607431768211456 |N_727|) true))
+  (not (and
+	(= (>= |N_727| 0) true)))
+))
+
+// query 10:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_727| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_727|) true)
+	(= (> 340282366920938463463374607431768211456 |N_727|) true))
+  (not (and
+	(= (< |N_727| 340282366920938463463374607431768211456) true)))
+))
+
+// query 11:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_727| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_727|) true)
+	(= (> 340282366920938463463374607431768211456 |N_727|) true))
+  (not (and
+	(= (< |N_727| 4294967296) true)))
+))
+
+// query 12:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_727| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_727|) true)
+	(= (> 340282366920938463463374607431768211456 |N_727|) true))
+  (not (and
+	(= (>= |N_727| 340282366920938463463374607431768211456) true)))
+))
+
+// query 13:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_727| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_727|) true)
+	(= (> 340282366920938463463374607431768211456 |N_727|) true))
+  (not (and
+	(= (< |N_727| 256) true)))
+))
+
+// query 14:
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_727| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_727|) true)
+	(= (> 340282366920938463463374607431768211456 |N_727|) true))
+  (not (and
+	(= (< |N_727| 65536) true)))
+))
+
+#True

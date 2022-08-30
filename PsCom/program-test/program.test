@@ -1,0 +1,113 @@
+// a layer of 16*16 net, and do the maxpool of size of 4.
+// and output a 4*4 net.
+// Finally, for the 4*4 net, do the fully-connected,
+// and get 4 outputs.
+
+start:
+  // firstly, maxpool the front 8 4*4 matrixs. Each element
+  // is 8 bits, and maxpool the output to r0-r7.
+  VMOV q0, #9334846744429898572646496134779727165701
+  MOV r0, #0
+  VMAXV.S8 r0, q0
+  VMOV q0, #8893982821132886712325588644710367143279
+  MOV r1, #0
+  VMAXV.S8 r1, q0
+  VMOV q0, #9248910663984426213406770703561304705222
+  MOV r2, #0
+  VMAXV.S8 r2, q0
+  VMOV q0, #102628662276138440260481591639629203517
+  MOV r3, #0
+  VMAXV.S8 r3, q0
+  VMOV q0, #5855309559397449956646210806784260349431
+  MOV r4, #0
+  VMAXV.S8 r4, q0
+  VMOV q0, #5671843247518098389934217707075592714857
+  MOV r5, #0
+  VMAXV.S8 r5, q0
+  VMOV q0, #1757155848508391993900048874598833042279
+  MOV r6, #0
+  VMAXV.S8 r6, q0
+  VMOV q0, #5984788560259745507418173465415256875527
+  MOV r7, #0
+  VMAXV.S8 r7, q0
+  
+  // set the output of maxpool of front 8 4*4 matrixs
+  // to the vector Q1.
+  VMOV.$8 q1[0], r0
+  VMOV.$8 q1[1], r1
+  VMOV.$8 q1[2], r2
+  VMOV.$8 q1[3], r3
+  VMOV.$8 q1[4], r4
+  VMOV.$8 q1[5], r5
+  VMOV.$8 q1[6], r6
+  VMOV.$8 q1[7], r7
+  
+  // continue to maxpool the later 8 4*4 matrixs, and
+  // output to r0-r7.
+  VMOV q0, #5212863794904213988421952141318239219559
+  MOV r0, #0
+  VMAXV.S8 r0, q0
+  VMOV q0, #9334988704955059049013414454579748233885
+  MOV r1, #0
+  VMAXV.S8 r1, q0
+  VMOV q0, #6667587189888747373090849516989613237196
+  MOV r2, #0
+  VMAXV.S8 r2, q0
+  VMOV q0, #6459888891961543482907143830613458548582
+  MOV r3, #0
+  VMAXV.S8 r3, q0
+  VMOV q0, #9322581109971323809051289431880843386465
+  MOV r4, #0
+  VMAXV.S8 r4, q0
+  VMOV q0, #9110302564881101301142797185345813108425
+  MOV r5, #0
+  VMAXV.S8 r5, q0
+  VMOV q0, #157316759269120729406377316743496927952
+  MOV r6, #0
+  VMAXV.S8 r6, q0
+  VMOV q0, #6247730918379965557388463542923074116009
+  MOV r7, #0
+  VMAXV.S8 r7, q0
+  
+  // set the rest of output of maxpool to vector Q1.
+  VMOV.$8 q1[8], r0
+  VMOV.$8 q1[9], r1
+  VMOV.$8 q1[10], r2
+  VMOV.$8 q1[11], r3
+  VMOV.$8 q1[12], r4
+  VMOV.$8 q1[13], r5
+  VMOV.$8 q1[14], r6
+  VMOV.$8 q1[15], r7
+  
+  // the matrix of weights of first final output 
+  // is stored in Q2.
+  // get the first final output of network,
+  // result set to r8
+  VMOV q2, #4009198122623912839089364287453441355107
+  MOV r8, #0
+  VMLAV.S8 r8, q1, q2
+  
+  // the matrix of weights of second final output 
+  // is stored in Q3.
+  // get the second final output of network,
+  // result set to r9
+  VMOV q3, #9821821920241091215713474566232361892674
+  MOV r9, #0
+  VMLAV.S8 r9, q1, q3
+  
+  // the matrix of weights of third final output 
+  // is stored in Q4.
+  // get the third final output of network,
+  // result set to r10
+  VMOV q4, #2694932117843888001747399394048380112313
+  MOV r10, #0
+  VMLAV.S8 r10, q1, q4
+  
+  // the matrix of weights of forth final output 
+  // is stored in Q5.
+  // get the third final output of network,
+  // result set to r11
+  VMOV q5, #907112666069913837349867571395165964263
+  MOV r11, #0
+  VMLAV.S8 r11, q1, q5
+end

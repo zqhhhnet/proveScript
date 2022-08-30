@@ -1,0 +1,5 @@
+start:
+  VMOV q0, #79230580421244924994404089863000	// [ 0 1000 2000 3000 4000 5000 6000 7000 ], 16b per element, and each element is decimal
+  VMOV q1, #41538929472669868031141181829283841000	// [ 8000 7000 6000 5000 4000 3000 2000 1000 ], 16b per element, and each element is decimal
+  VMLAV.S16 r0, q0, q1	// r0 = sum(Q0[i] * Q1[i]), and r0 = 84000000
+end
