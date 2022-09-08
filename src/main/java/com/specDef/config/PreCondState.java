@@ -80,25 +80,27 @@ public class PreCondState {
      * @param imm
      * @return
      */
-    public String isValMov(String imm) {
-        String preCondition = null;
+    private String isValMov(String imm) {
+        StringBuilder preCondition = new StringBuilder();
         if (imm.charAt(0) >= 'A' && imm.charAt(0) <= 'Z') {
             if (!proveObject.getPreCond().containsKey(imm)) {
                 throw new InputMismatchException("变量为空，请检测输入的条件");
             } else {
                 BigInteger[] bigIntegers = proveObject.getPreCond().get(imm);
+                preCondition.append("\t\t\trequires ");
                 if (bigIntegers[0].compareTo(minValue) == 0) {  // 左边界为空
-                    preCondition = imm + " <=Int " + bigIntegers[1] + "\n";
+                    preCondition.append(imm).append(" <=Int ").append(bigIntegers[1]).append("\n");
                 } else if (bigIntegers[1].compareTo(maxValue) == 0) { // 右边界为空
-                    preCondition = imm + " >=Int " + bigIntegers[0] + "\n";
+                    preCondition.append(imm).append(" >=Int ").append(bigIntegers[0]).append("\n");
                 } else {
                     if (bigIntegers[0].compareTo(bigIntegers[1]) == 0) {    // 左右界相等，即变量是等于某值
-                        preCondition = imm + " ==Int " + bigIntegers[0] + "\n";
+                        preCondition.append(imm).append(" ==Int ").append(bigIntegers[0]).append("\n");
                     } else {
-                        preCondition = bigIntegers[0] + " <=Int " + imm + " andBool " + imm + " <=Int " + bigIntegers[1] + "\n";
+                        preCondition.append(bigIntegers[0]).append(" <=Int ").append(imm).append(" andBool ").append(imm)
+                                .append(" <=Int ").append(bigIntegers[1]).append("\n");
                     }
                 }
-                return preCondition;
+                return preCondition.toString();
             }
         } else {
             return "";
@@ -153,32 +155,34 @@ public class PreCondState {
         return null;
     }
 
-    public String isValVmov(String imm) {
-        String preCondition = "";
+    private String isValVmov(String imm) {
+        StringBuilder preCondition = new StringBuilder();
         if (Character.isLetter(imm.charAt(0))) {
             if (!proveObject.getPreCond().containsKey(imm)) {
                 throw new RuntimeException("无效变量，请检测输入变量");
             } else {
+                preCondition.append("\t\t\trequires ");
                 BigInteger[] bigIntegers = proveObject.getPreCond().get(imm);
                 if (bigIntegers[0].compareTo(minValue) == 0) {  // 左边界为空
-                    preCondition = imm + " <=Int " + bigIntegers[1] + "\n";
+                    preCondition.append(imm).append(" <=Int ").append(bigIntegers[1]).append("\n");
                 } else if (bigIntegers[1].compareTo(maxValue) == 0) { // 右边界为空
-                    preCondition = imm + " >=Int " + bigIntegers[0] + "\n";
+                    preCondition.append(imm).append(" >=Int ").append(bigIntegers[0]).append("\n");
                 } else {
                     if (bigIntegers[0].compareTo(bigIntegers[1]) == 0) {    // 左右界相等，即变量是等于某值
-                        preCondition = imm + " ==Int " + bigIntegers[0] + "\n";
+                        preCondition.append(imm).append(" ==Int ").append(bigIntegers[0]).append("\n");
                     } else {
-                        preCondition = bigIntegers[0] + " <=Int " + imm + " andBool " + imm + " <=Int " + bigIntegers[1] + "\n";
+                        preCondition.append(bigIntegers[0]).append(" <=Int ").append(imm).append(" andBool ").append(imm)
+                                .append(" <=Int ").append(bigIntegers[1]).append("\n");
                     }
                 }
             }
-            return preCondition;
+            return preCondition.toString();
         } else // 立即数不设requires
             return "";
     }
 
     /**
-     * VMAXV指令的前置条件设置，使用组合验证方法，分解多个子问题进行解决
+     * VMAXV、VMINV指令的前置条件设置，使用组合验证方法，分解多个子问题进行解决
      * @return
      */
     public String vvIntPreSet() {
@@ -197,11 +201,39 @@ public class PreCondState {
             // 只需进入VMAXV第一个子问题的时候设置向量寄存器对应的浮点寄存器的值，其他子问题不需要再重复设置
             if (beat == 0) {
                 // 存放S寄存器到寄存器映射表
-                preSourceCond = setSRegister(sourceRegister, size);
+                preSourceCond = "\t\t\trequires " + setSRegister(sourceRegister, size);
             }
             // 将目标寄存器的值的范围设置到前置条件
             preCondition = setDesCond(preSourceCond, destinationRegister, size);
         } catch (InputMismatchException ex) {
+            ex.printStackTrace();
+        }
+        return preCondition;
+    }
+
+    /**
+     * for vector register, set the initial state of each element of the precondition
+     * @return
+     */
+    public String vecPreSet() {
+        String preCondition = null;
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null) {
+                throw new RuntimeException("context is null");
+            }
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty()) {
+                throw new RuntimeException("Source register is null");
+            }
+            String destinationRegister = instruction.getDestinationRegister();
+            int size = Integer.parseInt(instruction.getDatatype().substring(1));
+            if (beat == 0) {
+                StringBuilder curSource = new StringBuilder();
+                curSource.append(setSRegister(instruction.getSourceRegister().get(0), size)).append("\t\t\tandBool ");
+                curSource.append(setSRegister(instruction.getSourceRegister().get(1), size));
+                preSourceCond = "\t\t\trequires " + curSource;
+            }
+            preCondition = setDesCond(preSourceCond, destinationRegister, size);
+        } catch (RuntimeException ex) {
             ex.printStackTrace();
         }
         return preCondition;
@@ -228,7 +260,7 @@ public class PreCondState {
      * @return 源寄存器的前置条件
      */
     public String setSRegister(String sourceRegister, int size) {
-        String sourcePre = "";
+        StringBuilder sourcePre = new StringBuilder();
         Map<String, String> registerMap = proveObject.getRegisterMap();
         Map<String, BigInteger[]> preCond = proveObject.getPreCond();
         String val = registerMap.get(sourceRegister);
@@ -245,11 +277,11 @@ public class PreCondState {
                 registerMap.put(sReg, cur);
                 BigInteger[] bigIntegers = preCond.get(cur);
                 if (i == 0) {
-                    sourcePre = sourcePre + "\t\t\trequires " + cur + " >=Int " + bigIntegers[0] + " andBool " +
-                            cur + " <=Int " + bigIntegers[1] + "\n";
+                    sourcePre.append(cur).append(" >=Int ").append(bigIntegers[0]).append(" andBool ").append(cur)
+                            .append(" <=Int ").append(bigIntegers[1]).append("\n");
                 } else {
-                    sourcePre = sourcePre + "\t\t\tandBool " + cur + " >=Int " + bigIntegers[0] + " andBool "
-                            + cur + " >=Int " + bigIntegers[1] + "\n";
+                    sourcePre.append("\t\t\tandBool ").append(cur).append(" >=Int ").append(bigIntegers[0])
+                            .append(" andBool ").append(cur).append(" >=Int ").append(bigIntegers[1]).append("\n");
                 }
             }
         } else if (size == 16) {
@@ -265,13 +297,15 @@ public class PreCondState {
                 BigInteger[] bigIntegers1 = preCond.get(cur1);
                 BigInteger[] bigIntegers2 = preCond.get(cur2);
                 if (i == 0) {
-                    sourcePre = sourcePre + "\t\t\trequires " + cur1 + " >=Int " + bigIntegers1[0] + " andBool " +
-                            cur1 + " <=Int " + bigIntegers1[1] + "\n\t\t\tandBool " + cur2 + " >=Int "
-                            + bigIntegers2[0] + " andBool " + cur2 + " <=Int " + bigIntegers2[1] + "\n";
+                    sourcePre.append(cur1).append(" >=Int ").append(bigIntegers1[0]).append(" andBool ").append(cur1)
+                            .append(" <=Int ").append(bigIntegers1[1]).append("\n\t\t\tandBool ")
+                            .append(cur2).append(" >=Int ").append(bigIntegers2[0]).append(" andBool ").append(cur2).append(" <=Int ")
+                            .append(bigIntegers2[1]).append("\n");
                 } else {
-                    sourcePre = sourcePre + "\t\t\tandBool " + cur1 + " >=Int " + bigIntegers1[0] + " andBool " +
-                            cur1 + " <=Int " + bigIntegers1[1] + "\n\t\t\tandBool " + cur2 + " >=Int "
-                            + bigIntegers2[0] + " andBool " + cur2 + " <=Int " + bigIntegers2[1] + "\n";
+                    sourcePre.append("\t\t\tandBool ").append(cur1).append(" >=Int ")
+                            .append(bigIntegers1[0]).append(" andBool ").append(cur1).append(" <=Int ").append(bigIntegers1[1])
+                            .append("\n\t\t\tandBool ").append(cur2).append(" >=Int ").append(bigIntegers2[0]).append(" andBool ")
+                            .append(cur2).append(" <=Int ").append(bigIntegers2[1]).append("\n");
                 }
             }
         } else if (size == 8) {
@@ -290,24 +324,26 @@ public class PreCondState {
                 BigInteger[] big3 = preCond.get(cur3);
                 BigInteger[] big4 = preCond.get(cur4);
                 if (i == 0) {
-                    sourcePre = sourcePre + "\t\t\trequires " + cur1 + " >=Int " + big1[0] + " andBool " +
-                            cur1 + " <=Int " + big1[1] + "\n\t\t\tandBool " + cur2 + " >=Int "
-                            + big2[0] + " andBool " + cur2 + " <=Int " + big2[1] + "\n\t\t\tandBool "
-                            + cur3 + " >=Int " + big3[0] + " andBool " + cur3 + " <=Int " + big3[1]
-                            + "\n\t\t\tandBool " + cur4 + " >=Int " + big4[0] + " andBool " + cur4
-                            + " <=Int " + big4[1] + "\n";
+                    sourcePre.append(cur1).append(" >=Int ").append(big1[0]).append(" andBool ").append(cur1)
+                            .append(" <=Int ").append(big1[1]).append("\n\t\t\tandBool ").append(cur2).append(" >=Int ")
+                            .append(big2[0]).append(" andBool ").append(cur2).append(" <=Int ").append(big2[1])
+                            .append("\n\t\t\tandBool ").append(cur3).append(" >=Int ").append(big3[0])
+                            .append(" andBool ").append(cur3).append(" <=Int ").append(big3[1])
+                            .append("\n\t\t\tandBool ").append(cur4).append(" >=Int ").append(big4[0])
+                            .append(" andBool ").append(cur4).append(" <=Int ").append(big4[1]).append("\n");
                 } else {
-                    sourcePre = sourcePre + "\t\t\tandBool " + cur1 + " >=Int " + big1[0] + " andBool " +
-                            cur1 + " <=Int " + big1[1] + "\n\t\t\tandBool " + cur2 + " >=Int "
-                            + big2[0] + " andBool " + cur2 + " <=Int " + big2[1] + "\n\t\t\tandBool "
-                            + cur3 + " >=Int " + big3[0] + " andBool " + cur3 + " <=Int " + big3[1]
-                            + "\n\t\t\tandBool " + cur4 + " >=Int " + big4[0] + " andBool " + cur4
-                            + " <=Int " + big4[1] + "\n";
+                    sourcePre.append("\t\t\tandBool ").append(cur1).append(" >=Int ").append(big1[0]).append(" andBool ")
+                            .append(cur1).append(" <=Int ").append(big1[1]).append("\n\t\t\tandBool ").append(cur2)
+                            .append(" >=Int ").append(big2[0]).append(" andBool ").append(cur2).append(" <=Int ")
+                            .append(big2[1]).append("\n\t\t\tandBool ").append(cur3).append(" >=Int ").append(big3[0])
+                            .append(" andBool ").append(cur3).append(" <=Int ").append(big3[1])
+                            .append("\n\t\t\tandBool ").append(cur4).append(" >=Int ").append(big4[0])
+                            .append(" andBool ").append(cur4).append(" <=Int ").append(big4[1]).append("\n");
                 }
             }
         } else
             throw new InputMismatchException("无效数据类型");
         proveObject.setRegisterMap(registerMap);
-        return sourcePre;
+        return sourcePre.toString();
     }
 }

@@ -7,6 +7,7 @@ import com.specDef.config.PreCondState;
 import com.specDef.config.ProgramState;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +43,9 @@ public class SpecConfigImpl implements SpecConfig {
             if ("MOV".equals(opcode) || "VMOV".equals(opcode)) {
                 programSet = programState.simpleProgramSet(specContext);
                 return programSet;
-            } else if ("VMAXV".equals(opcode)) {
+            } else if ("VMAXV".equals(opcode) || "VMINV".equals(opcode)) {
+                programSet = programState.vvIntProgramSet(specContext);
+            } else if ("VMLAV".equals(opcode)) {
                 programSet = programState.vvIntProgramSet(specContext);
             }
 
@@ -70,8 +73,12 @@ public class SpecConfigImpl implements SpecConfig {
                 preCondition = preCondState.simplePreSet();
             } else if ("VMOV".equals(opcode)) {
                 preCondition = preCondState.vecSimplePreSet();
-            } else if (opcode.equals("VMAXV")) {
+            } else if ("VMAXV".equals(opcode) || "VMINV".equals(opcode)) {
                 preCondition = preCondState.vvIntPreSet();
+            } else if ("VMAXNMV".equals(opcode) || "VMINNMV".equals(opcode)) {
+                
+            } else if ("VMLAV".equals(opcode)) {
+                preCondition = preCondState.vecPreSet();
             }
             // TODO: 其他指令相应处理
             return preCondition;
@@ -97,8 +104,10 @@ public class SpecConfigImpl implements SpecConfig {
                 postCondition = postCondState.simplePostSet();
             } else if ("VMOV".equals(opcode)) {
                 postCondition = postCondState.vecSimplePostSet();
-            } else if ("VMAXV".equals(opcode)) {
+            } else if ("VMAXV".equals(opcode) || "VMINV".equals(opcode)) {
                 postCondition = postCondState.vvIntPostSet();
+            } else if ("VMLAV".equals(opcode)) {
+                postCondition = postCondState.innerProductPostSet();
             }
             // TODO: 其他指令相应处理
             // 都不匹配
@@ -156,12 +165,11 @@ public class SpecConfigImpl implements SpecConfig {
             if (opcode == null)
                 throw new IOException();
             String curPath = System.getProperty("user.dir");
+            String codeMap = "\t\t\tcode (\n" + specContext.getInstList().stream().collect(Collectors.joining()) + "\t\t\t)\n";
+            String regStateSet = specContext.getPostCondition().stream().collect(Collectors.joining());
+            String preCondition = specContext.getPreCondition();
             if ("MOV".equals(opcode) || "VMOV".equals(opcode)) {
                 String moduleName = "MOV".equals(opcode) ? "module SPEC-MOV-MODE\n" : "module SPEC-VMOV-MODE\n";
-                // 将code中，目标操作数和源操作数的寄存器的大写字母变为小写字母
-                String codeMap = "\t\t\tcode (\n" + specContext.getInstList().stream().collect(Collectors.joining()) + "\t\t\t)\n";
-                String regStateSet = specContext.getPostCondition().stream().collect(Collectors.joining());
-                String preCondition = "\t\t\trequires " + specContext.getPreCondition();
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
                         regStateSet + tempReg + defaultReg + preCondition + endModule;
                 File file = new File(curPath + System.getProperty("file.separator") + ("MOV".equals(opcode) ?
@@ -174,20 +182,26 @@ public class SpecConfigImpl implements SpecConfig {
                 fos.flush();
                 //System.out.println(file.getName() + " after");
                 return file;
-            } else if ("VMAXV".equals(opcode)) {
+            } else if ("VMAXV".equals(opcode) || "VMINV".equals(opcode)) {
                 StringBuilder moduleName = new StringBuilder();
-                moduleName.append("module SPEC-VMAXV-MODE").append('-').append(count).append('\n');
-                String codeMap = "\t\t\tcode (\n" + specContext.getInstList().stream().collect(Collectors.joining()) + "\t\t\t)\n";
-                String regStateSet = specContext.getPostCondition().stream().collect(Collectors.joining());
-                String preCondition = specContext.getPreCondition();
+                moduleName.append("module SPEC-").append(opcode).append("-MODE").append('-').append(count).append('\n');
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
                         regStateSet + defaultReg + preCondition + endModule;
-                File file = new File(curPath + System.getProperty("file.separator") + "spec-vmaxv-mode-" + count + ".k");
+                String curOpcode = "VMAXV".equals(opcode) ? "spec-vmaxv-mode-" : "spec-vminv-mode-";
+                File file = new File(curPath + System.getProperty("file.separator") + curOpcode + count + ".k");
                 System.out.println(file.getName());
                 fos = new FileOutputStream(file);
-                byte[] bytes = total.getBytes(StandardCharsets.UTF_8);
-                fos.write(bytes);
-                fos.flush();
+                makeFile(fos, total);
+                return file;
+            } else if ("VMLAV".equals(opcode)) {
+                StringBuilder moduleName = new StringBuilder();
+                moduleName.append("module SPEC-").append(opcode).append("-MODE").append('-').append(count).append('\n');
+                String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
+                        regStateSet + defaultReg + preCondition + endModule;
+                File file = new File(curPath + System.getProperty("file.separator") + "spec-vmlav-mode-" + count + ".k");
+                System.out.println(file.getName());
+                fos = new FileOutputStream(file);
+                makeFile(fos, total);
                 return file;
             }
             // TODO：其他指令的相应配置
@@ -206,4 +220,9 @@ public class SpecConfigImpl implements SpecConfig {
         return null;
     }
 
+    private void makeFile(FileOutputStream fos, String total) throws IOException {
+        byte[] bytes = total.getBytes(StandardCharsets.UTF_8);
+        fos.write(bytes);
+        fos.flush();
+    }
 }

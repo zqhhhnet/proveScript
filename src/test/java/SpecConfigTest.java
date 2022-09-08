@@ -16,10 +16,10 @@ import java.util.*;
 
 public class SpecConfigTest {
     @Test
-    public static void main(String[] args) {
+    public void main(String[] args) {
         ProveObject proveObject = new ProveObject();
         //String inst = "MOV R0, R1";
-        String inst = "VMAXV.S8 R1, Q2";
+        String inst = "VMLAV.U8 R1, Q2, Q3";
         List<String> insts = new ArrayList<>();
         insts.add(inst);
         proveObject.setInstructions(insts);
@@ -43,11 +43,29 @@ public class SpecConfigTest {
         preMap.put("A0014", new BigInteger[]{BigInteger.ZERO, new BigInteger("22")});
         preMap.put("A0015", new BigInteger[]{BigInteger.ZERO, new BigInteger("8")});
         preMap.put("B", new BigInteger[]{BigInteger.ZERO, new BigInteger("30")});
+        preMap.put("C", new BigInteger[]{BigInteger.ONE, new BigInteger("1455554345")});
+        preMap.put("C000", new BigInteger[]{BigInteger.ZERO, new BigInteger("25")});
+        preMap.put("C001", new BigInteger[]{BigInteger.ZERO, new BigInteger("45")});
+        preMap.put("C002", new BigInteger[]{BigInteger.ZERO, new BigInteger("56")});
+        preMap.put("C003", new BigInteger[]{BigInteger.ZERO, new BigInteger("52")});
+        preMap.put("C004", new BigInteger[]{BigInteger.ZERO, new BigInteger("35")});
+        preMap.put("C005", new BigInteger[]{BigInteger.ZERO, new BigInteger("12")});
+        preMap.put("C006", new BigInteger[]{BigInteger.ZERO, new BigInteger("23")});
+        preMap.put("C007", new BigInteger[]{BigInteger.ZERO, new BigInteger("58")});
+        preMap.put("C008", new BigInteger[]{BigInteger.ZERO, new BigInteger("65")});
+        preMap.put("C009", new BigInteger[]{BigInteger.ZERO, new BigInteger("78")});
+        preMap.put("C0010", new BigInteger[]{BigInteger.ZERO, new BigInteger("98")});
+        preMap.put("C0011", new BigInteger[]{BigInteger.ZERO, new BigInteger("87")});
+        preMap.put("C0012", new BigInteger[]{BigInteger.ZERO, new BigInteger("112")});
+        preMap.put("C0013", new BigInteger[]{BigInteger.ZERO, new BigInteger("110")});
+        preMap.put("C0014", new BigInteger[]{BigInteger.ZERO, new BigInteger("13")});
+        preMap.put("C0015", new BigInteger[]{BigInteger.ZERO, new BigInteger("12")});
         proveObject.setPreCond(preMap);
 
         Map<String, String> RegMap = new HashMap<>();
         RegMap.put("Q2", "A");
         RegMap.put("R1", "B");
+        RegMap.put("Q3", "C");
         proveObject.setRegisterMap(RegMap);
         PreCondState preCondState = new PreCondState(proveObject);
         PostCondState postCondState = new PostCondState(proveObject);

@@ -88,11 +88,23 @@ public class ProgramState {
             // 将寄存器的大写字母转为小写字母
             destinationRegister[0] = (char)(destinationRegister[0] + 32);
             StringBuilder inst = new StringBuilder();
-            char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
-            sourceRegister[0] = (char)(sourceRegister[0] + 32);
-            inst.append("\t\t\tmemloc(mi(32, 0)) |-> storedInstr( cmp . ").append(instruction.getDatatype()).append(' ')
-                    .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister))
-                    .append(", # 0, # ").append(beat).append(", # 0, .Operands)\n");
+            inst.append("\t\t\tmemloc(mi(32, 0)) |-> storedInstr( ");
+            if ("VMAXV".equals(instruction.getOpcode()) || "VMINV".equals(instruction.getOpcode())) {
+                char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
+                sourceRegister[0] = (char)(sourceRegister[0] + 32);
+                int cmpMode = "VMAXV".equals(instruction.getOpcode()) ? 0 : 1;
+                inst.append("cmp . ").append(instruction.getDatatype()).append(' ')
+                        .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister))
+                        .append(", # ").append(cmpMode).append(", # ").append(beat).append(", # 0, .Operands)\n");
+            } else if ("VMLAV".equals(instruction.getOpcode())) {
+                char[] sourceRegister0 = instruction.getSourceRegister().get(0).toCharArray();
+                char[] sourceRegister1 = instruction.getSourceRegister().get(1).toCharArray();
+                sourceRegister0[0] = (char) (sourceRegister0[0] + 32);
+                sourceRegister1[0] = (char) (sourceRegister1[0] + 32);
+                inst.append("maa . ").append(instruction.getDatatype()).append(' ').append(String.valueOf(destinationRegister))
+                        .append(", ").append(String.valueOf(sourceRegister0)).append(", ").append(String.valueOf(sourceRegister1))
+                        .append(", # ").append(beat).append(", Operands)\n");
+            }
             instList.add(inst.toString());
             return instList;
         } catch (RuntimeException ex) {

@@ -17,9 +17,9 @@ public class Binary2Signed {
         String result = "";
         //有符号且符号为1，负数时特殊处理
         if (includeSymbol && binaryStr.charAt(0) == '1') {
-            result = "-"+Integer.parseInt(binaryStr.substring(1), 2);
+            result = "-"+Long.parseLong(binaryStr.substring(1), 2);
         } else {
-            int i = Integer.parseInt(binaryStr, 2);
+            long i = Long.parseLong(binaryStr, 2);
             result = String.valueOf(i);
         }
         return result;
@@ -41,7 +41,7 @@ public class Binary2Signed {
         if (includeSymbol && binaryStr.charAt(0) == '1') {
             result = negativeBinToDec(binaryStr);
         } else {
-            int i = Integer.parseInt(binaryStr, 2);
+            long i = Long.parseLong(binaryStr, 2);
             result = String.valueOf(i);
         }
         return result;
@@ -59,7 +59,7 @@ public class Binary2Signed {
         //取反
         String negateBinary  = getNegate(oppositeCode);
         //转十进制带符号
-        String result = "-"+Integer.parseInt(negateBinary, 2);
+        String result = "-"+Long.parseLong(negateBinary, 2);
         return result;
     }
 
