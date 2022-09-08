@@ -1,0 +1,16 @@
+(set-option :auto-config false)
+(set-option :smt.mbqi false)
+(declare-fun andInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= 1 |N|) true)
+	(= (>= 1 |M|) true))
+  (not (and
+	(= (<= (+ |N| |M|) 2) true)))
+))
+(check-sat)

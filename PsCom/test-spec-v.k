@@ -1,0 +1,60 @@
+require "armv8-semantics.k"
+
+module TEST-SPEC-V
+
+  imports ARMV8-SEMANTICS
+  
+  rule <k>
+         scan => End
+       </k>
+       <begin>
+         .K
+       </begin>
+       <currentstate>
+         "text"
+       </currentstate>
+       <nextloc>
+         _:MInt
+       </nextloc>
+       <functarget>
+         start |-> mi(32, 0)
+       </functarget>
+       <instructiontext>
+         code ( //mi(32, 0) |-> storedInstr ( VMOV q0 , (# N:Int):Imm , .Operands )
+         //mi(32, 1) |-> storedInstr ( VMOV q1 , (# Y:Int):Imm , .Operands )
+         mi(32, 0) |-> storedInstr ( VMAXV . U32 r0 , q0 , .Operands )
+         /*mi(32, 3) |-> storedInstr ( end .Operands )*/ )
+       </instructiontext>
+       <regstate>
+         //"Q0" |-> mi(128, N)
+         "Q0" |-> concatenateMInt(mi(32, X), concatenateMInt( mi(32, Y), concatenateMInt( mi(32, J), mi(32, K))))
+         /*"Q1" |-> mi(128, Y)*/
+         "S0" |-> /*(mi(32, _:Int) =>*/ /*extractMInt(mi(128, N), 96, 128)*/ mi(32, K)
+         "S1" |-> /*(mi(32, _:Int) =>*/ /*extractMInt(mi(128, N), 64, 96)*/ mi(32, J)
+         "S2" |-> /*(mi(32, _:Int) =>*/ /*extractMInt(mi(128, N), 32, 64)*/ mi(32, Y)
+         "S3" |-> /*(mi(32, _:Int) =>*/ /*extractMInt(mi(128, N), 0, 32)*/ mi(32, X)
+         //"S4" |-> /*(mi(32, _:Int) =>*/ extractMInt(mi(128, Y), 96, 128)//)
+         //"S5" |-> /*(mi(32, _:Int) =>*/ extractMInt(mi(128, Y), 64, 96)//)
+         //"S6" |-> /*(mi(32, _:Int) =>*/ extractMInt(mi(128, Y), 32, 64)//)
+         //"S7" |-> /*(mi(32, _:Int) =>*/ extractMInt(mi(128, Y), 0, 32)//)
+         //"S8" |-> /*(mi(32, _:Int):MInt => mi(32, _)) */ (ifMInt (uvalueMInt(extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(extractMInt(mi(128,Y), 96, 128))) then (extractMInt(mi(128,N), 96, 128)) else (extractMInt(mi(128, Y), 96, 128))) 
+         //"S9" |-> /*(mi(32, _:Int):MInt => mi(32, _)) */ (ifMInt (uvalueMInt(extractMInt(mi(128,N), 64, 96)) >Int uvalueMInt(extractMInt(mi(128,Y), 64, 96))) then (extractMInt(mi(128,N), 64, 96)) else (extractMInt(mi(128, Y), 64, 96)))
+         //"S10" |-> /*(mi(32, _:Int):MInt => mi(32, _)) */ (ifMInt (uvalueMInt(extractMInt(mi(128,N), 32, 64)) >Int uvalueMInt(extractMInt(mi(128,Y), 32, 64))) then (extractMInt(mi(128,N), 32, 64)) else (extractMInt(mi(128, Y), 32, 64))) 
+         //"S11" |-> /*(mi(32, _:Int):MInt => mi(32, _)) */ (ifMInt (uvalueMInt(extractMInt(mi(128,N), 0, 32)) >Int uvalueMInt(extractMInt(mi(128,Y), 0, 32))) then (extractMInt(mi(128,N), 0, 32)) else (extractMInt(mi(128, Y), 0, 32))) 
+         //"R0" |-> ifMInt ( uvalueMInt( extractMInt(mi(128,N), 0, 32) ) >Int  uvalueMInt(ifMInt ( uvalueMInt( extractMInt(mi(128,N), 32, 64) ) >Int uvalueMInt(ifMInt (uvalueMInt( extractMInt(mi(128,N), 64, 96)) >Int uvalueMInt( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(mi(32, 0)) ) then (extractMInt(mi(128,N), 96, 128)) else (mi(32,0)) ) ) then ( extractMInt(mi(128,N), 64, 96)) else ( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(mi(32, 0)) ) then ( extractMInt(mi(128,N), 96, 128)) else (mi(32,0)) ) ) ) then (extractMInt(mi(128,N), 32, 64) ) else (ifMInt (uvalueMInt( extractMInt(mi(128,N), 64, 96)) >Int uvalueMInt( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(mi(32, 0)) ) then ( extractMInt(mi(128,N), 96, 128)) else (mi(32,0)) ) ) then ( extractMInt(mi(128,N), 64, 96)) else ( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(mi(32, 0)) ) then ( extractMInt(mi(128,N), 96, 128)) else (mi(32,0)) ) ) ) ) then ( extractMInt(mi(128,N), 0, 32) ) else ( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 32, 64) ) >Int uvalueMInt(ifMInt (uvalueMInt( extractMInt(mi(128,N), 64, 96)) >Int uvalueMInt( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(mi(32, 0)) ) then (extractMInt(mi(128,N), 96, 128)) else (mi(32,0)) ) ) then ( extractMInt(mi(128,N), 64, 96)) else ( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(mi(32, 0)) ) then (extractMInt(mi(128,N), 96, 128)) else (mi(32,0)) ) ) ) then (extractMInt(mi(128,N), 32, 64) ) else (ifMInt (uvalueMInt( extractMInt(mi(128,N), 64, 96)) >Int uvalueMInt( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(mi(32, 0)) ) then ( extractMInt(mi(128,N), 96, 128)) else (mi(32,0)) ) ) then (extractMInt(mi(128,N), 64, 96)) else ( ifMInt ( uvalueMInt( extractMInt(mi(128,N), 96, 128)) >Int uvalueMInt(mi(32, 0)) ) then (extractMInt(mi(128,N), 96, 128)) else (mi(32,0)) ) ) )
+         
+         "R0" |-> ifMInt ( uvalueMInt(mi(32,X)) >Int uvalueMInt( ifMInt ( uvalueMInt(mi(32, Y)) >Int uvalueMInt( ifMInt (uvalueMInt(mi(32, J)) >Int uvalueMInt( ifMInt (uvalueMInt(mi(32,K)) >Int uvalueMInt(mi(32, 0))) then (mi(32, K)) else (mi(32, 0)) )) then (mi(32, J)) else ( ifMInt (uvalueMInt(mi(32,K)) >Int uvalueMInt(mi(32, 0))) then (mi(32, K)) else (mi(32, 0))  ) ) ) then (mi(32, Y)) else (ifMInt (uvalueMInt(mi(32, J)) >Int uvalueMInt( ifMInt (uvalueMInt(mi(32,K)) >Int uvalueMInt(mi(32, 0))) then (mi(32, K)) else (mi(32, 0)) )) then (mi(32, J)) else ( ifMInt (uvalueMInt(mi(32,K)) >Int uvalueMInt(mi(32, 0))) then (mi(32, K)) else (mi(32, 0))  ) ) ) ) then (mi(32, X)) else ( ifMInt ( uvalueMInt(mi(32, Y)) >Int uvalueMInt( ifMInt (uvalueMInt(mi(32, J)) >Int uvalueMInt( ifMInt (uvalueMInt(mi(32,K)) >Int uvalueMInt(mi(32, 0))) then (mi(32, K)) else (mi(32, 0)) )) then (mi(32, J)) else ( ifMInt (uvalueMInt(mi(32,K)) >Int uvalueMInt(mi(32, 0))) then (mi(32, K)) else (mi(32, 0))  ) ) ) then (mi(32, Y)) else (ifMInt (uvalueMInt(mi(32, J)) >Int uvalueMInt( ifMInt (uvalueMInt(mi(32,K)) >Int uvalueMInt(mi(32, 0))) then (mi(32, K)) else (mi(32, 0)) )) then (mi(32, J)) else ( ifMInt (uvalueMInt(mi(32,K)) >Int uvalueMInt(mi(32, 0))) then (mi(32, K)) else (mi(32, 0))  ) ) )
+
+         "R15" |-> mi(32,0) /*(mi(32, 0) => mi(32, 4))*/
+       </regstate>
+         requires 0 <=Int X
+           andBool (2 ^Int 32) >Int X
+           andBool 0 <=Int Y
+           andBool (2 ^Int 32) >Int Y
+           andBool 0 <=Int J
+           andBool (2 ^Int 32) >Int J
+           andBool 0 <=Int K
+           andBool (2 ^Int 32) >Int K
+
+
+endmodule

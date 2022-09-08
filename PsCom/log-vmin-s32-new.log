@@ -1,0 +1,485 @@
+/*@
+  queries of SMT input
+*/
+
+// query 1
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |M|)))
+))
+
+// query 2
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |N|)))
+))
+
+// query 3
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M| 0) true)))
+))
+
+// query 4
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M| 4294967296) true)))
+))
+
+// query 5
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N| 0) true)))
+))
+
+// query 6
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N| 4294967296) true)))
+))
+
+// query 7
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (>= |N| 340282366920938463463374607431768211456) true)))
+))
+
+// query 8
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (>= |M| 340282366920938463463374607431768211456) true)))
+))
+
+// query 9
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |N_728|)))
+))
+
+// query 10
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |M_727|)))
+))
+
+// query 11
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M_727| 0) true)))
+))
+
+// query 12
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M_727| 4294967296) true)))
+))
+
+// query 13
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N_728| 0) true)))
+))
+
+// query 14
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N_728| 4294967296) true)))
+))
+
+// query 15
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (>= |N_728| 340282366920938463463374607431768211456) true)))
+))
+
+// query 16
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (>= |M_727| 340282366920938463463374607431768211456) true)))
+))
+
+// query 17
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M_727| 256) true)))
+))
+
+// query 18
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N_728| 256) true)))
+))
+
+// query 19
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M_727| 65536) true)))
+))
+
+// query 20
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N_728| 65536) true)))
+))
+
+// query 21
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_25_753| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_25_753|)))
+))
+
+// query 22
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_16_744| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_16_744|)))
+))
+
+// query 23
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_26_754| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_26_754|)))
+))
+
+// query 24
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_27_755| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_27_755|)))
+))
+
+// query 25
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_28_756| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_28_756|)))
+))
+
+

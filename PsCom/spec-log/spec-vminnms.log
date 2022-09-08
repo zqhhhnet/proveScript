@@ -1,0 +1,49 @@
+<generatedTop>
+  <k>
+    End
+  </k>
+  <begin>
+    .
+  </begin>
+  <currentstate>
+    "text"
+  </currentstate>
+  <nextloc>
+    V0
+  </nextloc>
+  <functarget>
+    start |-> 32'0
+  </functarget>
+  <instructiontext>
+    code ( memloc ( 32'0 ) |-> storedInstr ( MOV s0 , # V1 , .Operands )
+    memloc ( 32'1 ) |-> storedInstr ( MOV s1 , # V2 , .Operands )
+    memloc ( 32'2 ) |-> storedInstr ( VMINNM . F32 s2 , s0 , s1 , .Operands )
+    memloc ( 32'3 ) |-> storedInstr ( end .Operands ) )
+  </instructiontext>
+  <regstate>
+    "CONTROL" |-> 32'1
+    "CONTROL_NS" |-> 32'1
+    "CONTROL_S" |-> 32'1
+    "CPACR" |-> 32'3145728
+    "CPACR_NS" |-> 32'3145728
+    "CPACR_S" |-> 32'3145728
+    "CPPWR" |-> 32'0
+    "CPPWR_NS" |-> 32'0
+    "CPPWR_S" |-> 32'0
+    "EPSR" |-> 32'2048
+    "FPCCR" |-> 32'2147483648
+    "FPCCR_NS" |-> 32'2147483648
+    "FPCCR_S" |-> 32'2147483648
+    "FPSCR" |-> ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 1 , 9 ) ) ==K 255 andBool ( neMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 32 ) , 23'0 ) andBool eqMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 10 ) , 1'0 ) ) ) orBool ( uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 1 , 9 ) ) ==K 255 andBool ( neMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 32 ) , 23'0 ) andBool eqMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 10 ) , 1'0 ) ) ) then 32'50331649 else 32'50331648
+    "MVFR1" |-> 32'256
+    "NSACR" |-> 32'1024
+    "R15" |-> memloc ( 32'4 )
+    "RESULT64" |-> 64'0
+    "RESULT" |-> 32'0
+    "S0" |-> mi ( 32 , V1 )
+    "S1" |-> mi ( 32 , V2 )
+    "S2" |-> ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 1 , 9 ) ) ==K 255 ) andBool eqMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 10 ) , 1'1 ) andBool ( uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 1 , 9 ) ) ==K 255 andBool eqMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 10 ) , 1'1 ) ) then 32'2143289344 else ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 1 , 9 ) ) ==K 255 andBool ( neMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 32 ) , 23'0 ) andBool eqMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 10 ) , 1'0 ) ) ) orBool ( uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 1 , 9 ) ) ==K 255 andBool ( neMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 32 ) , 23'0 ) andBool eqMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 10 ) , 1'0 ) ) ) then 32'2143289344 else ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 1 , 9 ) ) ==K 255 ) andBool eqMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 10 ) , 1'1 ) then mi ( 32 , V2 ) else ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 1 , 9 ) ) ==K 255 ) andBool eqMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 10 ) , 1'1 ) then mi ( 32 , V1 ) else ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 1 , 9 ) ) ==K 255 ) andBool eqMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 32 ) , 23'0 ) then ifMInt eqMInt ( extractMInt ( mi ( 32 , V2 ) , 0 , 1 ) , 1'1 ) then mi ( 32 , V2 ) else mi ( 32 , V1 ) else ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 1 , 9 ) ) ==K 255 ) andBool eqMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 32 ) , 23'0 ) then ifMInt eqMInt ( extractMInt ( mi ( 32 , V1 ) , 0 , 1 ) , 1'1 ) then mi ( 32 , V1 ) else mi ( 32 , V2 ) else ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 1 , 9 ) ) ==K 0 ) andBool eqMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 32 ) , 23'0 ) andBool ( uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 1 , 9 ) ) ==K 0 andBool eqMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 32 ) , 23'0 ) ) andBool ugtMInt ( extractMInt ( mi ( 32 , V1 ) , 0 , 1 ) , extractMInt ( mi ( 32 , V2 ) , 0 , 1 ) ) then mi ( 32 , V1 ) else ifMInt ( uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 1 , 9 ) ) ==K 0 ) andBool eqMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 32 ) , 23'0 ) andBool ( uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 1 , 9 ) ) ==K 0 andBool eqMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 32 ) , 23'0 ) ) andBool uleMInt ( extractMInt ( mi ( 32 , V1 ) , 0 , 1 ) , extractMInt ( mi ( 32 , V2 ) , 0 , 1 ) ) then mi ( 32 , V2 ) else ifMInt MIntToFloatImpl ( 24 , 8 , uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 0 , 1 ) ) , uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 1 , 9 ) ) , uvalueMInt ( extractMInt ( mi ( 32 , V1 ) , 9 , 32 ) ) ) <=Float MIntToFloatImpl ( 24 , 8 , uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 0 , 1 ) ) , uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 1 , 9 ) ) , uvalueMInt ( extractMInt ( mi ( 32 , V2 ) , 9 , 32 ) ) ) then mi ( 32 , V1 ) else mi ( 32 , V2 )
+    "VPR" |-> 32'2048
+  </regstate>
+  V3
+</generatedTop>

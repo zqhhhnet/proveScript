@@ -1,0 +1,1336 @@
+hhh1@hhh1-virtual-machine:~/PsCom$ kprove test-spec.k -v --debug-z3 --output-file "spec.log" --debug
+Parse command line options                                   =  0.000s
+Importing: Source(/home/hhh1/PsCom/././test-spec.k)
+Importing: Source(/home/hhh1/PsCom/test-spec.k)
+Importing: Source(/home/hhh1/PsCom/armv8-semantics.k)
+Importing: Source(/home/hhh1/PsCom/armv8-loader.k)
+Importing: Source(/home/hhh1/PsCom/armv8-configuration.k)
+Importing: Source(/home/hhh1/PsCom/armv8-syntax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-syntax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-mint.k)
+Importing: Source(/home/hhh1/PsCom/armv8-conversions.k)
+Importing: Source(/home/hhh1/PsCom/vmax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-semantic.k)
+Importing: Source(/home/hhh1/PsCom/armv8-verification.k)
+Importing: Source(/home/hhh1/PsCom/exit.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnm.k)
+Importing: Source(/home/hhh1/PsCom/vmov.k)
+Importing: Source(/home/hhh1/PsCom/vmaxa.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnma.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnmv.k)
+Importing: Source(/home/hhh1/PsCom/mov.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnmav.k)
+Importing: Source(/home/hhh1/PsCom/vmaxv.k)
+Importing: Source(/home/hhh1/PsCom/vmaxav.k)
+Importing: Source(/home/hhh1/PsCom/vmin.k)
+Importing: Source(/home/hhh1/PsCom/vmina.k)
+Importing: Source(/home/hhh1/PsCom/vminv.k)
+Importing: Source(/home/hhh1/PsCom/vminav.k)
+Importing: Source(/home/hhh1/PsCom/vminnm.k)
+Importing: Source(/home/hhh1/PsCom/vminnma.k)
+Importing: Source(/home/hhh1/PsCom/vminnmv.k)
+Importing: Source(/home/hhh1/PsCom/vminnmav.k)
+Importing: Source(/home/hhh1/PsCom/vmlav.k)
+Parse spec modules [1/548 rules]                             =  0.019s
+
+Parsing finished:   23.699 s
+Pre-processing rule:
+rule too long...
+	Source: /home/hhh1/PsCom/test-spec.k Location(7,8,47,39)
+==================================
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, N:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(N:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => (2 ^Int M) +Int N
+    requires N <Int 0 
+    andBool  N >=Int -1 *Int (2 ^Int (M -Int 1))
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(286,8,288,49)
+-------------
+
+Z3 query result: unsat
+
+Z3 Implication (Function rule implication) RHS proved:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(N:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => N
+    requires N >=Int 0 
+    andBool  N <Int (2 ^Int M)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(282,8,284,31)
+-------------
+
+Z3 query result: unsat
+
+Z3 Implication (Function rule implication) RHS proved:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(N:Int,, Int(#"340282366920938463463374607431768211456")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => N
+    requires N >=Int 0 
+    andBool  N <Int (2 ^Int M)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(282,8,284,31)
+-------------
+
+Z3 Implication (Function rule implication) RHS proved (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(N:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 1 andBool E ==Int 33
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(326,8,332,43)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(N:Int,, Int(#"4294967296")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 1 andBool E ==Int 33
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(326,8,332,43)
+-------------
+
+Z3 Implication (Function rule implication) RHS proved (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(N:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 32 andBool E ==Int 64 
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(318,8,324,44)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(N:Int,, Int(#"4294967296")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 32 andBool E ==Int 64 
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(318,8,324,44)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, Y:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(Y:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => (2 ^Int M) +Int N
+    requires N <Int 0 
+    andBool  N >=Int -1 *Int (2 ^Int (M -Int 1))
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(286,8,288,49)
+-------------
+
+Z3 query result: unsat
+
+Z3 Implication (Function rule implication) RHS proved:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(Y:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => N
+    requires N >=Int 0 
+    andBool  N <Int (2 ^Int M)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(282,8,284,31)
+-------------
+
+Z3 query result: unsat
+
+Z3 Implication (Function rule implication) RHS proved:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(Y:Int,, Int(#"340282366920938463463374607431768211456")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => N
+    requires N >=Int 0 
+    andBool  N <Int (2 ^Int M)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(282,8,284,31)
+-------------
+
+Z3 Implication (Function rule implication) RHS proved (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(Y:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 1 andBool E ==Int 33
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(326,8,332,43)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(Y:Int,, Int(#"4294967296")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 1 andBool E ==Int 33
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(326,8,332,43)
+-------------
+
+Z3 Implication (Function rule implication) RHS proved (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(Y:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 32 andBool E ==Int 64 
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(318,8,324,44)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(Y:Int,, Int(#"4294967296")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 32 andBool E ==Int 64 
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(318,8,324,44)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N:Int),, Int(#"96"),, Int(#"128"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y:Int),, Int(#"96"),, Int(#"128")))),, Bool(#"false"))
+)
+
+Rule for formula above:
+  rule ifMInt B then _ else M => M requires notBool B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(160,8,160,54)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N:Int),, Int(#"96"),, Int(#"128"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y:Int),, Int(#"96"),, Int(#"128")))),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule ifMInt B then M else _ => M requires B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(159,8,159,46)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, N:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, Y:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N:Int),, Int(#"64"),, Int(#"96"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y:Int),, Int(#"64"),, Int(#"96")))),, Bool(#"false"))
+)
+
+Rule for formula above:
+  rule ifMInt B then _ else M => M requires notBool B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(160,8,160,54)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N:Int),, Int(#"64"),, Int(#"96"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y:Int),, Int(#"64"),, Int(#"96")))),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule ifMInt B then M else _ => M requires B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(159,8,159,46)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, N:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, Y:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N:Int),, Int(#"32"),, Int(#"64"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y:Int),, Int(#"32"),, Int(#"64")))),, Bool(#"false"))
+)
+
+Rule for formula above:
+  rule ifMInt B then _ else M => M requires notBool B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(160,8,160,54)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N:Int),, Int(#"32"),, Int(#"64"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y:Int),, Int(#"32"),, Int(#"64")))),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule ifMInt B then M else _ => M requires B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(159,8,159,46)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, N:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, Y:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N:Int),, Int(#"0"),, Int(#"32"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y:Int),, Int(#"0"),, Int(#"32")))),, Bool(#"false"))
+)
+
+Rule for formula above:
+  rule ifMInt B then _ else M => M requires notBool B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(160,8,160,54)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N:Int),, Int(#"0"),, Int(#"32"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y:Int),, Int(#"0"),, Int(#"32")))),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule ifMInt B then M else _ => M requires B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(159,8,159,46)
+-------------
+Pre-processing rule:
+rule too long...
+	Source: /home/hhh1/PsCom/test-spec.k Location(49,8,95,39)
+==================================
+
+Initialization finished
+==================================
+Stats for each phase, time, used memory, implicit main GC time percentage:
+Total init            :   24.234 s,	  495 MB, gc:  4.725 %
+  JVM init            :    0.051 s
+  Parsing             :   23.699 s,	  469 MB, gc:  4.831 %
+  Rewriter init       :    0.484 s,	  495 MB, gc:  0.000 %
+
+Init+Execution time:       0.484 s
+  query build time                 :    0.018 s,      #         18
+  Z3 Function rule implication time:    0.201 s,      #         10
+      sat           :       6
+      unsat (proved):       4
+    cached queries:       12
+    query build failures: 8
+
+  Time and top-level event counts:
+  resolveFunctionAndAnywhere time  :    0.368 s,      #        501
+    evaluateFunction time            :    0.356 s,      #        171
+      builtin evaluation               :           ,      #         92
+      no rule applicable               :           ,      #         44
+      no function rules                :           ,      #         35
+    applyAnywhereRules time          :    0.000 s,      #         51
+      no anywhere rules                :           ,      #         51
+    remaining time & # cached        :    0.011 s,      #        279
+  impliesSMT time                  :    0.272 s,      #         30
+
+  Recursive event counts:
+  resolveFunctionAndAnywhere time  :           ,      #        896
+    evaluateFunction time            :           ,      #         39
+      builtin evaluation               :           ,      #         13
+      no rule applicable               :           ,      #          6
+      no function rules                :           ,      #          8
+    applyAnywhereRules time          :           ,      #          0
+      no anywhere rules                :           ,      #          0
+    # cached                         :           ,      #        857
+==================================
+
+
+STEP 1 v1 :    0.012 s, 		  495 MB, gc:  0.000 %
+===================
+<k>(End_ARMV8-LOADER(.KList))
+/\
+ConjunctiveFormula(
+  init equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, N_709:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(N_709:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => (2 ^Int M) +Int N
+    requires N <Int 0 
+    andBool  N >=Int -1 *Int (2 ^Int (M -Int 1))
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(286,8,288,49)
+-------------
+
+Z3 query result: unsat
+
+Z3 Implication (Function rule implication) RHS proved:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(N_709:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => N
+    requires N >=Int 0 
+    andBool  N <Int (2 ^Int M)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(282,8,284,31)
+-------------
+
+Z3 query result: unsat
+
+Z3 Implication (Function rule implication) RHS proved:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(N_709:Int,, Int(#"340282366920938463463374607431768211456")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => N
+    requires N >=Int 0 
+    andBool  N <Int (2 ^Int M)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(282,8,284,31)
+-------------
+
+Z3 Implication (Function rule implication) RHS proved (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(N_709:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 1 andBool E ==Int 33
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(326,8,332,43)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(N_709:Int,, Int(#"4294967296")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 1 andBool E ==Int 33
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(326,8,332,43)
+-------------
+
+Z3 Implication (Function rule implication) RHS proved (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(N_709:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 32 andBool E ==Int 64 
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(318,8,324,44)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(N_709:Int,, Int(#"4294967296")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 32 andBool E ==Int 64 
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(318,8,324,44)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, Y_710:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(Y_710:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => (2 ^Int M) +Int N
+    requires N <Int 0 
+    andBool  N >=Int -1 *Int (2 ^Int (M -Int 1))
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(286,8,288,49)
+-------------
+
+Z3 query result: unsat
+
+Z3 Implication (Function rule implication) RHS proved:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(Y_710:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => N
+    requires N >=Int 0 
+    andBool  N <Int (2 ^Int M)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(282,8,284,31)
+-------------
+
+Z3 query result: unsat
+
+Z3 Implication (Function rule implication) RHS proved:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(Y_710:Int,, Int(#"340282366920938463463374607431768211456")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule uvalueMInt(mi(M:Int, N:Int)) => N
+    requires N >=Int 0 
+    andBool  N <Int (2 ^Int M)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(282,8,284,31)
+-------------
+
+Z3 Implication (Function rule implication) RHS proved (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(Y_710:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 1 andBool E ==Int 33
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(326,8,332,43)
+-------------
+
+Z3 query result: sat
+
+Z3 Implication (Function rule implication) failed:
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(Y_710:Int,, Int(#"4294967296")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 1 andBool E ==Int 33
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(326,8,332,43)
+-------------
+
+Z3 Implication (Function rule implication) RHS proved (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>=Int_(Y_710:Int,, Int(#"0")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 32 andBool E ==Int 64 
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(318,8,324,44)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<Int_(Y_710:Int,, Int(#"4294967296")),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(MI))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0    
+    andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
+    andBool   S ==Int 32 andBool E ==Int 64 
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(318,8,324,44)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"96"),, Int(#"128"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"96"),, Int(#"128")))),, Bool(#"false"))
+)
+
+Rule for formula above:
+  rule ifMInt B then _ else M => M requires notBool B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(160,8,160,54)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"96"),, Int(#"128"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"96"),, Int(#"128")))),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule ifMInt B then M else _ => M requires B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(159,8,159,46)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, N_709:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, Y_710:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"64"),, Int(#"96"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"64"),, Int(#"96")))),, Bool(#"false"))
+)
+
+Rule for formula above:
+  rule ifMInt B then _ else M => M requires notBool B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(160,8,160,54)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"64"),, Int(#"96"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"64"),, Int(#"96")))),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule ifMInt B then M else _ => M requires B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(159,8,159,46)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, N_709:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, Y_710:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"0"),, Int(#"32"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"0"),, Int(#"32")))),, Bool(#"false"))
+)
+
+Rule for formula above:
+  rule ifMInt B then _ else M => M requires notBool B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(160,8,160,54)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"0"),, Int(#"32"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"0"),, Int(#"32")))),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule ifMInt B then M else _ => M requires B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(159,8,159,46)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, N_709:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 Implication (Function rule implication) failed (cached result):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_<=Int_(Int(#"0"),, N_709:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_710:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, N_709:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, Y_710:Int),, Bool(#"true"))
+)
+  implies
+ConjunctiveFormula(
+  equalities:
+    _==K_(Int(#"0"),, Y_710:Int)
+)
+
+Rule for formula above:
+  rule extractMInt(MI, S, E) => mi(E -Int S, 0)
+    requires zeroMInt(MI)
+	Source: /home/hhh1/PsCom/armv8-verification.k Location(115,8,116,26)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"32"),, Int(#"64"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"32"),, Int(#"64")))),, Bool(#"false"))
+)
+
+Rule for formula above:
+  rule ifMInt B then _ else M => M requires notBool B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(160,8,160,54)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Function rule implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(_>Int_(uvalueMInt(extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"32"),, Int(#"64"))),, uvalueMInt(extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"32"),, Int(#"64")))),, Bool(#"true"))
+)
+
+Rule for formula above:
+  rule ifMInt B then M else _ => M requires B
+	Source: /home/hhh1/PsCom/armv8-mint.k Location(159,8,159,46)
+-------------
+
+Z3 warning. Query not generated: missing SMTLib translation for mi
+
+Z3 Implication (Final implication) RHS dropped (cannot be proved):
+ConjunctiveFormula(
+  equalities:
+    _==K_(mi(Int(#"32"),, _1_711:Int),, extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"96"),, Int(#"128")))
+    _==K_(mi(Int(#"32"),, _2_712:Int),, extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"64"),, Int(#"96")))
+    _==K_(mi(Int(#"32"),, _3_713:Int),, extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"32"),, Int(#"64")))
+    _==K_(mi(Int(#"32"),, _4_714:Int),, extractMInt(mi(Int(#"128"),, N_709:Int),, Int(#"0"),, Int(#"32")))
+    _==K_(mi(Int(#"32"),, _5_715:Int),, extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"96"),, Int(#"128")))
+    _==K_(mi(Int(#"32"),, _6_716:Int),, extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"64"),, Int(#"96")))
+    _==K_(mi(Int(#"32"),, _7_717:Int),, extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"32"),, Int(#"64")))
+    _==K_(mi(Int(#"32"),, _8_718:Int),, extractMInt(mi(Int(#"128"),, Y_710:Int),, Int(#"0"),, Int(#"32")))
+)
+
+Rule for formula above:
+rule too long...
+	Source: /home/hhh1/PsCom/test-spec.k Location(7,8,47,39)
+-------------
+
+Step above: 1, evaluation ended with no successors.
+
+SPEC FAILED: /home/hhh1/PsCom/test-spec.k Location(7,8,47,39)
+==================================
+Success execution paths: 0
+Failed execution paths: 1
+Longest path: 1 steps
+Stats for each phase, time, used memory, implicit main GC time percentage:
+Total                 :   24.542 s,	  506 MB, gc:  4.665 %
+  JVM init            :    0.051 s
+  Parsing             :   23.699 s,	  469 MB, gc:  4.831 %
+  Rewriter init       :    0.484 s,	  495 MB, gc:  0.000 %
+  Execution           :    0.308 s,	  506 MB, gc:  0.000 %
+
+Init+Execution time:       0.791 s
+  query build time                 :    0.028 s,      #         37
+  Z3 Function rule implication time:    0.417 s,      #         20
+      sat           :       12
+      unsat (proved):       8
+    cached queries:       24
+    query build failures: 16
+
+  Time and top-level event counts:
+  resolveFunctionAndAnywhere time  :    0.642 s,      #        618
+    evaluateFunction time            :    0.630 s,      #        221
+      builtin evaluation               :           ,      #         92
+      no rule applicable               :           ,      #         82
+      no function rules                :           ,      #         47
+    applyAnywhereRules time          :    0.000 s,      #         68
+      no anywhere rules                :           ,      #         68
+    remaining time & # cached        :    0.012 s,      #        329
+  log time                         :    0.003 s,      #          1
+  impliesSMT time                  :    0.525 s,      #         61
+
+  Recursive event counts:
+  resolveFunctionAndAnywhere time  :           ,      #       1034
+    evaluateFunction time            :           ,      #         73
+      builtin evaluation               :           ,      #         21
+      no rule applicable               :           ,      #         12
+      no function rules                :           ,      #         16
+    applyAnywhereRules time          :           ,      #          0
+      no anywhere rules                :           ,      #          0
+    # cached                         :           ,      #        961
+
+Max memory : 3641 MB
+==================================
+
+
+STEP 1 v1 :    0.312 s, 		  506 MB, gc:  0.000 %
+===================
+<k>(KItem(#"scan"))
+/\
+ConjunctiveFormula(
+  init equalities:
+    _==K_(_<=Int_(Int(#"0"),, A_721:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, B_722:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, W_723:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, X_724:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Y_725:Int),, Bool(#"true"))
+    _==K_(_<=Int_(Int(#"0"),, Z_726:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, A_721:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"340282366920938463463374607431768211456"),, B_722:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"4294967296"),, W_723:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"4294967296"),, X_724:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"4294967296"),, Y_725:Int),, Bool(#"true"))
+    _==K_(_>Int_(Int(#"4294967296"),, Z_726:Int),, Bool(#"true"))
+)
+Implication (Final implication) proved by simplification
+
+============
+Step 1: eliminated!
+============
+
+
+SPEC PROVED: /home/hhh1/PsCom/test-spec.k Location(49,8,95,39)
+==================================
+Execution paths: 1
+Longest path: 1 steps
+Stats for each phase, time, used memory, implicit main GC time percentage:
+Total                 :   24.549 s,	  506 MB, gc:  4.664 %
+  JVM init            :    0.051 s
+  Parsing             :   23.699 s,	  469 MB, gc:  4.831 %
+  Rewriter init       :    0.484 s,	  495 MB, gc:  0.000 %
+  Execution           :    0.315 s,	  506 MB, gc:  0.000 %
+
+Init+Execution time:       0.798 s
+  query build time                 :    0.028 s,      #         37
+  Z3 Function rule implication time:    0.417 s,      #         20
+      sat           :       12
+      unsat (proved):       8
+    cached queries:       24
+    query build failures: 16
+
+  Time and top-level event counts:
+  resolveFunctionAndAnywhere time  :    0.644 s,      #        677
+    evaluateFunction time            :    0.631 s,      #        259
+      builtin evaluation               :           ,      #         92
+      no rule applicable               :           ,      #         96
+      no function rules                :           ,      #         71
+    applyAnywhereRules time          :    0.000 s,      #         83
+      no anywhere rules                :           ,      #         83
+    remaining time & # cached        :    0.013 s,      #        335
+  log time                         :    0.004 s,      #          2
+  impliesSMT time                  :    0.525 s,      #         61
+
+  Recursive event counts:
+  resolveFunctionAndAnywhere time  :           ,      #       1034
+    evaluateFunction time            :           ,      #         73
+      builtin evaluation               :           ,      #         21
+      no rule applicable               :           ,      #         12
+      no function rules                :           ,      #         16
+    applyAnywhereRules time          :           ,      #          0
+      no anywhere rules                :           ,      #          0
+    # cached                         :           ,      #        961
+
+Max memory : 3641 MB
+==================================
+
+[Warning] Critical: Evaluation ended on 1st step. Possible cause:
+non-functional term in constraint (path condition).
+[Warning] Internal: execution phase: missing SMTLib translation for mi . Search
+the logs starting with 'Z3 warning' to see the Z3 implication that generated
+the warning. (missing SMTLib translation for mi)
+[Warning] Internal: init phase: missing SMTLib translation for mi . Search the
+logs starting with 'Z3 warning' to see the Z3 implication that generated the
+warning. (missing SMTLib translation for mi)
+
+

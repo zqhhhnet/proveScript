@@ -1,0 +1,135 @@
+Parse command line options                                   =  0.000s
+XXXXXXXXXXX
+
+YYYYYYYYYYY
+
+QQQQQQQQQQQ
+
+SSSSSSSSSSS
+
+ZZZZZZZZZZZZ
+
+AAAAAAAAAAAA
+
+DDDDDDDDDDDDD
+
+Importing: Source(/home/hhh1/PsCom/././test-spec-vmin-u32-t.k)
+Importing: Source(/home/hhh1/PsCom/test-spec-vmin-u32-t.k)
+Importing: Source(/home/hhh1/PsCom/armv8-semantics.k)
+Importing: Source(/home/hhh1/PsCom/armv8-loader.k)
+Importing: Source(/home/hhh1/PsCom/armv8-configuration.k)
+Importing: Source(/home/hhh1/PsCom/armv8-syntax.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-syntax.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/armv8-mint.k)
+Importing: Source(/home/hhh1/PsCom/armv8-conversions.k)
+222222222222222222222
+
+222222222222222222222
+
+222222222222222222222
+
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmax.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-semantic.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/armv8-verification.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/exit.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxnm.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmov.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxa.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxnma.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxnmv.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/mov.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxnmav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxv.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmin.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmina.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminv.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminnm.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminnma.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminnmv.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminnmav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmlav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/add-for-test.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/max-for-test.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/sst.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/ext.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/dtc.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/cmp.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/sto.k)
+222222222222222222222
+
+222222222222222222222
+
+222222222222222222222
+
+222222222222222222222
+
+EEEEEEEEEEEEE
+
+FFFFFFFFFFFFF
+
+GGGGGGGGGGGGG
+

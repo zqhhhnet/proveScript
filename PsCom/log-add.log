@@ -1,0 +1,209 @@
+Parse command line options                                   =  0.000s
+Importing: Source(/home/hhh1/PsCom/././add-spec.k)
+Importing: Source(/home/hhh1/PsCom/add-spec.k)
+Importing: Source(/home/hhh1/PsCom/armv8-semantics.k)
+Importing: Source(/home/hhh1/PsCom/armv8-loader.k)
+Importing: Source(/home/hhh1/PsCom/armv8-configuration.k)
+Importing: Source(/home/hhh1/PsCom/armv8-syntax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-syntax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-mint.k)
+Importing: Source(/home/hhh1/PsCom/armv8-conversions.k)
+Importing: Source(/home/hhh1/PsCom/vmax.k)
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-semantic.k)
+Importing: Source(/home/hhh1/PsCom/armv8-verification.k)
+Importing: Source(/home/hhh1/PsCom/exit.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnm.k)
+Importing: Source(/home/hhh1/PsCom/vmov.k)
+Importing: Source(/home/hhh1/PsCom/vmaxa.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnma.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnmv.k)
+Importing: Source(/home/hhh1/PsCom/mov.k)
+Importing: Source(/home/hhh1/PsCom/vmaxnmav.k)
+Importing: Source(/home/hhh1/PsCom/vmaxv.k)
+Importing: Source(/home/hhh1/PsCom/vmaxav.k)
+Importing: Source(/home/hhh1/PsCom/vmin.k)
+Importing: Source(/home/hhh1/PsCom/vmina.k)
+Importing: Source(/home/hhh1/PsCom/vminv.k)
+Importing: Source(/home/hhh1/PsCom/vminav.k)
+Importing: Source(/home/hhh1/PsCom/vminnm.k)
+Importing: Source(/home/hhh1/PsCom/vminnma.k)
+Importing: Source(/home/hhh1/PsCom/vminnmv.k)
+Importing: Source(/home/hhh1/PsCom/vminnmav.k)
+Importing: Source(/home/hhh1/PsCom/vmlav.k)
+Importing: Source(/home/hhh1/PsCom/add-for-test.k)
+Importing: Source(/home/hhh1/PsCom/max-for-test.k)
+Importing: Source(/home/hhh1/PsCom/sst.k)
+Importing: Source(/home/hhh1/PsCom/ext.k)
+Importing: Source(/home/hhh1/PsCom/dtc.k)
+Importing: Source(/home/hhh1/PsCom/cmp.k)
+Importing: Source(/home/hhh1/PsCom/sto.k)
+Parse spec modules [0/571 rules]                             =  0.012s
+SMT query  @@@@@
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |A_728| () Int)
+(declare-fun |B_729| () Int)
+(assert (and
+  (and
+	(= (<= 0 |A_728|) true)
+	(= (< |A_728| 2147483648) true)
+	(= (>= |B_729| 0) true)
+	(= (< |B_729| 2147483648) true))
+  (not (and
+	(= (< |A_728| 4294967296) true)))
+))
+SMT query  #####
+
+SMT query  @@@@@
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |A_728| () Int)
+(declare-fun |B_729| () Int)
+(assert (and
+  (and
+	(= (<= 0 |A_728|) true)
+	(= (< |A_728| 2147483648) true)
+	(= (>= |B_729| 0) true)
+	(= (< |B_729| 2147483648) true))
+  (not (and
+	(= (< |B_729| 4294967296) true)))
+))
+SMT query  #####
+
+SMT query  @@@@@
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |A_728| () Int)
+(declare-fun |B_729| () Int)
+(assert (and
+  (and
+	(= (<= 0 |A_728|) true)
+	(= (< |A_728| 2147483648) true)
+	(= (>= |B_729| 0) true)
+	(= (< |B_729| 2147483648) true))
+  (not (and
+	(= 0 |A_728|)))
+))
+SMT query  #####
+
+SMT query  @@@@@
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |A_728| () Int)
+(declare-fun |B_729| () Int)
+(assert (and
+  (and
+	(= (<= 0 |A_728|) true)
+	(= (< |A_728| 2147483648) true)
+	(= (>= |B_729| 0) true)
+	(= (< |B_729| 2147483648) true))
+  (not (and
+	(= 0 |B_729|)))
+))
+SMT query  #####
+
+SMT query  @@@@@
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |A_728| () Int)
+(declare-fun |B_729| () Int)
+(assert (and
+  (and
+	(= (<= 0 |A_728|) true)
+	(= (< |A_728| 2147483648) true)
+	(= (>= |B_729| 0) true)
+	(= (< |B_729| 2147483648) true))
+  (not (and
+	(= (>= |B_729| -2147483648) true)))
+))
+SMT query  #####
+
+SMT query  @@@@@
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |A_728| () Int)
+(declare-fun |B_729| () Int)
+(assert (and
+  (and
+	(= (<= 0 |A_728|) true)
+	(= (< |A_728| 2147483648) true)
+	(= (>= |B_729| 0) true)
+	(= (< |B_729| 2147483648) true))
+  (not (and
+	(= (>= |A_728| -2147483648) true)))
+))
+SMT query  #####
+
+SMT query  @@@@@
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |A_728| () Int)
+(declare-fun |B_729| () Int)
+(assert (and
+  (and
+	(= (<= 0 |A_728|) true)
+	(= (< |A_728| 2147483648) true)
+	(= (>= |B_729| 0) true)
+	(= (< |B_729| 2147483648) true))
+  (not (and
+	(= (< (+ |A_728| |B_729|) 4294967295) true)))
+))
+SMT query  #####
+
+SMT query  @@@@@
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |A_728| () Int)
+(declare-fun |B_729| () Int)
+(assert (and
+  (and
+	(= (<= 0 |A_728|) true)
+	(= (< |A_728| 2147483648) true)
+	(= (>= |B_729| 0) true)
+	(= (< |B_729| 2147483648) true))
+  (not (and
+	(= (>= (+ |A_728| |B_729|) -4294967295) true)))
+))
+SMT query  #####
+
+#True

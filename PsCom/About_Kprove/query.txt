@@ -1,0 +1,17 @@
+(set-option :auto-config false)
+(set-option :smt.mbqi false)
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_725| () Int)
+(assert (and
+  (and
+	(= (<= 0 |N_725|) true)
+	(= (> 340282366920938463463374607431768211456 |N_725|) true))
+  (not (and
+	(= (< |N_725| 65536) true)))
+))
+(check-sat)

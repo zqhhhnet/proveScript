@@ -1,0 +1,4729 @@
+Parse command line options                                   =  0.000s
+XXXXXXXXXXX
+
+YYYYYYYYYYY
+
+QQQQQQQQQQQ
+
+SSSSSSSSSSS
+
+ZZZZZZZZZZZZ
+
+AAAAAAAAAAAA
+
+DDDDDDDDDDDDD
+
+Importing: Source(/home/hhh1/PsCom/././test-spec-vmin-s32.k)
+Importing: Source(/home/hhh1/PsCom/test-spec-vmin-s32.k)
+Importing: Source(/home/hhh1/PsCom/armv8-semantics.k)
+Importing: Source(/home/hhh1/PsCom/armv8-loader.k)
+Importing: Source(/home/hhh1/PsCom/armv8-configuration.k)
+Importing: Source(/home/hhh1/PsCom/armv8-syntax.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-syntax.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/armv8-mint.k)
+Importing: Source(/home/hhh1/PsCom/armv8-conversions.k)
+222222222222222222222
+
+222222222222222222222
+
+222222222222222222222
+
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmax.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/armv8-abstract-semantic.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/armv8-verification.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/exit.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxnm.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmov.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxa.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxnma.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxnmv.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/mov.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxnmav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxv.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmaxav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmin.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmina.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminv.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminnm.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminnma.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminnmv.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vminnmav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/vmlav.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/add-for-test.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/max-for-test.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/sst.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/ext.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/dtc.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/cmp.k)
+222222222222222222222
+
+Importing: Source(/home/hhh1/PsCom/sto.k)
+222222222222222222222
+
+222222222222222222222
+
+222222222222222222222
+
+222222222222222222222
+
+EEEEEEEEEEEEE
+
+FFFFFFFFFFFFF
+
+GGGGGGGGGGGGG
+
+HHHHHHHHHHH
+
+IIIIIIIIIII
+
+1111110000000
+
+1111110000000
+
+JJJJJJJJJJJJ
+
+HHHHHHHHHHHH
+
+IIIIIIIIIIIII
+
+55555555555555
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+1111110000000
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+666666666666
+
+1111110000000
+
+77777777777
+
+88888888888
+
+999999999999
+
+KKKKKKKKKKKK
+
+CCCCCCCCC
+
+Parse spec modules [0/571 rules]                             =  0.015s
+BBBBBBBBBBBBB
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |M|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@9311473
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |N|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@7f97b771
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M| 0) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@1e7c5ed4
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M| 4294967296) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@64ab44c9
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N| 0) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@653856a3
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N| 4294967296) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@27d6494a
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (>= |N| 340282366920938463463374607431768211456) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@5b20299a
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N| () Int)
+(declare-fun |M| () Int)
+(assert (and
+  (and
+	(= (>= |N| 0) true)
+	(= (< |N| 340282366920938463463374607431768211456) true)
+	(= (>= |M| 0) true)
+	(= (< |M| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (>= |M| 340282366920938463463374607431768211456) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@6593b33b
+
+getOutputStream    eeeeeeeeeeee
+
+cccc prove   111111
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |N_728|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@3e732a07
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |M_727|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@8394e70
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M_727| 0) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@6e2433f8
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M_727| 4294967296) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@7321959a
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N_728| 0) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@54a5baeb
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N_728| 4294967296) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@162d34c1
+
+getOutputStream    eeeeeeeeeeee
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+@@@@@@@ 111111 
+
+<generatedTop>(<k>(KItem(#"scan")),, <begin>(#EmptyK()),, <currentstate>(String(#""text"")),, <nextloc>(_0_758:MInt),, <functarget>(Start(#"start") |-> MInt(#"32'0")   ),, <instructiontext>(code(memloc(MInt(#"32'1")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(M_727:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'0")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(N_728:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'3")) |-> storedInstr(___ARMV8-SYNTAX(end_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))) memloc(MInt(#"32'2")) |-> storedInstr(_.___ARMV8-SYNTAX(Opcode(#"VMIN"),, S32_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q2_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))))))   )),, <regstate>(String(#""Q1"") |-> mi(Int(#"128"),, M_727:Int) String(#""S3"") |-> mi(Int(#"32"),, _20_748:Int) String(#""Q2"") |-> mi(Int(#"128"),, _16_744:Int) String(#""S4"") |-> mi(Int(#"32"),, _21_749:Int) String(#""CPACR_NS"") |-> mi(Int(#"32"),, _5_733:Int) String(#""S5"") |-> mi(Int(#"32"),, _22_750:Int) String(#""S6"") |-> mi(Int(#"32"),, _23_751:Int) String(#""S7"") |-> mi(Int(#"32"),, _24_752:Int) String(#""S8"") |-> mi(Int(#"32"),, _25_753:Int) String(#""S9"") |-> mi(Int(#"32"),, _26_754:Int) String(#""CPPWR"") |-> mi(Int(#"32"),, _7_735:Int) String(#""FPCCR_NS"") |-> mi(Int(#"32"),, _12_740:Int) String(#""CPACR_S"") |-> mi(Int(#"32"),, _6_734:Int) String(#""CPPWR_NS"") |-> mi(Int(#"32"),, _8_736:Int) String(#""FPCCR"") |-> mi(Int(#"32"),, _11_739:Int) String(#""VPR"") |-> mi(Int(#"32"),, _29_757:Int) String(#""CONTROL_S"") |-> mi(Int(#"32"),, _3_731:Int) String(#""CPPWR_S"") |-> mi(Int(#"32"),, _9_737:Int) String(#""EPSR"") |-> mi(Int(#"32"),, _10_738:Int) String(#""CONTROL_NS"") |-> mi(Int(#"32"),, _2_730:Int) String(#""S11"") |-> mi(Int(#"32"),, _28_756:Int) String(#""S10"") |-> mi(Int(#"32"),, _27_755:Int) String(#""CPACR"") |-> mi(Int(#"32"),, _4_732:Int) String(#""R15"") |-> memloc(MInt(#"32'0")) String(#""MVFR1"") |-> mi(Int(#"32"),, _14_742:Int) String(#""RESULT64"") |-> MInt(#"64'0") String(#""NSACR"") |-> mi(Int(#"32"),, _15_743:Int) String(#""FPCCR_S"") |-> mi(Int(#"32"),, _13_741:Int) String(#""S0"") |-> mi(Int(#"32"),, _17_745:Int) String(#""RESULT"") |-> MInt(#"32'0") String(#""S1"") |-> mi(Int(#"32"),, _18_746:Int) String(#""CONTROL"") |-> mi(Int(#"32"),, _1_729:Int) String(#""Q0"") |-> mi(Int(#"128"),, N_728:Int) String(#""S2"") |-> mi(Int(#"32"),, _19_747:Int)   ),, DotVar0_759:K)
+
+========= 
+
+
+
+--------- 
+
+<generatedTop>(<k>(End_ARMV8-LOADER(.KList)),, <begin>(#EmptyK()),, <currentstate>(String(#""text"")),, <nextloc>(_0_758:MInt),, <functarget>(Start(#"start") |-> MInt(#"32'0")   ),, <instructiontext>(code(memloc(MInt(#"32'1")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(M_727:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'0")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(N_728:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'3")) |-> storedInstr(___ARMV8-SYNTAX(end_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))) memloc(MInt(#"32'2")) |-> storedInstr(_.___ARMV8-SYNTAX(Opcode(#"VMIN"),, S32_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q2_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))))))   )),, <regstate>(String(#""Q1"") |-> mi(Int(#"128"),, M_727:Int) String(#""S3"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")) String(#""Q2"") |-> concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128")))))) String(#""S4"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128")) String(#""CPACR_NS"") |-> MInt(#"32'3145728") String(#""S5"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96")) String(#""S6"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64")) String(#""S7"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32")) String(#""S8"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""S9"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""CPPWR"") |-> MInt(#"32'0") String(#""FPCCR_NS"") |-> MInt(#"32'0") String(#""CPACR_S"") |-> MInt(#"32'3145728") String(#""CPPWR_NS"") |-> MInt(#"32'0") String(#""FPCCR"") |-> MInt(#"32'0") String(#""VPR"") |-> MInt(#"32'2048") String(#""CONTROL_S"") |-> MInt(#"32'1") String(#""CPPWR_S"") |-> MInt(#"32'0") String(#""EPSR"") |-> MInt(#"32'2048") String(#""CONTROL_NS"") |-> MInt(#"32'1") String(#""S11"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""S10"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""CPACR"") |-> MInt(#"32'3145728") String(#""R15"") |-> memloc(MInt(#"32'4")) String(#""MVFR1"") |-> MInt(#"32'256") String(#""RESULT64"") |-> MInt(#"64'0") String(#""NSACR"") |-> MInt(#"32'1024") String(#""FPCCR_S"") |-> MInt(#"32'0") String(#""S0"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")) String(#""RESULT"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))) String(#""S1"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")) String(#""CONTROL"") |-> MInt(#"32'1") String(#""Q0"") |-> mi(Int(#"128"),, N_728:Int) String(#""S2"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64"))   ),, DotVar0_759:K)
+
+$$$$$$$ 111111 
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+@@@@@@@ 111111 
+
+<generatedTop>(<k>(KItem(#"scan")),, <begin>(#EmptyK()),, <currentstate>(String(#""text"")),, <nextloc>(_0_758:MInt),, <functarget>(Start(#"start") |-> MInt(#"32'0")   ),, <instructiontext>(code(memloc(MInt(#"32'1")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(M_727:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'0")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(N_728:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'3")) |-> storedInstr(___ARMV8-SYNTAX(end_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))) memloc(MInt(#"32'2")) |-> storedInstr(_.___ARMV8-SYNTAX(Opcode(#"VMIN"),, S32_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q2_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))))))   )),, <regstate>(String(#""Q1"") |-> mi(Int(#"128"),, M_727:Int) String(#""S3"") |-> mi(Int(#"32"),, _20_748:Int) String(#""Q2"") |-> mi(Int(#"128"),, _16_744:Int) String(#""S4"") |-> mi(Int(#"32"),, _21_749:Int) String(#""CPACR_NS"") |-> mi(Int(#"32"),, _5_733:Int) String(#""S5"") |-> mi(Int(#"32"),, _22_750:Int) String(#""S6"") |-> mi(Int(#"32"),, _23_751:Int) String(#""S7"") |-> mi(Int(#"32"),, _24_752:Int) String(#""S8"") |-> mi(Int(#"32"),, _25_753:Int) String(#""S9"") |-> mi(Int(#"32"),, _26_754:Int) String(#""CPPWR"") |-> mi(Int(#"32"),, _7_735:Int) String(#""FPCCR_NS"") |-> mi(Int(#"32"),, _12_740:Int) String(#""CPACR_S"") |-> mi(Int(#"32"),, _6_734:Int) String(#""CPPWR_NS"") |-> mi(Int(#"32"),, _8_736:Int) String(#""FPCCR"") |-> mi(Int(#"32"),, _11_739:Int) String(#""VPR"") |-> mi(Int(#"32"),, _29_757:Int) String(#""CONTROL_S"") |-> mi(Int(#"32"),, _3_731:Int) String(#""CPPWR_S"") |-> mi(Int(#"32"),, _9_737:Int) String(#""EPSR"") |-> mi(Int(#"32"),, _10_738:Int) String(#""CONTROL_NS"") |-> mi(Int(#"32"),, _2_730:Int) String(#""S11"") |-> mi(Int(#"32"),, _28_756:Int) String(#""S10"") |-> mi(Int(#"32"),, _27_755:Int) String(#""CPACR"") |-> mi(Int(#"32"),, _4_732:Int) String(#""R15"") |-> memloc(MInt(#"32'0")) String(#""MVFR1"") |-> mi(Int(#"32"),, _14_742:Int) String(#""RESULT64"") |-> MInt(#"64'0") String(#""NSACR"") |-> mi(Int(#"32"),, _15_743:Int) String(#""FPCCR_S"") |-> mi(Int(#"32"),, _13_741:Int) String(#""S0"") |-> mi(Int(#"32"),, _17_745:Int) String(#""RESULT"") |-> MInt(#"32'0") String(#""S1"") |-> mi(Int(#"32"),, _18_746:Int) String(#""CONTROL"") |-> mi(Int(#"32"),, _1_729:Int) String(#""Q0"") |-> mi(Int(#"128"),, N_728:Int) String(#""S2"") |-> mi(Int(#"32"),, _19_747:Int)   ),, DotVar0_759:K)
+
+========= 
+
+
+
+--------- 
+
+<generatedTop>(<k>(End_ARMV8-LOADER(.KList)),, <begin>(#EmptyK()),, <currentstate>(String(#""text"")),, <nextloc>(_0_758:MInt),, <functarget>(Start(#"start") |-> MInt(#"32'0")   ),, <instructiontext>(code(memloc(MInt(#"32'1")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(M_727:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'0")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(N_728:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'3")) |-> storedInstr(___ARMV8-SYNTAX(end_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))) memloc(MInt(#"32'2")) |-> storedInstr(_.___ARMV8-SYNTAX(Opcode(#"VMIN"),, S32_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q2_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))))))   )),, <regstate>(String(#""Q1"") |-> mi(Int(#"128"),, M_727:Int) String(#""S3"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")) String(#""Q2"") |-> concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128")))))) String(#""S4"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128")) String(#""CPACR_NS"") |-> MInt(#"32'3145728") String(#""S5"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96")) String(#""S6"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64")) String(#""S7"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32")) String(#""S8"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""S9"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""CPPWR"") |-> MInt(#"32'0") String(#""FPCCR_NS"") |-> MInt(#"32'0") String(#""CPACR_S"") |-> MInt(#"32'3145728") String(#""CPPWR_NS"") |-> MInt(#"32'0") String(#""FPCCR"") |-> MInt(#"32'0") String(#""VPR"") |-> MInt(#"32'2048") String(#""CONTROL_S"") |-> MInt(#"32'1") String(#""CPPWR_S"") |-> MInt(#"32'0") String(#""EPSR"") |-> MInt(#"32'2048") String(#""CONTROL_NS"") |-> MInt(#"32'1") String(#""S11"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""S10"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""CPACR"") |-> MInt(#"32'3145728") String(#""R15"") |-> memloc(MInt(#"32'4")) String(#""MVFR1"") |-> MInt(#"32'256") String(#""RESULT64"") |-> MInt(#"64'0") String(#""NSACR"") |-> MInt(#"32'1024") String(#""FPCCR_S"") |-> MInt(#"32'0") String(#""S0"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")) String(#""RESULT"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))) String(#""S1"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")) String(#""CONTROL"") |-> MInt(#"32'1") String(#""Q0"") |-> mi(Int(#"128"),, N_728:Int) String(#""S2"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64"))   ),, DotVar0_759:K)
+
+$$$$$$$ 111111 
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (>= |N_728| 340282366920938463463374607431768211456) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@3046d8a3
+
+getOutputStream    eeeeeeeeeeee
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+@@@@@@@ 111111 
+
+<generatedTop>(<k>(KItem(#"scan")),, <begin>(#EmptyK()),, <currentstate>(String(#""text"")),, <nextloc>(_0_758:MInt),, <functarget>(Start(#"start") |-> MInt(#"32'0")   ),, <instructiontext>(code(memloc(MInt(#"32'1")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(M_727:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'0")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(N_728:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'3")) |-> storedInstr(___ARMV8-SYNTAX(end_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))) memloc(MInt(#"32'2")) |-> storedInstr(_.___ARMV8-SYNTAX(Opcode(#"VMIN"),, S32_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q2_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))))))   )),, <regstate>(String(#""Q1"") |-> mi(Int(#"128"),, M_727:Int) String(#""S3"") |-> mi(Int(#"32"),, _20_748:Int) String(#""Q2"") |-> mi(Int(#"128"),, _16_744:Int) String(#""S4"") |-> mi(Int(#"32"),, _21_749:Int) String(#""CPACR_NS"") |-> mi(Int(#"32"),, _5_733:Int) String(#""S5"") |-> mi(Int(#"32"),, _22_750:Int) String(#""S6"") |-> mi(Int(#"32"),, _23_751:Int) String(#""S7"") |-> mi(Int(#"32"),, _24_752:Int) String(#""S8"") |-> mi(Int(#"32"),, _25_753:Int) String(#""S9"") |-> mi(Int(#"32"),, _26_754:Int) String(#""CPPWR"") |-> mi(Int(#"32"),, _7_735:Int) String(#""FPCCR_NS"") |-> mi(Int(#"32"),, _12_740:Int) String(#""CPACR_S"") |-> mi(Int(#"32"),, _6_734:Int) String(#""CPPWR_NS"") |-> mi(Int(#"32"),, _8_736:Int) String(#""FPCCR"") |-> mi(Int(#"32"),, _11_739:Int) String(#""VPR"") |-> mi(Int(#"32"),, _29_757:Int) String(#""CONTROL_S"") |-> mi(Int(#"32"),, _3_731:Int) String(#""CPPWR_S"") |-> mi(Int(#"32"),, _9_737:Int) String(#""EPSR"") |-> mi(Int(#"32"),, _10_738:Int) String(#""CONTROL_NS"") |-> mi(Int(#"32"),, _2_730:Int) String(#""S11"") |-> mi(Int(#"32"),, _28_756:Int) String(#""S10"") |-> mi(Int(#"32"),, _27_755:Int) String(#""CPACR"") |-> mi(Int(#"32"),, _4_732:Int) String(#""R15"") |-> memloc(MInt(#"32'0")) String(#""MVFR1"") |-> mi(Int(#"32"),, _14_742:Int) String(#""RESULT64"") |-> MInt(#"64'0") String(#""NSACR"") |-> mi(Int(#"32"),, _15_743:Int) String(#""FPCCR_S"") |-> mi(Int(#"32"),, _13_741:Int) String(#""S0"") |-> mi(Int(#"32"),, _17_745:Int) String(#""RESULT"") |-> MInt(#"32'0") String(#""S1"") |-> mi(Int(#"32"),, _18_746:Int) String(#""CONTROL"") |-> mi(Int(#"32"),, _1_729:Int) String(#""Q0"") |-> mi(Int(#"128"),, N_728:Int) String(#""S2"") |-> mi(Int(#"32"),, _19_747:Int)   ),, DotVar0_759:K)
+
+========= 
+
+
+
+--------- 
+
+<generatedTop>(<k>(End_ARMV8-LOADER(.KList)),, <begin>(#EmptyK()),, <currentstate>(String(#""text"")),, <nextloc>(_0_758:MInt),, <functarget>(Start(#"start") |-> MInt(#"32'0")   ),, <instructiontext>(code(memloc(MInt(#"32'1")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(M_727:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'0")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(N_728:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'3")) |-> storedInstr(___ARMV8-SYNTAX(end_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))) memloc(MInt(#"32'2")) |-> storedInstr(_.___ARMV8-SYNTAX(Opcode(#"VMIN"),, S32_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q2_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))))))   )),, <regstate>(String(#""Q1"") |-> mi(Int(#"128"),, M_727:Int) String(#""S3"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")) String(#""Q2"") |-> concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128")))))) String(#""S4"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128")) String(#""CPACR_NS"") |-> MInt(#"32'3145728") String(#""S5"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96")) String(#""S6"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64")) String(#""S7"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32")) String(#""S8"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""S9"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""CPPWR"") |-> MInt(#"32'0") String(#""FPCCR_NS"") |-> MInt(#"32'0") String(#""CPACR_S"") |-> MInt(#"32'3145728") String(#""CPPWR_NS"") |-> MInt(#"32'0") String(#""FPCCR"") |-> MInt(#"32'0") String(#""VPR"") |-> MInt(#"32'2048") String(#""CONTROL_S"") |-> MInt(#"32'1") String(#""CPPWR_S"") |-> MInt(#"32'0") String(#""EPSR"") |-> MInt(#"32'2048") String(#""CONTROL_NS"") |-> MInt(#"32'1") String(#""S11"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""S10"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""CPACR"") |-> MInt(#"32'3145728") String(#""R15"") |-> memloc(MInt(#"32'4")) String(#""MVFR1"") |-> MInt(#"32'256") String(#""RESULT64"") |-> MInt(#"64'0") String(#""NSACR"") |-> MInt(#"32'1024") String(#""FPCCR_S"") |-> MInt(#"32'0") String(#""S0"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")) String(#""RESULT"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))) String(#""S1"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")) String(#""CONTROL"") |-> MInt(#"32'1") String(#""Q0"") |-> mi(Int(#"128"),, N_728:Int) String(#""S2"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64"))   ),, DotVar0_759:K)
+
+$$$$$$$ 111111 
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+@@@@@@@ 111111 
+
+<generatedTop>(<k>(KItem(#"scan")),, <begin>(#EmptyK()),, <currentstate>(String(#""text"")),, <nextloc>(_0_758:MInt),, <functarget>(Start(#"start") |-> MInt(#"32'0")   ),, <instructiontext>(code(memloc(MInt(#"32'1")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(M_727:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'0")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(N_728:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'3")) |-> storedInstr(___ARMV8-SYNTAX(end_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))) memloc(MInt(#"32'2")) |-> storedInstr(_.___ARMV8-SYNTAX(Opcode(#"VMIN"),, S32_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q2_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))))))   )),, <regstate>(String(#""Q1"") |-> mi(Int(#"128"),, M_727:Int) String(#""S3"") |-> mi(Int(#"32"),, _20_748:Int) String(#""Q2"") |-> mi(Int(#"128"),, _16_744:Int) String(#""S4"") |-> mi(Int(#"32"),, _21_749:Int) String(#""CPACR_NS"") |-> mi(Int(#"32"),, _5_733:Int) String(#""S5"") |-> mi(Int(#"32"),, _22_750:Int) String(#""S6"") |-> mi(Int(#"32"),, _23_751:Int) String(#""S7"") |-> mi(Int(#"32"),, _24_752:Int) String(#""S8"") |-> mi(Int(#"32"),, _25_753:Int) String(#""S9"") |-> mi(Int(#"32"),, _26_754:Int) String(#""CPPWR"") |-> mi(Int(#"32"),, _7_735:Int) String(#""FPCCR_NS"") |-> mi(Int(#"32"),, _12_740:Int) String(#""CPACR_S"") |-> mi(Int(#"32"),, _6_734:Int) String(#""CPPWR_NS"") |-> mi(Int(#"32"),, _8_736:Int) String(#""FPCCR"") |-> mi(Int(#"32"),, _11_739:Int) String(#""VPR"") |-> mi(Int(#"32"),, _29_757:Int) String(#""CONTROL_S"") |-> mi(Int(#"32"),, _3_731:Int) String(#""CPPWR_S"") |-> mi(Int(#"32"),, _9_737:Int) String(#""EPSR"") |-> mi(Int(#"32"),, _10_738:Int) String(#""CONTROL_NS"") |-> mi(Int(#"32"),, _2_730:Int) String(#""S11"") |-> mi(Int(#"32"),, _28_756:Int) String(#""S10"") |-> mi(Int(#"32"),, _27_755:Int) String(#""CPACR"") |-> mi(Int(#"32"),, _4_732:Int) String(#""R15"") |-> memloc(MInt(#"32'0")) String(#""MVFR1"") |-> mi(Int(#"32"),, _14_742:Int) String(#""RESULT64"") |-> MInt(#"64'0") String(#""NSACR"") |-> mi(Int(#"32"),, _15_743:Int) String(#""FPCCR_S"") |-> mi(Int(#"32"),, _13_741:Int) String(#""S0"") |-> mi(Int(#"32"),, _17_745:Int) String(#""RESULT"") |-> MInt(#"32'0") String(#""S1"") |-> mi(Int(#"32"),, _18_746:Int) String(#""CONTROL"") |-> mi(Int(#"32"),, _1_729:Int) String(#""Q0"") |-> mi(Int(#"128"),, N_728:Int) String(#""S2"") |-> mi(Int(#"32"),, _19_747:Int)   ),, DotVar0_759:K)
+
+========= 
+
+
+
+--------- 
+
+<generatedTop>(<k>(End_ARMV8-LOADER(.KList)),, <begin>(#EmptyK()),, <currentstate>(String(#""text"")),, <nextloc>(_0_758:MInt),, <functarget>(Start(#"start") |-> MInt(#"32'0")   ),, <instructiontext>(code(memloc(MInt(#"32'1")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(M_727:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'0")) |-> storedInstr(___ARMV8-SYNTAX(Opcode(#"VMOV"),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(#__ARMV8-SYNTAX(N_728:Int),, .List{"_,__ARMV8-SYNTAX"}(.KList))))) memloc(MInt(#"32'3")) |-> storedInstr(___ARMV8-SYNTAX(end_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))) memloc(MInt(#"32'2")) |-> storedInstr(_.___ARMV8-SYNTAX(Opcode(#"VMIN"),, S32_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q2_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q0_ARMV8-SYNTAX(.KList),, _,__ARMV8-SYNTAX(q1_ARMV8-SYNTAX(.KList),, .List{"_,__ARMV8-SYNTAX"}(.KList))))))   )),, <regstate>(String(#""Q1"") |-> mi(Int(#"128"),, M_727:Int) String(#""S3"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")) String(#""Q2"") |-> concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, concatenateMInt(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128")))))) String(#""S4"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128")) String(#""CPACR_NS"") |-> MInt(#"32'3145728") String(#""S5"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96")) String(#""S6"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64")) String(#""S7"") |-> extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32")) String(#""S8"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"96"),, Int(#"128"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""S9"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"64"),, Int(#"96"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""CPPWR"") |-> MInt(#"32'0") String(#""FPCCR_NS"") |-> MInt(#"32'0") String(#""CPACR_S"") |-> MInt(#"32'3145728") String(#""CPPWR_NS"") |-> MInt(#"32'0") String(#""FPCCR"") |-> MInt(#"32'0") String(#""VPR"") |-> MInt(#"32'2048") String(#""CONTROL_S"") |-> MInt(#"32'1") String(#""CPPWR_S"") |-> MInt(#"32'0") String(#""EPSR"") |-> MInt(#"32'2048") String(#""CONTROL_NS"") |-> MInt(#"32'1") String(#""S11"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""S10"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(notBool_(IsUndef(ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))))),, ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"32"),, Int(#"64"))),, undefMInt32_ARMV8-MINT-SYNTAX(.KList)) String(#""CPACR"") |-> MInt(#"32'3145728") String(#""R15"") |-> memloc(MInt(#"32'4")) String(#""MVFR1"") |-> MInt(#"32'256") String(#""RESULT64"") |-> MInt(#"64'0") String(#""NSACR"") |-> MInt(#"32'1024") String(#""FPCCR_S"") |-> MInt(#"32'0") String(#""S0"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"96"),, Int(#"128")) String(#""RESULT"") |-> ifMInt_then_else__ARMV8-MINT-SYNTAX(_>=Int_(svalueMInt(extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))),, svalueMInt(extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")))),, extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"0"),, Int(#"32")),, extractMInt(mi(Int(#"128"),, M_727:Int),, Int(#"0"),, Int(#"32"))) String(#""S1"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"64"),, Int(#"96")) String(#""CONTROL"") |-> MInt(#"32'1") String(#""Q0"") |-> mi(Int(#"128"),, N_728:Int) String(#""S2"") |-> extractMInt(mi(Int(#"128"),, N_728:Int),, Int(#"32"),, Int(#"64"))   ),, DotVar0_759:K)
+
+$$$$$$$ 111111 
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (>= |M_727| 340282366920938463463374607431768211456) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@e518d5c
+
+getOutputStream    eeeeeeeeeeee
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M_727| 256) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@43236c15
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N_728| 256) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@6a9b6e50
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |M_727| 65536) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@68223532
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= (< |N_728| 65536) true)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@30b9afe7
+
+getOutputStream    eeeeeeeeeeee
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_25_753| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_25_753|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@72e81793
+
+getOutputStream    eeeeeeeeeeee
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_16_744| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_16_744|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@43b01e70
+
+getOutputStream    eeeeeeeeeeee
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_26_754| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_26_754|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@47f97eb9
+
+getOutputStream    eeeeeeeeeeee
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_27_755| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_27_755|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@369f7e07
+
+getOutputStream    eeeeeeeeeeee
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc impliesSMT   00000
+
+(declare-fun andInt (Int Int) Int)
+(declare-fun shlInt (Int Int) Int)
+(declare-fun shrInt (Int Int) Int)
+(declare-fun xorInt (Int Int) Int)
+(declare-fun orInt (Int Int) Int)
+(declare-fun notInt (Int) Int)
+(declare-fun |N_728| () Int)
+(declare-fun |M_727| () Int)
+(declare-fun |_28_756| () Int)
+(assert (and
+  (and
+	(= (>= |N_728| 0) true)
+	(= (< |N_728| 340282366920938463463374607431768211456) true)
+	(= (>= |M_727| 0) true)
+	(= (< |M_727| 340282366920938463463374607431768211456) true))
+  (not (and
+	(= 0 |_28_756|)))
+))
+cccc impliesSMT   11111
+
+isUnsat $$$$$$
+
+getOutputStream    dddddddddddd
+
+get   java.lang.UNIXProcess$ProcessPipeOutputStream@1132e74c
+
+getOutputStream    eeeeeeeeeeee
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0002222
+
+cccc 33333  buildRHS 2  0003333
+
+cccc 33333  buildRHS 2  0004444
+
+cccc 33333  buildRHS 2  0001111
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  buildRHS 2  0005555
+
+cccc 33333  buildRHS 2  0006666
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0002222
+
+cccc 33333  buildRHS  0003333
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0002222
+
+cccc 33333  buildRHS  0003333
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0001111
+
+cccc 33333  buildRHS  0004444
+
+cccc 33333  buildRHS  0004444
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0002222
+
+cccc 33333  buildRHS  0003333
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0002222
+
+cccc 33333  buildRHS  0003333
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0001111
+
+cccc 33333  buildRHS  0004444
+
+cccc 33333  buildRHS  0004444
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+cccc prove  222222
+
+cccc prove   33333
+
+cccc 33333   00000
+
+cccc 33333   11111
+
+cccc 33333   22222
+
+cccc 33333  loop  000
+
+cccc 33333  loop  111
+
+cccc 33333  loop  222
+
+cccc 33333  loop  333
+
+cccc 33333  loop  444
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0002222
+
+cccc 33333  buildRHS  0003333
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0002222
+
+cccc 33333  buildRHS  0003333
+
+cccc 33333  buildRHS  ssss
+
+cccc 33333  buildRHS  0001111
+
+cccc 33333  buildRHS  0004444
+
+cccc 33333  buildRHS  0004444
+
+cccc 33333  loop  555
+
+cccc 33333  loop  666
+
+cccc 33333  loop  777
+
+cccc 33333  loop  888
+
+cccc 33333  loop  999
+
+cccc 33333  loop  111000
+
+cccc 33333  loop  111222
+
+cccc 33333   33333
+
+cccc prove   44444
+
+cccc prove   55555
+
+cccc prove   66666
+
+cccc prove   111111
+
+matchingSymbols !!!!!!!!!
+
+[]
+
+matchingSymbols @@@@@@@@@
+
+#True
