@@ -47,6 +47,7 @@ public class RunProve {
         // TODO:需要优化，对于普通赋值指令和简单指令（单次可以验证）可以连续组成一个子问题
         // 按次序处理指令
         for (String instruction : instructions) {
+            proveObject.setCurInst(proveObject.getCurInst()+1);
             // 解析指令
             Instruction instructionStruct = instParser.instParse(instruction);
             // 将解析的指令信息输入前置条件适配器，用于配置前置条件
@@ -55,10 +56,14 @@ public class RunProve {
             postCondState.setInstruction(instructionStruct);
             // 将解析的指令信息输入程序设定适配器，用于设定验证程序
             programState.setInstruction(instructionStruct);
-            if ("VMAXV".equals(instructionStruct.getOpcode()) || "VMINV".equals(instructionStruct.getOpcode())) {
+            if ("VMAXV".equals(instructionStruct.getOpcode()) || "VMINV".equals(instructionStruct.getOpcode())
+                || "VMAXAV".equals(instructionStruct.getOpcode()) || "VMINAV".equals(instructionStruct.getOpcode())) {
                 // 根据数据类型，获取需要分解为多少个子问题
                 int count = 128 / Integer.parseInt(instructionStruct.getDatatype().substring(1));
-                programState.setSubOpcode("cmp");
+                if ("VMAXV".equals(instructionStruct.getOpcode()) || "VMINV".equals(instructionStruct.getOpcode()))
+                    programState.setSubOpcode("cmp");
+                else
+                    programState.setSubOpcode("cmpAbs");
                 for (int i = 0; i < count; i++) {
                     // 创建spec目录，用于存储指令解析的结果
                     SpecContext specContext = new SpecContext();
@@ -106,7 +111,9 @@ public class RunProve {
                     System.out.println("-----------  current instruction to prove: " + instruction + " 第" + i + "个子问题"
                             + " ----------- ");
                     System.out.println("----------- " + specFile.getName() + " begin prove ----------- ");
-                    result = specProve.executeSpecProve("kprove " + specFile.getName() + " --z3-impl-timeout 150000", null);
+                    // 用QFNRA-NLSAT策略解决Non-Linear Integer问题
+                    result = specProve.executeSpecProve("kprove " + specFile.getName() +
+                            " --z3-impl-timeout 150000 --z3-tactic qfnra-nlsat", null);
                     if (result == null)
                         return false;
                     System.out.println("============= Result : " + result.split("\\n")[0]);
@@ -131,7 +138,18 @@ public class RunProve {
             //String[] split = specFile.getName().split(System.getProperty("file.separator"));
             System.out.println("-----------  current instruction to prove: " + instruction + " ----------- ");
             System.out.println("----------- " + specFile.getName() + " begin prove ----------- ");
-            result = specProve.executeSpecProve("kprove " + specFile.getName() + " --z3-impl-timeout 150000", null);
+            // 加入 --smt-prelude 支持int_abs等Z3 function
+            /*result = specProve.executeSpecProve("kprove " + specFile.getName()
+                    + " --z3-impl-timeout 15000 --smt-prelude " + System.getProperty("file.separator") + "home"
+                    + System.getProperty("file.separator") + "hhh1" + System.getProperty("file.separator") + "kkkk"
+                    + System.getProperty("file.separator") + "old-ver" + System.getProperty("file.separator")
+                    + "kframework-5.0.0" + System.getProperty("file.separator") + "k-distribution" + System.getProperty("file.separator")
+                    + "include" + System.getProperty("file.separator") + "z3" + System.getProperty("file.separator")
+                    + "basic.smt2", null);*/
+            result = proveObject.getSmtPrelude() == null ? specProve.executeSpecProve("kprove "
+                    + specFile.getName() + " --z3-impl-timeout 15000", null) :
+                    specProve.executeSpecProve("kprove " + specFile.getName() + " --z3-impl-timeout 15000 " +
+                            "--smt-prelude " + proveObject.getSmtPrelude(), null);
             if (result == null)
                 return false;
             System.out.println("============= Result : " + result.split("\\n")[0]);

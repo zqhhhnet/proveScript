@@ -182,7 +182,7 @@ public class PreCondState {
     }
 
     /**
-     * VMAXV、VMINV指令的前置条件设置，使用组合验证方法，分解多个子问题进行解决
+     * VMAXV、VMINV等操作数是通用寄存器与向量寄存器的指令的前置条件设置，使用组合验证方法，分解多个子问题进行解决
      * @return
      */
     public String vvIntPreSet() {
@@ -212,7 +212,37 @@ public class PreCondState {
     }
 
     /**
-     * for vector register, set the initial state of each element of the precondition
+     * 用于设置操作数都为向量寄存器的指令的前置条件
+     * @return
+     */
+    public String allVecPreSet() {
+        String preCondition = "";
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null) {
+                throw new RuntimeException("context is null");
+            }
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty()) {
+                throw new RuntimeException("Source register is null");
+            }
+            String desRegister = instruction.getDestinationRegister();
+            int size = Integer.parseInt(instruction.getDatatype().substring(1));
+            if ("VMAX".equals(instruction.getOpcode()) || "VMIN".equals(instruction.getOpcode())) {
+                if (instruction.getSourceRegister().size() < 2)
+                    throw new RuntimeException("Number of Source Registers is less than 2");
+                preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size)
+                        + "\t\t\tandBool " + setSRegister(instruction.getSourceRegister().get(1), size) + "\n";
+            } else if ("VMAXA".equals(instruction.getOpcode()) || "VMINA".equals(instruction.getOpcode())) {
+                preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size)
+                        + "\t\t\tandBool " + setSRegister(instruction.getDestinationRegister(), size) + "\n";
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+        }
+        return preCondition;
+    }
+
+    /**
+     * for VMLAV, set the initial state of each element of the precondition
      * @return
      */
     public String vecPreSet() {
@@ -346,4 +376,6 @@ public class PreCondState {
         proveObject.setRegisterMap(registerMap);
         return sourcePre.toString();
     }
+
+    
 }

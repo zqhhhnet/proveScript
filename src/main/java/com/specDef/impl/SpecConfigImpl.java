@@ -5,6 +5,7 @@ import com.pojo.SpecContext;
 import com.specDef.SpecConfig;
 import com.specDef.config.PreCondState;
 import com.specDef.config.ProgramState;
+import java.lang.String;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,9 +44,10 @@ public class SpecConfigImpl implements SpecConfig {
             if ("MOV".equals(opcode) || "VMOV".equals(opcode)) {
                 programSet = programState.simpleProgramSet(specContext);
                 return programSet;
-            } else if ("VMAXV".equals(opcode) || "VMINV".equals(opcode)) {
-                programSet = programState.vvIntProgramSet(specContext);
-            } else if ("VMLAV".equals(opcode)) {
+            } else if ("VMAXV".equals(opcode) || "VMINV".equals(opcode)
+                    || "VMAX".equals(opcode) || "VMIN".equals(opcode)
+                    || "VMAXA".equals(opcode) || "VMINA".equals(opcode)
+                    || "VMLAV".equals(opcode) || "VMAXAV".equals(opcode) || "VMINAV".equals(opcode)) {
                 programSet = programState.vvIntProgramSet(specContext);
             }
 
@@ -75,10 +77,13 @@ public class SpecConfigImpl implements SpecConfig {
                 preCondition = preCondState.vecSimplePreSet();
             } else if ("VMAXV".equals(opcode) || "VMINV".equals(opcode)) {
                 preCondition = preCondState.vvIntPreSet();
-            } else if ("VMAXNMV".equals(opcode) || "VMINNMV".equals(opcode)) {
-                
             } else if ("VMLAV".equals(opcode)) {
                 preCondition = preCondState.vecPreSet();
+            } else if ("VMAXAV".equals(opcode) || "VMINAV".equals(opcode)) {
+                preCondition = preCondState.vvIntPreSet();
+            } else if ("VMAX".equals(opcode) || "VMIN".equals(opcode)
+                    ||"VMAXA".equals(opcode) || "VMINA".equals(opcode)) {
+                preCondition = preCondState.allVecPreSet();
             }
             // TODO: 其他指令相应处理
             return preCondition;
@@ -91,6 +96,7 @@ public class SpecConfigImpl implements SpecConfig {
     /**
      * 后置条件解析与设定
      * 需要根据指令分别处理
+     * TODO: 加入ensures
      * @return
      */
     @Override
@@ -108,6 +114,11 @@ public class SpecConfigImpl implements SpecConfig {
                 postCondition = postCondState.vvIntPostSet();
             } else if ("VMLAV".equals(opcode)) {
                 postCondition = postCondState.innerProductPostSet();
+            } else if ("VMAXAV".equals(opcode) || "VMINAV".equals(opcode)) {
+                postCondition = postCondState.vvIntAbsPostSet();
+            } else if ("VMAXA".equals(opcode) || "VMINA".equals(opcode)
+                    || "VMAX".equals(opcode) || "VMIN".equals(opcode)) {
+                postCondition = postCondState.allVecPostSet();
             }
             // TODO: 其他指令相应处理
             // 都不匹配
@@ -144,12 +155,12 @@ public class SpecConfigImpl implements SpecConfig {
         }
     }
 
-    private String fileRef = "require \"armv8-semantics.k\"\n";
-    private String moduleImportRuleTillInstList = "\timports ARMV8-SEMANTICS\n\n\trule <k>\n\t\t\tscan => End\n\t\t</k>\n\t\t<begin>\n\t\t\t.K\n\t\t</begin>\n\t\t<currentstate>\n\t\t\t\"text\"\n\t\t</currentstate>\n\t\t<nextloc>    \n\t\t\t_:MInt\n\t\t</nextloc>\n\t\t<functarget>\n\t\t\tstart |-> mi(32, 0)\n\t\t</functarget>\n\t\t<instructiontext>\n";
-    private String endInstListAndRegStateBegin = "\t\t</instructiontext>\n\t\t<regstate>\n";
-    private String tempReg = "\t\t\t\"RESULT\" |-> mi(32, 0)\n\t\t\t\"RESULT64\" |-> mi(64, 0)\n";
-    private String defaultReg = "\t\t\t\"R15\" |-> (memloc(mi(32, 0)) => memloc(mi(32, 1)))\n\t\t</regstate>\n";
-    private String endModule = "endmodule\n";
+    private final String fileRef = "require \"armv8-semantics.k\"\n";
+    private final String moduleImportRuleTillInstList = "\timports ARMV8-SEMANTICS\n\n\trule <k>\n\t\t\tscan => End\n\t\t</k>\n\t\t<begin>\n\t\t\t.K\n\t\t</begin>\n\t\t<currentstate>\n\t\t\t\"text\"\n\t\t</currentstate>\n\t\t<nextloc>    \n\t\t\t_:MInt\n\t\t</nextloc>\n\t\t<functarget>\n\t\t\tstart |-> mi(32, 0)\n\t\t</functarget>\n\t\t<instructiontext>\n";
+    private final String endInstListAndRegStateBegin = "\t\t</instructiontext>\n\t\t<regstate>\n";
+    private final String tempReg = "\t\t\t\"RESULT\" |-> mi(32, 0)\n\t\t\t\"RESULT64\" |-> mi(64, 0)\n";
+    private final String defaultReg = "\t\t\t\"R15\" |-> (memloc(mi(32, 0)) => memloc(mi(32, 1)))\n\t\t</regstate>\n";
+    private final String endModule = "endmodule\n";
 
     /**
      * 根据不同指令设定specFile
@@ -165,8 +176,8 @@ public class SpecConfigImpl implements SpecConfig {
             if (opcode == null)
                 throw new IOException();
             String curPath = System.getProperty("user.dir");
-            String codeMap = "\t\t\tcode (\n" + specContext.getInstList().stream().collect(Collectors.joining()) + "\t\t\t)\n";
-            String regStateSet = specContext.getPostCondition().stream().collect(Collectors.joining());
+            String codeMap = "\t\t\tcode (\n" + String.join("", specContext.getInstList()) + "\t\t\t)\n";
+            String regStateSet = String.join("", specContext.getPostCondition());
             String preCondition = specContext.getPreCondition();
             if ("MOV".equals(opcode) || "VMOV".equals(opcode)) {
                 String moduleName = "MOV".equals(opcode) ? "module SPEC-MOV-MODE\n" : "module SPEC-VMOV-MODE\n";
@@ -199,6 +210,32 @@ public class SpecConfigImpl implements SpecConfig {
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
                         regStateSet + defaultReg + preCondition + endModule;
                 File file = new File(curPath + System.getProperty("file.separator") + "spec-vmlav-mode-" + count + ".k");
+                System.out.println(file.getName());
+                fos = new FileOutputStream(file);
+                makeFile(fos, total);
+                return file;
+            } else if ("VMAXAV".equals(opcode) || "VMINAV".equals(opcode)) {
+                StringBuilder moduleName = new StringBuilder();
+                moduleName.append("module SPEC-").append(opcode).append("-MODE").append('-').append(count).append('\n');
+                String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
+                        regStateSet + defaultReg + preCondition + endModule;
+                String curOpcode = "VMAXAV".equals(opcode) ? "spec-vmaxav-mode-" : "spec-vminav-mode-";
+                File file = new File(curPath + System.getProperty("file.separator") + curOpcode + count
+                        + ".k");
+                System.out.println(file.getName());
+                fos = new FileOutputStream(file);
+                makeFile(fos, total);
+                return file;
+            } else if ("VMAXA".equals(opcode) || "VMINA".equals(opcode)
+                    || "VMAX".equals(opcode) || "VMIN".equals(opcode)) {
+                StringBuilder moduleName = new StringBuilder();
+                moduleName.append("module SPEC-").append(opcode).append("-ONCE\n");
+                String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
+                        regStateSet + defaultReg + preCondition + endModule;
+                String curOpcode = "VMAXA".equals(opcode) ? "spec-vmaxa-once.k" :
+                        ("VMINA".equals(opcode) ? "spec-vmina-once.k" :
+                                ("VMAX").equals(opcode) ? "spec-vmax-once.k" : "spec-vmin-once.k");
+                File file = new File(curPath + System.getProperty("file.separator") + curOpcode);
                 System.out.println(file.getName());
                 fos = new FileOutputStream(file);
                 makeFile(fos, total);

@@ -6,11 +6,12 @@ import com.pojo.ProveObject;
 import com.specProve.RunProve;
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 
 
 public class Prove {
 
-    private static String filename = "check.txt";
+    private static String filename;
 
     /**
      * 脚本
@@ -33,9 +34,41 @@ public class Prove {
         // 获取文件名
         //String filename = getOpt.getOptFromCommandLine(args[0], args, "-:f");
 
+        // 从命令行中获取需要验证的文档
+        if (args.length > 0) {
+            boolean proveFile = false;
+            for (String s : args) {
+                if ("--file".equals(s)) {
+                    proveFile = true;
+                } else if (proveFile) {
+                    filename = s;
+                    break;
+                }
+            }
+        }
+        if (filename == null)
+            throw new IOException("请输入所要验证的文档");
+
         // 从文件中提取所需信息：程序指令、前置条件、后置条件
         FileParser fileParser = new FileParserImpl();
         ProveObject proveObject = fileParser.fileParser(filename);
+
+        // 判断命令行中是否有入参
+        if (args.length > 0) {
+            boolean smtPrelude = false;
+            for (String s : args) {
+                if ("--smt-prelude".equals(s)) {
+                    smtPrelude = true;
+                } else if (smtPrelude) {
+                    try {
+                        proveObject.setSmtPrelude(s);
+                        break;
+                    } catch (RuntimeException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        }
 
         /*
          * TODO: 按顺序处理指令，以及设定前置条件、后置条件

@@ -104,6 +104,27 @@ public class ProgramState {
                 inst.append("maa . ").append(instruction.getDatatype()).append(' ').append(String.valueOf(destinationRegister))
                         .append(", ").append(String.valueOf(sourceRegister0)).append(", ").append(String.valueOf(sourceRegister1))
                         .append(", # ").append(beat).append(", Operands)\n");
+            } else if ("VMAXAV".equals(instruction.getOpcode()) || "VMINAV".equals(instruction.getOpcode())) {
+                char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
+                sourceRegister[0] = (char)(sourceRegister[0] + 32);
+                int cmpMode = "VMAXAV".equals(instruction.getOpcode()) ? 0 : 1;
+                inst.append("cmpAbs . ").append(instruction.getDatatype()).append(' ')
+                        .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister))
+                        .append(", # ").append(cmpMode).append(", # ").append(beat).append(", .Operands)\n");
+            } else if ("VMAX".equals(instruction.getOpcode()) || "VMIN".equals(instruction.getOpcode())) {
+                char[] sourceRegister1 = instruction.getSourceRegister().get(0).toCharArray();
+                char[] sourceRegister2 = instruction.getSourceRegister().get(1).toCharArray();
+                sourceRegister1[0] = (char)(sourceRegister1[0] + 32);
+                sourceRegister2[0] = (char)(sourceRegister2[0] + 32);
+                inst.append(instruction.getOpcode()).append(" . ").append(instruction.getDatatype()).append(' ')
+                        .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister1))
+                        .append(", ").append(String.valueOf(sourceRegister2)).append(", .Operands)\n");
+            } else if ("VMAXA".equals(instruction.getOpcode()) || "VMINA".equals(instruction.getOpcode())) {
+                char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
+                sourceRegister[0] = (char)(sourceRegister[0] + 32);
+                inst.append(instruction.getOpcode()).append(" . ").append(instruction.getDatatype()).append(' ')
+                        .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister))
+                        .append(", .Operands)\n");
             }
             instList.add(inst.toString());
             return instList;
