@@ -180,11 +180,15 @@ public class SpecConfigImpl implements SpecConfig {
             String regStateSet = String.join("", specContext.getPostCondition());
             String preCondition = specContext.getPreCondition();
             if ("MOV".equals(opcode) || "VMOV".equals(opcode)) {
-                String moduleName = "MOV".equals(opcode) ? "module SPEC-MOV-MODE\n" : "module SPEC-VMOV-MODE\n";
+                String moduleName = "MOV".equals(opcode) ? "module SPEC-MOV-MODE\n" : (
+                        preCondState.getInstruction().getDatatype() == null ? "module SPEC-VMOV-MODE\n" :
+                        "module SPEC-VMOV-LANE-MODE\n");
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
                         regStateSet + tempReg + defaultReg + preCondition + endModule;
-                File file = new File(curPath + System.getProperty("file.separator") + ("MOV".equals(opcode) ?
-                        "spec-mov-mode.k" : "spec-vmov-mode.k"));
+                File file;
+                file = new File(curPath + System.getProperty("file.separator") + ("MOV".equals(opcode) ?
+                        "spec-mov-mode.k" : preCondState.getInstruction().getDatatype() == null ?
+                        "spec-vmov-mode.k" : "spec-vmov-lane-mode.k"));
                 System.out.println(file.getName());
                 fos = new FileOutputStream(file);
                 byte[] bytes = total.getBytes(StandardCharsets.UTF_8);

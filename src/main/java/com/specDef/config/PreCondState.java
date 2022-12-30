@@ -39,11 +39,17 @@ public class PreCondState {
             // String preCondition = null;
             // 提取prove 目录中的寄存器映射表
             Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
             // 目标寄存器
             String destinationRegister = instruction.getDestinationRegister();
             // 当源操作数为立即数时，直接将立即数存储到寄存器映射表中
             if (instruction.getImm() != null) {
                 registerMap.put(destinationRegister, instruction.getImm());
+                // 将立即数存到preCond中，以免后续获取范围时出现空指针，即左右界都是立即数
+                if (!preCond.containsKey(instruction.getImm())) {
+                    preCond.put(instruction.getImm(), new BigInteger[]{new BigInteger(instruction.getImm()),
+                            new BigInteger(instruction.getImm())});
+                }
                 // 当MOV的源操作数是立即数时，前置条件为空（验证程序中默认的范围，即当为32位寄存器值时，当立即数超出32位能表达的范围验证器不会判True）
                 // 只需验证其后置条件是否满足
                 return isValMov(instruction.getImm());
@@ -117,6 +123,7 @@ public class PreCondState {
             // String preCondition = null;
             // 提取prove 目录中的寄存器映射表
             Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
             // 目标寄存器
             String destinationRegister = instruction.getDestinationRegister();
             if (destinationRegister.charAt(0) != 'Q')
@@ -132,22 +139,55 @@ public class PreCondState {
                 if (sourceRegister == null || sourceRegister.isEmpty()) {
                     throw new InputMismatchException("源操作数空");
                 }
-                if (sourceRegister.get(0).charAt(0) != 'Q') {
+                if (sourceRegister.get(0).charAt(0) != 'Q' && sourceRegister.get(0).charAt(0) != 'R') {
                     throw new InputMismatchException("源操作数不为向量寄存器，请重新输入");
                 }
                 String source = sourceRegister.get(0);
-                // 当源操作数在寄存器表中没有记录，则默认设定初始值0
-                if (!registerMap.containsKey(source)) {
-                    registerMap.put(source, "0");
-                    // 若目标寄存器原来有值，也覆盖掉，契合语义，MOV/load语句会覆盖当前值
-                    registerMap.put(destinationRegister, "0");
+                // 当存在数据类型的时候，表明现在是VMOV.$I模式，需要处理一下目标寄存器，因为目标寄存器为Qn[I]，后面的[I]截取掉
+                if (instruction.getDatatype() != null) {
+                    int index = Integer.parseInt(destinationRegister.substring(3, destinationRegister.indexOf("]")));
+                    int dataSize = Integer.parseInt(instruction.getDatatype().substring(1));
+                    destinationRegister = destinationRegister.substring(0, 2);
+                    if (registerMap.containsKey(destinationRegister)) {
+                        String valDes = registerMap.get(destinationRegister);
+                        valDes = dataSize == 8 ? valDes + "00" + index : ((dataSize == 16) ? valDes + "0" + index :
+                                valDes + index);
+                        preCond.put(valDes, preCond.get(registerMap.get(source)));
+                    } else {
+                        String valDes = destinationRegister + "_V";
+                        registerMap.put(destinationRegister, valDes);
+                        if (!preCond.containsKey(valDes)) {
+                            preCond.put(valDes, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                        }
+                        valDes = dataSize == 8 ? valDes + "00" + index : (dataSize == 16 ? valDes + "0" + index :
+                                valDes + index);
+                        preCond.put(valDes, preCond.get(registerMap.get(source)));
+                    }
+                    String value = registerMap.get(destinationRegister);
+                    proveObject.setRegisterMap(registerMap);
+                    proveObject.setPreCond(preCond);
+                    BigInteger[] sourceValue = preCond.get(registerMap.get(source));
+                    StringBuilder sourcePre = new StringBuilder();
+                    sourcePre.append("\t\t\t\tandBool ").append(sourceValue[0]).append(" <=Int ").append(registerMap.get(source))
+                            .append(" andBool ").append(registerMap.get(source)).append(" <=Int ").append(sourceValue[1])
+                            .append("\n");
+                    return isValVmov(value) + sourcePre.toString();
                 } else {
-                    registerMap.put(destinationRegister, registerMap.get(source));
+                    // 当源操作数在寄存器表中没有记录，则默认设定初始值0
+                    if (!registerMap.containsKey(source)) {
+                        registerMap.put(source, "0");
+                        // 若目标寄存器原来有值，也覆盖掉，契合语义，MOV/load语句会覆盖当前值
+                        registerMap.put(destinationRegister, "0");
+                    } else {
+                        registerMap.put(destinationRegister, registerMap.get(source));
+                    }
+                    // 当MOV的源操作数是寄存器时，需要再判断一次，若当前存储的是立即数（即源操作数的值也是立即数的情况），那还是设空，不是立即数就
+                    // 设定范围
+                    String value = registerMap.get(destinationRegister);
+                    proveObject.setRegisterMap(registerMap);
+                    proveObject.setPreCond(preCond);
+                    return isValVmov(value);
                 }
-                // 当MOV的源操作数是寄存器时，需要再判断一次，若当前存储的是立即数（即源操作数的值也是立即数的情况），那还是设空，不是立即数就
-                // 设定范围
-                String value = registerMap.get(destinationRegister);
-                return isValVmov(value);
             }
         } catch (RuntimeException ex) {
             ex.printStackTrace();
@@ -276,6 +316,9 @@ public class PreCondState {
         if (!registerMap.containsKey(destinationRegister))
             throw new InputMismatchException("目标寄存器无对应值，请重新设置");
         String val = registerMap.get(destinationRegister);
+        if (val != null && preCond.get(val) == null) {
+            preCond.put(val, new BigInteger[]{new BigInteger(val), new BigInteger(val)});
+        }
         BigInteger[] bigIntegers = preCond.get(val);
         desPreCond = preSourceCond + "\t\t\tandBool " + val + " >=Int " + bigIntegers[0] +
                 " andBool " + val + " <=Int " + bigIntegers[1] + "\n";

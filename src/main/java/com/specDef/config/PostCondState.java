@@ -65,7 +65,8 @@ public class PostCondState {
      */
     public List<String> vecSimplePostSet() {
         try {
-            checkException();
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
             String destinationRegister = instruction.getDestinationRegister();
             List<String> postCondition = new ArrayList<>();
             if (instruction.getImm() != null) {
@@ -80,12 +81,85 @@ public class PostCondState {
                 if (destinationRegister.equals(sourceRegister.get(0)))
                     throw new RuntimeException("VMOV中，目标操作数和源操作数不能为同一寄存器");
                 String val = proveObject.getRegisterMap().get(sourceRegister.get(0));
-                String sourceReg = "\t\t\t\"" + sourceRegister.get(0) + "\" |-> mi(128, " + val + ")\n";
-                String destinationReg = "\t\t\t\"" + destinationRegister + "\" |-> mi(128, " + val + ")\n";
-                postCondition.add(sourceReg);
-                postCondition.add(destinationReg);
-                setSReg(postCondition, sourceRegister.get(0), val);
-                setSReg(postCondition, destinationRegister, val);
+                if (instruction.getDatatype() == null) {
+                    String sourceReg = "\t\t\t\"" + sourceRegister.get(0) + "\" |-> mi(128, " + val + ")\n";
+                    String destinationReg = "\t\t\t\"" + destinationRegister + "\" |-> mi(128, " + val + ")\n";
+                    postCondition.add(sourceReg);
+                    postCondition.add(destinationReg);
+                    setSReg(postCondition, sourceRegister.get(0), val);
+                    setSReg(postCondition, destinationRegister, val);
+                } else {    // VMOV.$I Qn[D], Rn
+                    String sourceReg = "\t\t\t\"" + sourceRegister.get(0) + "\" |-> mi(32, " + val + ")\n";
+                    int dataSize = Integer.parseInt(instruction.getDatatype().substring(1));
+                    int index = Integer.parseInt(destinationRegister.substring(3, destinationRegister.indexOf("]")));
+                    destinationRegister = destinationRegister.substring(0, 2);
+                    String valDes = proveObject.getRegisterMap().get(destinationRegister);
+                    int cur = Integer.parseInt(destinationRegister.substring(1));
+                    int speIndex = index / (32 / dataSize);
+                    String destinationReg;
+                    if ((dataSize == 32 && index > 0 && index < 3) || (dataSize == 16 && index > 0 && index < 7)
+                        || (dataSize == 8 && index > 0 && index < 15)) {
+                        destinationReg = "\t\t\t\"" + destinationRegister + "\" |-> (mi(128, " + valDes + ") => " +
+                                "concatenateMInt(extractMInt(mi(128, " + valDes + "), 0, " + (128 - (index+1) * dataSize) +
+                                "), concatenateMInt(extractMInt(mi(32, " + val + "), " + (32 - dataSize) + ", 32), extractMInt(mi(128, " +
+                                valDes + "), " + (128 - index * dataSize) + ", 128))))\n";
+                    } else if (index == 0) {
+                        destinationReg = "\t\t\t\"" + destinationRegister + "\" |-> (mi(128, " + valDes + ") => " +
+                                "concatenateMInt(extractMInt(mi(128, " + valDes + "), 0, " + (128 - dataSize) + "), extractMInt(mi(32, "
+                                + val + "), " + (32 - dataSize) + ", 32)))\n";
+                    } else {
+                        destinationReg = "\t\t\t\"" + destinationRegister + "\" |-> (mi(128, " + valDes + ") => " +
+                                "concatenateMInt(extractMInt(mi(32, " + val + "), " + (32 - dataSize) + ", 32), extractMInt(mi(128, " +
+                                valDes + "), " + dataSize + ", 128)))\n";
+                    }
+                    postCondition.add(sourceReg);
+                    postCondition.add(destinationReg);
+                    for (int i = 0; i <= 3; i++) {
+                        StringBuilder sReg = new StringBuilder();
+                        sReg.append('S').append(cur * 4 + i);
+                        String post;
+                        if (i != speIndex) {
+                            post = "\t\t\t\"" + sReg + "\" |-> extractMInt(mi(128, " + valDes + "), " + ((3-i) * 32) +
+                                    ", " + ((4-i) * 32) + ")\n";
+                        } else {
+                            if (dataSize == 32) {
+                                post = "\t\t\t\"" + sReg + "\" |-> (extractMInt(mi(128, " + valDes + "), " + ((3-i)*32) +
+                                        ", " + ((4-i)*32) + ") => mi(32, " + val + "))\n";
+                            } else if (dataSize == 16) {
+                                if (index % 2 == 0) {
+                                    post = "\t\t\t\"" + sReg + "\" |-> (extractMInt(mi(128, " + valDes + "), " + ((3-i)*32) +
+                                            ", " + ((4-i)*32) + ") => concatenateMInt(extractMInt(mi(128, " + valDes + "), " +
+                                            ((3-i)*32) + ", " + (128 - (index + 1) * 16) + "), extractMInt(mi(32, " +
+                                            val + "), 16, 32)))\n";
+                                } else {
+                                    post = "\t\t\t\"" + sReg + "\" |-> (extractMInt(mi(128, " + valDes + "), " + ((3-i)*32) +
+                                            ", " + ((4-i)*32) + ") => concatenateMInt(extractMInt(mi(32, " + val + "), 16, 32), " +
+                                            "extractMInt(mi(128, " + valDes + "), " + (128 - index * 16) + ", "
+                                            + ((4-i)*32) + ")))\n";
+                                }
+                            } else {
+                                if (index % 4 == 0) {
+                                    post = "\t\t\t\"" + sReg + "\" |-> (extractMInt(mi(128, " + valDes + "), " + ((3-i) * 32) +
+                                            ", " + ((4-i) * 32) + ") => concatenateMInt(extractMInt(mi(128, " + valDes + "), " +
+                                            ((3-i) * 32) + ", " + (128 - (index + 1) * 8) + "), extractMInt(mi(32, " +
+                                            val + "), 24, 32)))\n";
+                                } else if (index % 4 == 3) {
+                                    post = "\t\t\t\"" + sReg + "\" |-> (extractMInt(mi(128, " + valDes + ")," + ((3-i)*32) +
+                                            ", " + ((4-i)*32) + ") => concatenateMInt(extractMInt(mi(32, " + val + "), 24, 32), " +
+                                            "extractMInt(mi(128, " + valDes + "), " + (128 - index * 8) + ", "
+                                            + ((4-i)*32) + ")))\n";
+                                } else {
+                                    post = "\t\t\t\"" + sReg + "\" |-> (extractMInt(mi(128, " + valDes + "), " + ((3-i) * 32) +
+                                            ", " + ((4-i) * 32) + ") => concatenateMInt(extractMInt(mi(128, " + valDes + "), " +
+                                            ((3-i) * 32) + ", " + (128 - (index + 1) * dataSize) + "), concatenateMInt(extractMInt(mi(32, "
+                                            + val + "), " + (32 - dataSize) + ", 32), extractMInt(mi(128, " + valDes + "), "
+                                            + (128 - index*dataSize) + ", " + ((4-i) * 32) + "))))\n";
+                                }
+                            }
+                        }
+                        postCondition.add(post);
+                    }
+                }
             }
             return postCondition;
         } catch (RuntimeException ex) {

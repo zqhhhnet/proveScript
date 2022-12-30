@@ -65,6 +65,8 @@ public class RunProve {
                 else
                     programState.setSubOpcode("cmpAbs");
                 for (int i = 0; i < count; i++) {
+                    long oneInstTimeStart = System.currentTimeMillis();
+
                     // 创建spec目录，用于存储指令解析的结果
                     SpecContext specContext = new SpecContext();
                     // 将VMAXV指令分解为多个子问题，循环依次解决每个子问题
@@ -83,6 +85,10 @@ public class RunProve {
                     System.out.println("----------- " + specFile.getName() + " begin prove ----------- ");
                     // TODO: 将验证参数通过输入层更改
                     result = specProve.executeSpecProve("kprove " + specFile.getName() + " --z3-impl-timeout 150000", null);
+
+                    long oneInstTimeEnd = System.currentTimeMillis();
+                    System.out.printf("该次验证用时：%d 毫秒%n", (oneInstTimeEnd - oneInstTimeStart));
+
                     if (result == null)
                         return false;
                     System.out.println("============= Result : " + result.split("\\n")[0]);
@@ -95,6 +101,8 @@ public class RunProve {
                 continue;
             } else if ("VMLAV".equals(instructionStruct.getOpcode())) {
                 for (int i = 0; i < 4; i++) {
+                    long oneInstTimeStart = System.currentTimeMillis();
+
                     // 创建spec目录，用于存储指令解析的结果
                     SpecContext specContext = new SpecContext();
                     // 将VMAXV指令分解为多个子问题，循环依次解决每个子问题
@@ -114,6 +122,10 @@ public class RunProve {
                     // 用QFNRA-NLSAT策略解决Non-Linear Integer问题
                     result = specProve.executeSpecProve("kprove " + specFile.getName() +
                             " --z3-impl-timeout 150000 --z3-tactic qfnra-nlsat", null);
+
+                    long oneInstTimeEnd = System.currentTimeMillis();
+                    System.out.printf("该次验证用时：%d 毫秒%n", (oneInstTimeEnd - oneInstTimeStart));
+
                     if (result == null)
                         return false;
                     System.out.println("============= Result : " + result.split("\\n")[0]);
@@ -125,6 +137,8 @@ public class RunProve {
                 postCondState.setSourcePostCond(new ArrayList<>());
                 continue;
             }
+            long oneInstTimeStart = System.currentTimeMillis();
+
             // 创建spec目录，用于存储指令解析的结果
             SpecContext specContext = new SpecContext();
             // spec解析入口，解析的结果存储于specContext
@@ -150,6 +164,10 @@ public class RunProve {
                     + specFile.getName() + " --z3-impl-timeout 15000", null) :
                     specProve.executeSpecProve("kprove " + specFile.getName() + " --z3-impl-timeout 15000 " +
                             "--smt-prelude " + proveObject.getSmtPrelude(), null);
+
+            long oneInstTimeEnd = System.currentTimeMillis();
+            System.out.printf("该次验证用时：%d 毫秒%n", (oneInstTimeEnd - oneInstTimeStart));
+
             if (result == null)
                 return false;
             System.out.println("============= Result : " + result.split("\\n")[0]);

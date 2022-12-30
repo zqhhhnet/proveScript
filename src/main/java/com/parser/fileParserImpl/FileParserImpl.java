@@ -50,6 +50,8 @@ public class FileParserImpl implements FileParser {
                         if (line.matches("^end.*")) {
                             break;
                         }
+                        if (line.trim().equals(""))
+                            continue;
                         instList.add(line.trim());
                     }
                     if (instList == null)
@@ -58,7 +60,7 @@ public class FileParserImpl implements FileParser {
                 } else if (line.matches("^preCond.*")) {
                     boolean flag = true;
                     while ((line = br.readLine()) != null) {
-                        if (line.length() == 0)
+                        if (line.length() == 0 || line.trim().length() == 0)
                             continue;
                         if (line.matches("^postCond.*")) {
                             flag = false;

@@ -8,8 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InstParserImpl implements InstParser {
-    //                                  1           2         3     4                   5                         6                         7                             8                        9
-    private final String instPattern = "^[ ]*([A-Z]+)[ ]*([\\.][ ]*([SUF](8|16|32|64)+))*[ ]*([RQSD][0-9]{1,2})[ ]*,[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))[ ]*,?[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))?[ ]*";
+    //                                       1           2         3     4                    5                6                            7                        8                              9                         10
+    private final String instPattern = "^[ ]*([A-Z]+)[ ]*([\\.][ ]*([SUF$](8|16|32|64)+))*[ ]*([RQSD][0-9]{1,2}(\\[[0-9]{1,2}\\])*)[ ]*,[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))[ ]*,?[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))?[ ]*";
 
     private final Set<String> instTable = new HashSet<>(Arrays.asList("MOV", "VMOV", "VMAX", "VMAXA", "VMAXV", "VMAXAV", "VMAXNM", "VMAXNMV", "VMAXNMA", "VMAXNMAV",
             "VMIN", "VMINV", "VMINA", "VMINAV", "VMINNM", "VMINNMA", "VMINNMV", "VMINNMAV", "VMLAV"));
@@ -30,58 +30,60 @@ public class InstParserImpl implements InstParser {
                 Instruction instruction = new Instruction();
                 // 判断opcode是否有效
                 if (!instTable.contains(matcher.group(1)))
-                    throw new InputMismatchException();
+                    throw new RuntimeException();
                 instruction.setOpcode(matcher.group(1));
                 // 判断数据类型是否为空，并是否有效
-                if (matcher.group(3) != null && !dataTypeTable.contains(matcher.group(3)))
-                    throw new InputMismatchException();
-                else if (matcher.group(3) != null)
+                if (matcher.group(3) != null && (dataTypeTable.contains(matcher.group(3)) || matcher.group(3).matches("^[$](8|16|32)"))) {
                     instruction.setDatatype(matcher.group(3));
+                } else if (matcher.group(3) != null)
+                    throw new RuntimeException();
+
 
                 // 判断目标操作数是否有效
-                if (!RegisterTable.contains(matcher.group(5)))
-                    throw new InputMismatchException();
-                instruction.setDestinationRegister(matcher.group(5));
+                if (RegisterTable.contains(matcher.group(5)) || matcher.group(5).matches("^[Q][0-7]\\[[0-9]{1,2}\\]")) {
+                    instruction.setDestinationRegister(matcher.group(5));
+                } else
+                    throw new RuntimeException();
                 // 判断第一个源操作数是否为立即数，若不是，判断其寄存器是否有效
-                if (!matcher.group(6).contains("#") ) {
-                    if (!RegisterTable.contains(matcher.group(6)))
-                        throw new InputMismatchException();
+                if (!matcher.group(7).contains("#") ) {
+                    if (!RegisterTable.contains(matcher.group(7)))
+                        throw new RuntimeException();
                     else {
                         List<String> sourceReg = instruction.getSourceRegister();
                         if (sourceReg == null || sourceReg.isEmpty()) {
                             sourceReg = new ArrayList<>();
-                            sourceReg.add(matcher.group(6));
+                            sourceReg.add(matcher.group(7));
                         }
                         else
-                            sourceReg.add(matcher.group(6));
+                            sourceReg.add(matcher.group(7));
                         instruction.setSourceRegister(sourceReg);
                     }
                 } else {
-                    if (matcher.group(8) != null)
-                        throw new InputMismatchException();
-                    instruction.setImm(matcher.group(7));
+                    if (matcher.group(9) != null)
+                        throw new RuntimeException();
+                    instruction.setImm(matcher.group(8));
                     return instruction;
                 }
                 // 判断第二个源操作数
-                if (matcher.group(8) != null && !matcher.group(8).contains("#")) {
-                    if (!RegisterTable.contains(matcher.group(8))) {
-                        throw new InputMismatchException();
+                if (matcher.group(9) != null && !matcher.group(9).contains("#")) {
+                    if (!RegisterTable.contains(matcher.group(9))) {
+                        throw new RuntimeException();
                     } else {
                         List<String> sourceReg = instruction.getSourceRegister();
                         if (sourceReg == null || sourceReg.isEmpty()) {
                             sourceReg = new ArrayList<>();
-                            sourceReg.add(matcher.group(8));
+                            sourceReg.add(matcher.group(9));
                         } else
-                            sourceReg.add(matcher.group(8));
+                            sourceReg.add(matcher.group(9));
                         instruction.setSourceRegister(sourceReg);
                     }
-                } else if (matcher.group(8) != null) {
-                    instruction.setImm(matcher.group(9));
+                } else if (matcher.group(9) != null) {
+                    instruction.setImm(matcher.group(10));
                 }
                 return instruction;
             } else
-                throw new InputMismatchException();
-        } catch (InputMismatchException ex) {
+                throw new RuntimeException();
+        } catch (RuntimeException ex) {
             System.err.println("指令非法，请检测指令是否错误 ： " + inst);
             return null;
         }

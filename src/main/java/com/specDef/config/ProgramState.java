@@ -31,8 +31,14 @@ public class ProgramState {
                 // 将寄存器的大写字母转为小写字母
                 destinationRegister[0] = (char)(destinationRegister[0] + 32);
                 String lowDestinationRegister = String.valueOf(destinationRegister);
-                String inst = "\t\t\tmemloc(mi(32, 0)) |-> storedInstr( " + instruction.getOpcode() + " " + lowDestinationRegister
-                        + ", ";
+                String inst;
+                if (instruction.getDatatype() == null) {
+                    inst = "\t\t\tmemloc(mi(32, 0)) |-> storedInstr( " + instruction.getOpcode() + " " + lowDestinationRegister
+                            + ", ";
+                } else {        // VMOV.$I qn[index], #num
+                    inst = "\t\t\tmemloc(mi(32, 0)) |-> storedInstr( " + instruction.getOpcode() + " . "
+                            + instruction.getDatatype() + " " + lowDestinationRegister + ", ";
+                }
                 if (instruction.getImm() == null) {
                     char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
                     sourceRegister[0] = (char) (sourceRegister[0] + 32);
@@ -58,8 +64,14 @@ public class ProgramState {
                         } else
                             lowDestinationRegister.append(destinationRegister[i]);
                     }*/
-                    String inst = "\t\t\tmemloc(mi(32, " + curLoc + ")) |-> storedInstr( " + instruction.getOpcode() + " " +
-                            lowDestinationRegister + ", ";
+                    String inst;
+                    if (instruction.getDatatype() == null) {
+                        inst = "\t\t\tmemloc(mi(32, " + curLoc + ")) |-> storedInstr( " + instruction.getOpcode() + " " +
+                                lowDestinationRegister + ", ";
+                    } else {
+                        inst = "\t\t\tmemloc(mi(32, " + curLoc + ")) |-> storedInstr( " + instruction.getOpcode() +
+                                " . " + instruction.getDatatype() + " " + lowDestinationRegister + ", ";
+                    }
                     if (instruction.getImm() == null) {
                         char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
                         sourceRegister[0] = (char) (sourceRegister[0] + 32);
