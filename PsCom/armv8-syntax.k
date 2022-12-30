@@ -57,12 +57,28 @@ module ARMV8-SYNTAX
                   | "VMLAV"		[token]
                   // VMLAVA is VMLAV{A} format
                   | "VMLAVA"		[token]
+
   
   syntax Opcode ::= "end"
                   | "VMOV"		[token]
                   | "MOV"		[token]
                   | "ADD"		[token] //for test
                   | "MAX"		[token]
+                  // add for prove
+                  | "VADD"  [token]
+                  | "VMUL"  [token]
+                  | "VSUB"  [token]
+                  | "VSHR"  [token]
+                  | "VSHL"  [token]
+                  | "VORR"  [token]
+                  | "VAND"  [token]
+                  | "VQADD" [token]       // fpscr
+                  | "VDUP"  [token]
+                  | "VNEG"  [token]
+                  | "VMLA"  [token]       
+                  | "VRSHL" [token]
+                  | "VQRDMULH"  [token]   // fpscr
+
                  
   syntax Register ::= R32
                     | Q128
@@ -189,6 +205,10 @@ module ARMV8-SYNTAX
                  | "F16"
                  | "F32"
                  | "F64"
+                 | "I8"
+                 | "I16"
+                 | "I32"
+                 | Int
                  
   // for store to vector lane.
   syntax NLabel ::= "$" Int
@@ -219,6 +239,7 @@ module ARMV8-SYNTAX
                        | "sint"   [token]
                        | "uint"   [token]
                        | "maa"    [token]
+                       | "cmpAbs" [token]
   
   syntax Opcode ::= StepCommand
   

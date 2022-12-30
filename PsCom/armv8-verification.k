@@ -246,6 +246,7 @@ module MINT-LEMMAS
   /*@ 
     L3: addMInt: Semantics 
   */  
+  /*
   rule addMInt(MI1:MInt, MI2:MInt) => 
     mi(bitwidthMInt(MI1), svalueMInt(MI1) +Int svalueMInt(MI2))
       requires (svalueMInt(MI1) +Int svalueMInt(MI2)) <Int        
@@ -253,6 +254,7 @@ module MINT-LEMMAS
        andBool (svalueMInt(MI1) +Int svalueMInt(MI2)) >=Int 
             -1 *Int ((2 ^Int bitwidthMInt(MI1)) -Int 1)
        andBool bitwidthMInt(MI1) ==Int bitwidthMInt(MI2) 
+       */
 
   /*@ 
     L4: subMInt Semantics
@@ -331,6 +333,16 @@ module MINT-LEMMAS
     andBool   uvalueMInt(MI) <Int (2 ^Int (E -Int S))    
     andBool   S ==Int 1 andBool E ==Int 33
   
+  /**
+  rule extractMInt(MI:MInt, S:Int, E:Int) => mi(E -Int S, uvalueMInt(extractMInt(MI, S, E)))
+    requires  bitwidthMInt(MI) ==Int E
+    andBool   E >Int S
+    andBool   bitwidthMInt(MI) >Int (E -Int S)
+    andBool   uvalueMInt(MI) >=Int 0
+    andBool   uvalueMInt(MI) <Int (2 ^Int E)
+    andBool   S >=Int 0
+    */
+  
   /*@
     L11: mi semantics
   */
@@ -377,6 +389,12 @@ module MINT-LEMMAS
   rule lshrMInt(M:MInt, I:Int) => mi(bitwidthMInt(M), 0)
     requires I ==Int bitwidthMInt(M)
     
+  rule absInt(I:Int) => I
+    requires I >=Int 0
+  
+  rule absInt(I:Int) => -1 *Int I
+    requires I <Int 0
+  
 endmodule
 
 module ARMV8-VERIFICATION

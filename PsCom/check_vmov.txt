@@ -1,0 +1,11 @@
+start:
+    MOV R0, # A
+    VMOV.$8 Q1[0], R0
+    
+end
+
+preCond:
+    0 <= A < 2^7
+
+postCond:
+    0 <= Q1 < 2^128
