@@ -25,7 +25,7 @@ require "vmlav.k"
 require "add-for-test.k"
 require "max-for-test.k"
 
-// add for check
+// add for prove
 require "sst.k"
 require "ext.k"
 require "dtc.k"
@@ -35,6 +35,22 @@ require "conca.k"
 require "sint.k"
 require "uint.k"
 require "maa.k"
+require "cmpAbs.k"
+
+require "vadd.k"
+require "vsub.k"
+require "vmul.k"
+require "vshl.k"
+require "vshr.k"
+require "vorr.k"
+require "vand.k"
+require "vdup.k"
+require "vqadd.k"
+require "vneg.k"
+require "vmla.k"
+require "vrshl.k"
+require "vqrdmulh.k"
+
 
 module ARMV8-SEMANTICS
   imports ARMV8-LOADER
@@ -74,5 +90,22 @@ module ARMV8-SEMANTICS
   imports UINT
   imports SINT
   imports MAA
+  imports CMPABS
+  
+  imports VADD
+  imports VSUB
+  
+  imports VMUL
+  imports VAND
+  imports VDUP
+  imports VORR
+  imports VSHL
+  imports VSHR
+  imports VQADD
+  imports VNEG
+  imports VMLA
+  imports VRSHL
+  imports VQRDMULH
+  
   
 endmodule

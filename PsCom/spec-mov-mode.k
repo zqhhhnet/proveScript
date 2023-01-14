@@ -19,14 +19,13 @@ module SPEC-MOV-MODE
 		</functarget>
 		<instructiontext>
 			code (
-			memloc(mi(32, 0)) |-> storedInstr( MOV r0, # A, .Operands)
+			memloc(mi(32, 0)) |-> storedInstr( MOV r11, # 0, .Operands)
 			)
 		</instructiontext>
 		<regstate>
-			"R0" |-> mi(32, A)
+			"R11" |-> mi(32, 0)
 			"RESULT" |-> mi(32, 0)
 			"RESULT64" |-> mi(64, 0)
 			"R15" |-> (memloc(mi(32, 0)) => memloc(mi(32, 1)))
 		</regstate>
-			requires -32 <=Int A andBool A <=Int 63
 endmodule

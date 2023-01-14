@@ -127,7 +127,9 @@ module ARMV8-CONFIGURATION
       ("FPCCR_S"	|-> mi(32, 0))
       ("FPCCR_NS"	|-> mi(32, 0))
       ("VPR"		|-> mi(32, 0))
-      ("FPSCR"		|-> mi(32, 0))
+      //("FPSCR"		|-> mi(32, 0))
+      // for prove
+      ("FPSCR"    |-> mi(32, 50331648))
       // add for check
       ("TEMP1"		|-> mi(32, 0))
       ("TEMP2"		|-> mi(32, 0))

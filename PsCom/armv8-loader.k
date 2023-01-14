@@ -69,28 +69,10 @@ module ARMV8-LOADER
                    execinstrBeat(OP . S OPR, 3) ~>
                    //registersMessage ~>
   		    
-  		/*
-                   beat1Result(OP . S OPR, 0) ~> 
-                   execinstr1Beat(OP . S OPR, 0) ~>
-                   registersMessage ~> 
-                   
-                   beat2Result(OP . S OPR) ~>
-                   execinstr2Beat(OP . S OPR) ~>
-                   registersMessage ~> 
-                   
-                   beat3Result(OP . S OPR) ~>
-                   execinstr3Beat(OP . S OPR) ~>
-                   registersMessage ~> 
-                   
-                   
-                   beat4Result(OP . S OPR) ~>
-                   execinstr4Beat(OP . S OPR) ~>
-                   registersMessage ~>
-               */
                    scan ...</k>
        <instructiontext> code(memloc(L) |-> storedInstr(OP . S OPR) _:Map) </instructiontext>
        <regstate>... "R15" |-> (memloc(L:MInt) => memloc(addMInt(L, mi(32, 1)))) ...</regstate>
-         requires notBool ((OP ==K end) orBool (OP ==K ext) orBool (OP ==K dtc) orBool (OP ==K cmp) orBool (OP ==K maa))
+         requires notBool ((OP ==K end) orBool (OP ==K ext) orBool (OP ==K dtc) orBool (OP ==K cmp) orBool (OP ==K maa) orBool (OP ==K cmpAbs))
   
   /*@
     vmov
@@ -114,6 +96,34 @@ module ARMV8-LOADER
        <regstate>... "R15" |-> (memloc(L:MInt) => memloc(addMInt(L, mi(32, 1)))) ...</regstate>
          requires (notBool ((OP ==K sst) orBool (OP ==K sto) )) andBool (OP ==K VMOV)
   
+  /*@
+    vorr
+  */
+  rule <k> scan => setDefaultRegs(OP) ~>
+                   beatResult(OP OPR, 0) ~>
+                   execinstrBeat(OP OPR, 0) ~>
+                   //registersMessage ~>
+                   
+                   setDefaultRegs(OP) ~>
+                   beatResult(OP OPR, 1) ~>
+                   execinstrBeat(OP OPR, 1) ~>
+                   //registersMessage ~>
+                   
+                   setDefaultRegs(OP) ~>
+                   beatResult(OP OPR, 2) ~>
+                   execinstrBeat(OP OPR, 2) ~>
+                   //registersMessage ~>
+                   
+                   setDefaultRegs(OP) ~>
+                   beatResult(OP OPR, 3) ~>
+                   execinstrBeat(OP OPR, 3) ~>
+                   //registersMessage ~>
+  		    
+                   scan ...</k>
+       <instructiontext> code(memloc(L) |-> storedInstr(OP OPR) _:Map) </instructiontext>
+       <regstate>... "R15" |-> (memloc(L:MInt) => memloc(addMInt(L, mi(32, 1)))) ...</regstate>
+        requires (OP ==K VORR orBool OP ==K VAND)
+
   // for vector lane, store the specific R to one element of Q.
   rule <k> scan => setDefaultRegs(OP) ~>
                    execinstr(OP . S:NLabel OPR) ~>
@@ -182,7 +192,7 @@ module ARMV8-LOADER
   rule <k> scan => execinstr(OP . S:Label OPR) ~> scan ...</k>
        <instructiontext> code(memloc(L) |-> storedInstr(OP . S:Label OPR) _:Map) </instructiontext>
        <regstate>... "R15" |-> (memloc(L:MInt) => memloc(addMInt(L, mi(32, 1)))) ...</regstate>
-         requires (OP ==K ext) orBool (OP ==K dtc) orBool (OP ==K cmp) orBool (OP ==K maa)
+         requires (OP ==K ext) orBool (OP ==K dtc) orBool (OP ==K cmp) orBool (OP ==K maa) orBool (OP ==K cmpAbs)
   
 endmodule
 

@@ -399,29 +399,236 @@ module ARMV8-ABSTRACT-SEMANTIC
     for the R and Q register fp command to get the minimum one
   */
   
-  rule LeftMinMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) ) then (concatenateMInt(mi(8, 126), mi(8, 0))) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))))) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then ( MI2 ) else (ifMInt ((((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then (MI1) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then MI2 else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (MI1) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) else (ifMInt (MInt2Float(MI1, 11, 5) >=Float MInt2Float(MI2, 11, 5)) then (MI2) else (MI1) ) ) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
+  rule LeftMinMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      (concatenateMInt(mi(8, 126), mi(8, 0))) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) orBool (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))))) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      ( MI2 ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      (MI1) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      MI2 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (MI1) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI1) else (MI2) )
+    // TODO: need to modify 
+    else (ifMInt (MInt2Float(MI1, 11, 5) >=Float MInt2Float(MI2, 11, 5)) then 
+      (MI2) 
+    else (MI1) 
+    ) ) ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
   
-  rule LeftMinMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))))) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) then ( MI2 ) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0))))) then (MI1) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) then MI2 else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) then (MI1) else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)))) then ( ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) else (ifMInt (MInt2Float(MI1, 24, 8) >=Float MInt2Float(MI2, 24, 8)) then (MI2) else (MI1) ) ) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
+  /**
+    modified
+    */
+  rule LeftMinMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))))) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) then 
+      //( MI2 ) 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) else (concatenateMInt(mi(1,1), mi(31,0)))) 
+      else (MI2))
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0))))) then 
+      //(MI1) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0))) else (concatenateMInt(mi(1,1), mi(31,0)))) 
+      else (MI1))
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) then 
+      //MI2 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) else (concatenateMInt(mi(1,1), mi(31,0)))) 
+      else (MI2))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) then 
+      //(MI1) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0))) else (concatenateMInt(mi(1,1), mi(31,0)))) 
+      else (MI1))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then 
+      (ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)))) then 
+      ( ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (MI2) else (MI1) )  
+    // Denormalize
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) else (concatenateMInt(mi(1, 0), mi(31, 0))) )
+    else ( ifMInt ( (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) andBool (eqMInt(extractMInt(MI2, 0, 1), mi(1,0)))) then 
+      ( concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0)) )
+    else ( ifMInt ( (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) andBool (eqMInt(extractMInt(MI1, 0, 1), mi(1,0)))) then 
+      (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0)))
+    // TODO: need to modify
+    else (ifMInt (MInt2Float(MI1, 24, 8) >=Float MInt2Float(MI2, 24, 8)) then 
+      (MI2)  
+    else (MI1)  
+    ) ) ) ) ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
   
   /*@
     for the R and Q register fp command to get the maximum one, vmaxnmv
   */
   
-  rule LeftMaxMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) ) then (concatenateMInt(mi(8, 126), mi(8, 0))) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))))) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then ( MI2 ) else (ifMInt ((((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then (MI1) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then MI2 else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (MI1) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) else (ifMInt (MInt2Float(MI1, 11, 5) <=Float MInt2Float(MI2, 11, 5)) then (MI2) else (MI1) ) ) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
+  rule LeftMaxMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => 
+    (ifMInt /*S S*/ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(8, 126), mi(8, 0))) 
+    else (ifMInt /* S Q */ ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) orBool (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))))) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt /* Q Q */ ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt /* S */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      ( MI2 ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      (MI1) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      MI2 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (MI1) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) 
+    else (ifMInt (MInt2Float(MI1, 11, 5) <=Float MInt2Float(MI2, 11, 5)) then 
+      (MI2) 
+    else (MI1) 
+      ) ) ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
   
-  rule LeftMaxMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))))) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) then ( MI2 ) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0))))) then (MI1) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) then MI2 else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) then (MI1) else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)))) then ( ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) else (ifMInt (MInt2Float(MI1, 24, 8) <=Float MInt2Float(MI2, 24, 8)) then (MI2) else (MI1) ) ) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
+  /**
+    modified
+    */
+  rule LeftMaxMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))))) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) then 
+      //( MI2 ) 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) else (mi(32, 0))) 
+      else (MI2))
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0))))) then 
+      //(MI1) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0))) else (mi(32, 0))) 
+      else (MI1))
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) then 
+      // MI2 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) else (mi(32, 0))) 
+      else (MI2))
+    else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) then 
+      // MI1
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0))) else (mi(32, 0))) 
+      else (MI1))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (MI1) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)))) then 
+      ( ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (MI1) else (MI2) ) 
+    // Denormalize
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) else (concatenateMInt(mi(1, 0), mi(31, 0))) )
+    else ( ifMInt ( (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) andBool (eqMInt(extractMInt(MI2, 0, 1), mi(1,1)))) then 
+      ( concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0)) )
+    else ( ifMInt ( (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) andBool (eqMInt(extractMInt(MI1, 0, 1), mi(1,1)))) then 
+      (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0)))
+    // TODO: need to modify
+    else (ifMInt (MInt2Float(MI1, 24, 8) <=Float MInt2Float(MI2, 24, 8)) then 
+      (MI2) 
+    else (MI1) 
+      ) ) ) ) ) ) ) ) ) ) ) ) )
+        requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
   
   /*@
     maximum: for the one absolute and the other not absolute, like vmaxnmav
   */
-  rule LeftAbsMaxMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) ) then (concatenateMInt(mi(8, 126), mi(8, 0))) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))))) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then ( MI2 ) else (ifMInt ((((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then MI2 else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16)) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) then (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16))) else (ifMInt (absFloat(MInt2Float(MI1, 11, 5)) <=Float MInt2Float(MI2, 11, 5)) then (MI2) else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16))) ) ) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
+  rule LeftAbsMaxMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      (concatenateMInt(mi(8, 126), mi(8, 0))) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) orBool (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))))) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      ( MI2 ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      MI2 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16)) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) then 
+      (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16)))
+    // TODO: need to modify
+    else (ifMInt (absFloat(MInt2Float(MI1, 11, 5)) <=Float MInt2Float(MI2, 11, 5)) then 
+      (MI2) 
+    else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16)) 
+      ) ) ) ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
   
-  rule LeftAbsMaxMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))))) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) then ( MI2 ) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0))))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) then MI2 else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32)) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) then (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 32))) else (ifMInt (absFloat(MInt2Float(MI1, 24, 8)) <=Float MInt2Float(MI2, 24, 8)) then (MI2) else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 32))) ) ) ) ) ) ) ) ) ) ) )
+  /**
+    modified
+    */
+  rule LeftAbsMaxMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) )
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))))) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) then 
+      //( MI2 ) 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (mi(32, 0))
+      else (MI2))
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0))))) then 
+      //(concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (mi(32, 0))
+      else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))))
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) then 
+      // MI2 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (mi(32, 0))
+      else (MI2))
+    else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) then 
+      //(concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (mi(32, 0))
+      else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (MI2) else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) )  
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)))) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32)) ) 
+    // Denormalize
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) ) then 
+      (concatenateMInt(mi(1,0),mi(31,0)))
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) andBool eqMInt(extractMInt(MI2, 0, 1), mi(1,1))) then
+      (mi(32, 0))
+    // TODO: need to modify 
+    else (ifMInt (absFloat(MInt2Float(MI1, 24, 8)) <=Float MInt2Float(MI2, 24, 8)) then 
+      (MI2) 
+    else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 32))) 
+    ) ) ) ) ) ) ) ) ) ) ) )
     requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
   
   
@@ -429,70 +636,365 @@ module ARMV8-ABSTRACT-SEMANTIC
     minimum: for the one absolute and the other not absolute, like vminnmav
     MI1 is source operand, MI2 is destination operand.
   */
-  rule LeftAbsMinMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => (ifMInt /* two SNaN */(((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) ) then (concatenateMInt(mi(8, 126), mi(8, 0))) else (ifMInt /* SNaN and QNaN */ ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))))) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt /* two QNaN */ ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt /* SNaN and not NaN */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then ( MI2 ) else (ifMInt /* SNaN and not NaN */ ((((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) else (ifMInt /* QNaN and not NaN */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then MI2 else ( ifMInt /* QNaN and not NaN */ (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) else (ifMInt /* Infinity */ (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) else (MI2) ) else (ifMInt /* QNaN and not NaN */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (MI2) else (ifMInt /* 0 and 0 */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) then (MI2) else (ifMInt /* normal */ (absFloat(MInt2Float(MI1, 11, 5)) >=Float MInt2Float(MI2, 11, 5)) then (MI2) else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16))) ) ) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
+  rule LeftAbsMinMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => 
+    (ifMInt /* two SNaN */(((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      (concatenateMInt(mi(8, 126), mi(8, 0))) 
+    else (ifMInt /* SNaN and QNaN */ ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) orBool (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))))) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt /* two QNaN */ ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt /* SNaN and not NaN */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      ( MI2 ) 
+    else (ifMInt /* SNaN and not NaN */ ((((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0)))) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) 
+    else (ifMInt /* QNaN and not NaN */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      MI2 
+    else ( ifMInt /* QNaN and not NaN */ (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) 
+    else (ifMInt /* Infinity */ (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16)))  else (MI2) )
+    else (ifMInt /* Infinity */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (MI2) 
+    else (ifMInt /* 0 and 0 */ (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) then 
+      (MI2) 
+    // need to be modify
+    else (ifMInt /* normal */ (absFloat(MInt2Float(MI1, 11, 5)) >=Float MInt2Float(MI2, 11, 5)) then 
+      (MI2) 
+    else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16)) 
+      ) ) ) ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
   
-  rule LeftAbsMinMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => (ifMInt /* two SNaN */ (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt /* SNaN and QNaN */ ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))))) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt /* two QNaN */ (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt /* SNaN and not NaN */ ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) then ( MI2 ) else (ifMInt /* SNaN and not NaN */ (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0))))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (ifMInt /* QNaN and not NaN */ ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) then MI2 else ( ifMInt /* QNaN and not NaN */ ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (ifMInt /* Infinity */ ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (MI2) ) else (ifMInt /* Infinity */ ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)))) then (MI2) else (ifMInt /* 0 and 0 */ (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) then (MI2) else (ifMInt (absFloat(MInt2Float(MI1, 24, 8)) >=Float MInt2Float(MI2, 24, 8)) then (MI2) else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 32))) ) ) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
+  /**
+    modified
+    */
+  rule LeftAbsMinMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => 
+    (ifMInt /* two SNaN */ (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt /* SNaN and QNaN */ ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) orBool (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) andBool ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))))) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt /* two QNaN */ (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))))) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt /* SNaN and not NaN */ ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) then 
+      //( MI2 ) 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (mi(32, 0))
+      else (MI2))
+    else (ifMInt /* SNaN and not NaN */ (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0))))) then 
+      //(concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (mi(32, 0))
+      else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))))
+    else (ifMInt /* QNaN and not NaN */ ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) then 
+      //MI2 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (mi(32, 0))
+      else (MI2))
+    else ( ifMInt /* QNaN and not NaN */ ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) then 
+      //(concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (mi(32, 0))
+      else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))))
+    else (ifMInt /* Infinity */ ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (MI2) ) 
+    else (ifMInt /* Infinity */ ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)))) then 
+      (MI2) 
+    // Denormalized
+    else (ifMInt /* 0 and 0 */ (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) ) then 
+      (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0)))
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) andBool eqMInt(extractMInt(MI2, 0, 1), mi(1, 0)) ) then
+      (mi(32, 0))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1)))) then
+      concatenateMInt(extractMInt(MI2,0,1), mi(31,0))
+    // need to be modify
+    else (ifMInt (absFloat(MInt2Float(MI1, 24, 8)) >=Float MInt2Float(MI2, 24, 8)) then 
+      (MI2) 
+    else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 32))
+      ) ) ) ) ) ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
   
   /*@
     get the maximum absolute MInt of float
   */
-  rule AbsMaxMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else ( ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16))) else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16)) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (concatenateMInt(mi(1,0),extractMInt(MI2, 1, 16))) else (ifMInt (absFloat(MInt2Float(MI1, 11, 5)) <=Float absFloat(MInt2Float(MI2, 11, 5))) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16))) else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16))) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
+  rule AbsMaxMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => 
+    (ifMInt /*Q Q*/ ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16))) 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16)) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16)) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then 
+      (concatenateMInt(mi(1,0),extractMInt(MI2, 1, 16)))
+    // need to modify
+    else (ifMInt (absFloat(MInt2Float(MI1, 11, 5)) <=Float absFloat(MInt2Float(MI2, 11, 5))) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16))) 
+    else (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16)))
+       ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
   
-  rule AbsMaxMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else ( ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1))) ) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32))) else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32)) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (concatenateMInt(mi(1, 0), extractMInt(MI2, 1, 32))) else (ifMInt (absFloat(MInt2Float(MI1, 24, 8)) <=Float absFloat(MInt2Float(MI2, 24, 8))) then (concatenateMInt(mi(1, 0), extractMInt(MI2, 1, 32))) else (concatenateMInt(mi(1, 0), extractMInt(MI1, 1, 32))) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
+  /**
+    modified
+    */
+  rule AbsMaxMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else ( ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1))) ) then 
+      //(concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32))) 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        mi(32, 0)
+      else (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32))))
+    else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))) ) then 
+      //(concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        mi(32, 0)
+      else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32)) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) 
+    // Denormalized
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then 
+      (concatenateMInt(mi(1, 0), mi(31, 0))) 
+    // need to modify
+    else (ifMInt (absFloat(MInt2Float(MI1, 24, 8)) <=Float absFloat(MInt2Float(MI2, 24, 8))) then 
+      (concatenateMInt(mi(1, 0), extractMInt(MI2, 1, 32))) 
+    else (concatenateMInt(mi(1, 0), extractMInt(MI1, 1, 32)))
+     ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
 
   /*@
     get the maximum MInt of float
   */
-  rule MaxMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else ( ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (MI2) else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (MI1) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (MI1) else (MI2) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (MI2) else (MI1) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (MI2) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool uleMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (MI1) else (ifMInt (MInt2Float(MI1, 11, 5) <=Float MInt2Float(MI2, 11, 5)) then (MI2) else (MI1) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
+  rule MaxMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => 
+    (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (MI2) 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (MI1) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (MI1) else (MI2) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (MI2) else (MI1) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then 
+      (MI2) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool uleMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then 
+      (MI1) 
+    // TODO: need to modify
+    else (ifMInt (MInt2Float(MI1, 11, 5) <=Float MInt2Float(MI2, 11, 5)) then 
+      (MI2) 
+    else (MI1) 
+      ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
   
-  rule MaxMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else ( ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1))) ) then (MI2) else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))) ) then (MI1) else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (MI1) else (MI2) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) then (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (MI2) else (MI1) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (MI2) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) andBool uleMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (MI1) else (ifMInt (MInt2Float(MI1, 24, 8) <=Float MInt2Float(MI2, 24, 8)) then (MI2) else (MI1) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
+  /**
+    modified
+    */
+  rule MaxMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else ( ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1))) ) then 
+      //(MI2) 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) else (mi(32, 0))) 
+      else (MI2))
+    else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))) ) then 
+      //(MI1) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0))) else (mi(32, 0))) 
+      else (MI1))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (MI1) else (MI2) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) then 
+      (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (MI2) else (MI1) ) 
+    // Denormalized
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) ) then 
+      (concatenateMInt(mi(1, uvalueMInt(extractMInt(MI1,0,1)) &Int uvalueMInt(extractMInt(MI2, 0, 1))), mi(31,0)))  
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool eqMInt(extractMInt(MI2, 0, 1), mi(1,1)) ) then 
+      (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool eqMInt(extractMInt(MI1, 0, 1), mi(1,1)) ) then
+      (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0)))
+    // TODO: need to modify
+    else (ifMInt (MInt2Float(MI1, 24, 8) <=Float MInt2Float(MI2, 24, 8)) then 
+      (MI2) 
+    else (MI1) 
+      ) ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
   
   /*@
     get the minimum absolute MInt of float
   */
-  rule AbsMinMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else ( ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16))) else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16)) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16))) else (ifMInt (absFloat(MInt2Float(MI1, 11, 5)) <=Float absFloat(MInt2Float(MI2, 11, 5))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) else (concatenateMInt(mi(1,0),extractMInt(MI2, 1, 16))) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
+  rule AbsMinMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => 
+    (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16))) 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16)) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 16)) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then 
+      (concatenateMInt(mi(1,0),extractMInt(MI1, 1, 16))) 
+    // TODO: need to modify
+    else (ifMInt (absFloat(MInt2Float(MI1, 11, 5)) <=Float absFloat(MInt2Float(MI2, 11, 5))) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 16))) 
+    else (concatenateMInt(mi(1,0),extractMInt(MI2, 1, 16))) 
+      ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
   
-  rule AbsMinMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else ( ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1))) ) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32))) else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))) ) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32)) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) then (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32))) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (concatenateMInt(mi(1, 0), extractMInt(MI1, 1, 32))) else (ifMInt (absFloat(MInt2Float(MI1, 24, 8)) <=Float absFloat(MInt2Float(MI2, 24, 8))) then (concatenateMInt(mi(1, 0), extractMInt(MI1, 1, 32))) else (concatenateMInt(mi(1, 0), extractMInt(MI2, 1, 32))) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
+  /**
+    modified
+    */
+  rule AbsMinMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else ( ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1))) ) then 
+      //(concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32))) 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        mi(32, 0)
+      else (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32))))
+    else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))) ) then 
+      //(concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        mi(32, 0)
+      else (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32))))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI1, 1, 32)) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) then 
+      (concatenateMInt(mi(1,0), extractMInt(MI2, 1, 32))) 
+    // Denormalized
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) ) then 
+      (concatenateMInt(mi(1,0), mi(31,0))) 
+    // TODO: need to modify
+    else (ifMInt (absFloat(MInt2Float(MI1, 24, 8)) <=Float absFloat(MInt2Float(MI2, 24, 8))) then 
+      (concatenateMInt(mi(1, 0), extractMInt(MI1, 1, 32))) 
+    else (concatenateMInt(mi(1, 0), extractMInt(MI2, 1, 32)))
+       ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
 
   /*@
     get the minimum MInt of float
   */
-  rule MinMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( concatenateMInt(mi(8, 126), mi(8, 0)) ) else ( ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (MI2) else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (MI1) else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (MI2) else (MI1) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (MI1) else (MI2) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (MI1) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool uleMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (MI2) else (ifMInt (MInt2Float(MI1, 11, 5) <=Float MInt2Float(MI2, 11, 5)) then (MI1) else (MI2) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
+  rule MinMIntOfFP(MI1:MInt, MI2:MInt, 16, RSMap:Map) => 
+    (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI1, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI1, 6, 7), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool ((neMInt(extractMInt(MI2, 6, 16), mi(10, 0))) andBool eqMInt(extractMInt(MI2, 6, 7), mi(1,0))))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( concatenateMInt(mi(8, 126), mi(8, 0)) ) 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (MI2) 
+    else ( ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 7), mi(1, 1)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (MI1) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (MI2) else (MI1) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int MaxExponentBits(5)) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0)))) andBool (eqMInt(extractMInt(getReg("FPSCR", RSMap), 5, 6), mi(1,0))) ) then 
+      (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (MI1) else (MI2) ) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then 
+      (MI1) 
+    else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 6, 16), mi(10, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 6)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 6, 16), mi(10, 0))) ) ) andBool uleMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then 
+      (MI2) 
+    // TODO: need to modify
+    else (ifMInt (MInt2Float(MI1, 11, 5) <=Float MInt2Float(MI2, 11, 5)) then 
+      (MI1) 
+    else (MI2)
+     ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 16) andBool (bitwidthMInt(MI2) ==Int 16)
   
-  rule MinMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) else ( ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1))) ) then (MI2) else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))) ) then (MI1) else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (MI2) else (MI1) ) else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) then (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (MI1) else (MI2) ) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) andBool ugtMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (MI1) else (ifMInt ((((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0))) ) ) andBool uleMInt(extractMInt(MI1, 0, 1), extractMInt(MI2, 0, 1)) ) then (MI2) else (ifMInt (MInt2Float(MI1, 24, 8) <=Float MInt2Float(MI2, 24, 8)) then (MI1) else (MI2) ) ) ) ) ) ) ) ) )
-    requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
+  /**
+    modified
+    */
+  rule MinMIntOfFP(MI1:MInt, MI2:MInt, 32, RSMap:Map) => 
+    (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1)))) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI1, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI1, 9, 10), mi(1,0)))) orBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool ((neMInt(extractMInt(MI2, 9, 32), mi(23, 0))) andBool eqMInt(extractMInt(MI2, 9, 10), mi(1,0)))) ) then 
+      ( concatenateMInt(mi(8, 127), concatenateMInt(mi(8, 192), concatenateMInt(mi(8, 0), mi(8, 0)))) ) 
+    else ( ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 10), mi(1, 1))) ) then 
+      //(MI2) 
+      (ifMInt (uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 0))) then (concatenateMInt(extractMInt(MI1, 0, 1), mi(31, 0))) else concatenateMInt(mi(1,1), mi(31, 0))) 
+      else (MI2))
+    else ( ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 10), mi(1, 1))) ) then 
+      //(MI1) 
+      (ifMInt (uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) then 
+        (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 0))) then (concatenateMInt(extractMInt(MI2, 0, 1), mi(31, 0))) else concatenateMInt(mi(1,1), mi(31, 0))) 
+      else (MI1))
+    else (ifMInt ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)))) then 
+      ( ifMInt (eqMInt(extractMInt(MI2, 0, 1), mi(1, 1))) then (MI2) else (MI1) ) 
+    else (ifMInt ((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int MaxExponentBits(8)) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0))) ) then 
+      (ifMInt (eqMInt(extractMInt(MI1, 0, 1), mi(1, 1))) then (MI1) else (MI2) ) 
+    // Denormalized
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool ((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) ) then 
+      (concatenateMInt(mi(1, uvalueMInt(extractMInt(MI1,0,1)) |Int uvalueMInt(extractMInt(MI2, 0, 1))), mi(31,0)))
+    else (ifMInt (((uvalueMInt(extractMInt(MI1, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI1, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool eqMInt(extractMInt(MI2,0,1), mi(1,0)) ) then 
+      (concatenateMInt(extractMInt(MI1,0,1), mi(31,0))) 
+    else (ifMInt (((uvalueMInt(extractMInt(MI2, 1, 9)) ==Int 0) andBool (eqMInt(extractMInt(MI2, 9, 32), mi(23, 0)) orBool eqMInt(extractMInt(getReg("FPSCR", RSMap), 7, 8), mi(1,1))) ) andBool eqMInt(extractMInt(MI1,0,1), mi(1,0)) ) then
+      (concatenateMInt(extractMInt(MI2,0,1), mi(31,0)))
+    // TODO: need to modify
+    else (ifMInt (MInt2Float(MI1, 24, 8) <=Float MInt2Float(MI2, 24, 8)) then 
+      (MI1) 
+    else (MI2) 
+      ) ) ) ) ) ) ) ) ) )
+      requires (bitwidthMInt(MI1) ==Int 32) andBool (bitwidthMInt(MI2) ==Int 32)
 
   /*@
     Get the Maximum one of two Int of MInt
   */
-  rule MaxMIntOfInt(MI1:MInt, MI2:MInt, I:Int, S:Label, RSMap:Map) => ( ifMInt (((S ==K S8) orBool (S ==K S16)) orBool (S ==K S32)) then ( ifMInt (svalueMInt(MI1) <=Int svalueMInt(MI2)) then (MI2) else (MI1) ) else ( ifMInt (((S ==K U8) orBool (S ==K U16)) orBool (S ==K U32)) then (ifMInt (uvalueMInt(MI1) <=Int uvalueMInt(MI2)) then (MI2) else (MI1) ) else (mi(I, -1)) ) )
-    requires (bitwidthMInt(MI1) ==Int I) andBool (bitwidthMInt(MI2) ==Int I)
+  rule MaxMIntOfInt(MI1:MInt, MI2:MInt, I:Int, S:Label, RSMap:Map) => 
+    ( ifMInt (((S ==K S8) orBool (S ==K S16)) orBool (S ==K S32)) then 
+      ( ifMInt (svalueMInt(MI1) <=Int svalueMInt(MI2)) then (MI2) else (MI1) ) 
+    else ( ifMInt (((S ==K U8) orBool (S ==K U16)) orBool (S ==K U32)) then 
+      (ifMInt (uvalueMInt(MI1) <=Int uvalueMInt(MI2)) then (MI2) else (MI1) ) 
+    else (mi(I, -1)) 
+      ) )
+      requires (bitwidthMInt(MI1) ==Int I) andBool (bitwidthMInt(MI2) ==Int I)
   
-  rule LeftAbsMaxMIntOfInt(MI1:MInt, MI2:MInt, I:Int, RSMap:Map) => ( ifMInt (absInt(svalueMInt(MI1)) <=Int uvalueMInt(MI2)) then (MI2) else (mi(I, absInt(svalueMInt(MI1)))) )
-    requires (bitwidthMInt(MI1) ==Int I) andBool (bitwidthMInt(MI2) ==Int I)
+  rule LeftAbsMaxMIntOfInt(MI1:MInt, MI2:MInt, I:Int, RSMap:Map) => 
+    ( ifMInt (absInt(svalueMInt(MI1)) <=Int uvalueMInt(MI2)) then 
+      (MI2) 
+    else (mi(I, absInt(svalueMInt(MI1)))) 
+      )
+      requires (bitwidthMInt(MI1) ==Int I) andBool (bitwidthMInt(MI2) ==Int I)
   
   /*@
     Get the Minimun one of two Int of MInt, MI1 is the source operand,
     MI2 is the destination operand.
   */
-  rule MinMIntOfInt(MI1:MInt, MI2:MInt, I:Int, S:Label, RSMap:Map) => ( ifMInt (((S ==K S8) orBool (S ==K S16)) orBool (S ==K S32)) then ( ifMInt (svalueMInt(MI1) >=Int svalueMInt(MI2)) then (MI2) else (MI1) ) else ( ifMInt (((S ==K U8) orBool (S ==K U16)) orBool (S ==K U32)) then (ifMInt (uvalueMInt(MI1) >=Int uvalueMInt(MI2)) then (MI2) else (MI1) ) else (mi(I, -1)) ) )
-    requires (bitwidthMInt(MI1) ==Int I) andBool (bitwidthMInt(MI2) ==Int I)
+  rule MinMIntOfInt(MI1:MInt, MI2:MInt, I:Int, S:Label, RSMap:Map) => 
+    ( ifMInt (((S ==K S8) orBool (S ==K S16)) orBool (S ==K S32)) then 
+      ( ifMInt (svalueMInt(MI1) >=Int svalueMInt(MI2)) then (MI2) else (MI1) ) 
+    else ( ifMInt (((S ==K U8) orBool (S ==K U16)) orBool (S ==K U32)) then 
+      (ifMInt (uvalueMInt(MI1) >=Int uvalueMInt(MI2)) then (MI2) else (MI1) ) 
+    else (mi(I, -1)) 
+      ) )
+      requires (bitwidthMInt(MI1) ==Int I) andBool (bitwidthMInt(MI2) ==Int I)
   
-  rule LeftAbsMinMIntOfInt(MI1:MInt, MI2:MInt, I:Int, RSMap:Map) => ( ifMInt (absInt(svalueMInt(MI1)) >=Int uvalueMInt(MI2)) then (MI2) else (mi(I, absInt(svalueMInt(MI1)))) )
-    requires (bitwidthMInt(MI1) ==Int I) andBool (bitwidthMInt(MI2) ==Int I)
+  rule LeftAbsMinMIntOfInt(MI1:MInt, MI2:MInt, I:Int, RSMap:Map) => 
+    ( ifMInt (absInt(svalueMInt(MI1)) >=Int uvalueMInt(MI2)) then 
+      (MI2) 
+    else (mi(I, absInt(svalueMInt(MI1))))
+     )
+      requires (bitwidthMInt(MI1) ==Int I) andBool (bitwidthMInt(MI2) ==Int I)
   
   /*@
     get the multiply of MInt
   */
+  /*
   rule uMulofInt8(MI1:MInt, MI2:MInt) => mi(64, ( (uvalueMInt(extractMInt(MI1, 24, 32)) *Int uvalueMInt(extractMInt(MI2, 24, 32))) +Int (uvalueMInt(extractMInt(MI1, 16, 24)) *Int uvalueMInt(extractMInt(MI2, 16, 24))) +Int (uvalueMInt(extractMInt(MI1, 8, 16)) *Int uvalueMInt(extractMInt(MI2, 8, 16))) +Int (uvalueMInt(extractMInt(MI1, 0, 8)) *Int uvalueMInt(extractMInt(MI2, 0, 8))) ) )
   
   rule uMulofInt16(MI1:MInt, MI2:MInt) => mi(64, ( (uvalueMInt(extractMInt(MI1, 0, 16)) *Int uvalueMInt(extractMInt(MI2, 0, 16))) +Int (uvalueMInt(extractMInt(MI1, 16, 32)) *Int uvalueMInt(extractMInt(MI2, 16, 32))) ) )
@@ -504,7 +1006,19 @@ module ARMV8-ABSTRACT-SEMANTIC
   rule sMulofInt16(MI1:MInt, MI2:MInt) => mi(64, ( (svalueMInt(extractMInt(MI1, 0, 16)) *Int svalueMInt(extractMInt(MI2, 0, 16))) +Int (svalueMInt(extractMInt(MI1, 16, 32)) *Int svalueMInt(extractMInt(MI2, 16, 32))) ) )
   
   rule sMulofInt32(MI1:MInt, MI2:MInt) => mi(64, ( (svalueMInt(extractMInt(MI1, 0, 32)) *Int svalueMInt(extractMInt(MI2, 0, 32))) ) )
+  */
+
+  rule uMulofInt8(MI1:MInt, MI2:MInt) => ( (uvalueMInt(extractMInt(MI1, 24, 32)) *Int uvalueMInt(extractMInt(MI2, 24, 32))) +Int (uvalueMInt(extractMInt(MI1, 16, 24)) *Int uvalueMInt(extractMInt(MI2, 16, 24))) +Int (uvalueMInt(extractMInt(MI1, 8, 16)) *Int uvalueMInt(extractMInt(MI2, 8, 16))) +Int (uvalueMInt(extractMInt(MI1, 0, 8)) *Int uvalueMInt(extractMInt(MI2, 0, 8))) ) 
   
+  rule uMulofInt16(MI1:MInt, MI2:MInt) => ( (uvalueMInt(extractMInt(MI1, 16, 32)) *Int uvalueMInt(extractMInt(MI2, 16, 32))) +Int (uvalueMInt(extractMInt(MI1, 0, 16)) *Int uvalueMInt(extractMInt(MI2, 0, 16))) )
+  
+  rule uMulofInt32(MI1:MInt, MI2:MInt) => ( (uvalueMInt(extractMInt(MI1, 0, 32)) *Int uvalueMInt(extractMInt(MI2, 0, 32))) )
+  
+  rule sMulofInt8(MI1:MInt, MI2:MInt) => ( (svalueMInt(extractMInt(MI1, 24, 32)) *Int svalueMInt(extractMInt(MI2, 24, 32))) +Int (svalueMInt(extractMInt(MI1, 16, 24)) *Int svalueMInt(extractMInt(MI2, 16, 24))) +Int (svalueMInt(extractMInt(MI1, 8, 16)) *Int svalueMInt(extractMInt(MI2, 8, 16))) +Int (svalueMInt(extractMInt(MI1, 0, 8)) *Int svalueMInt(extractMInt(MI2, 0, 8))) )
+  
+  rule sMulofInt16(MI1:MInt, MI2:MInt) => ( (svalueMInt(extractMInt(MI1, 16, 32)) *Int svalueMInt(extractMInt(MI2, 16, 32))) +Int (svalueMInt(extractMInt(MI1, 0, 16)) *Int svalueMInt(extractMInt(MI2, 0, 16))) ) 
+  
+  rule sMulofInt32(MI1:MInt, MI2:MInt) => ( (svalueMInt(extractMInt(MI1, 0, 32)) *Int svalueMInt(extractMInt(MI2, 0, 32))) )
 
   
 endmodule
