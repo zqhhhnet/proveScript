@@ -32,7 +32,7 @@ public class SpecConfigImpl implements SpecConfig {
     /**
      * spec中，code text的设置
      * @param specContext
-     * @return
+     * @return 返回验证程序
      */
     @Override
     public List<String> programSet(SpecContext specContext) {
@@ -49,6 +49,12 @@ public class SpecConfigImpl implements SpecConfig {
                     || "VMAXA".equals(opcode) || "VMINA".equals(opcode)
                     || "VMLAV".equals(opcode) || "VMAXAV".equals(opcode) || "VMINAV".equals(opcode)) {
                 programSet = programState.vvIntProgramSet(specContext);
+            } else if ("VADD".equals(opcode) || "VSUB".equals(opcode) || "VMUL".equals(opcode)
+                    || "VAND".equals(opcode) || "VORR".equals(opcode) || "VDUP".equals(opcode)
+                    || "VNEG".equals(opcode) || "VSHR".equals(opcode) || "VSHL".equals(opcode)
+                    || "VRSHL".equals(opcode) || "VMLA".equals(opcode) || "VQADD".equals(opcode)
+                    || "VQRDMULH".equals(opcode)) {
+                programSet = programState.vvIntProgramSet(specContext);
             }
 
             // TODO: 其他指令相应处理
@@ -62,7 +68,7 @@ public class SpecConfigImpl implements SpecConfig {
     /**
      * 前置条件解析与设置
      * 按照不同指令进行设定
-     * @return
+     * @return 返回前置条件
      */
     @Override
     public String preConditionSet() {
@@ -82,8 +88,22 @@ public class SpecConfigImpl implements SpecConfig {
             } else if ("VMAXAV".equals(opcode) || "VMINAV".equals(opcode)) {
                 preCondition = preCondState.vvIntPreSet();
             } else if ("VMAX".equals(opcode) || "VMIN".equals(opcode)
-                    ||"VMAXA".equals(opcode) || "VMINA".equals(opcode)) {
+                    || "VMAXA".equals(opcode) || "VMINA".equals(opcode) || "VRSHL".equals(opcode)
+                    || "VQADD".equals(opcode)) {
                 preCondition = preCondState.allVecPreSet();
+            } else if ("VADD".equals(opcode) || "VSUB".equals(opcode) || "VMUL".equals(opcode)) {
+                if (preCondState.getInstruction().getSourceRegister().get(1).charAt(0) == 'R') {
+                    preCondition = preCondState.vecAndGeneralPreSet();
+                } else {
+                    preCondition = preCondState.allVecPreSet();
+                }
+            } else if ("VAND".equals(opcode) || "VORR".equals(opcode)) {
+                preCondition = preCondState.allVecPreSetNoDataType();
+            } else if ("VDUP".equals(opcode)) {
+                preCondition = preCondState.vdupRQPreSet();
+            } else if ("VNEG".equals(opcode) || "VSHR".equals(opcode) || "VSHL".equals(opcode)
+                    || "VMLA".equals(opcode) || "VQRDMULH".equals(opcode)) {
+                preCondition = preCondState.vecAndGeneralPreSet();
             }
             // TODO: 其他指令相应处理
             return preCondition;
@@ -97,7 +117,7 @@ public class SpecConfigImpl implements SpecConfig {
      * 后置条件解析与设定
      * 需要根据指令分别处理
      * TODO: 加入ensures
-     * @return
+     * @return 返回后置条件
      */
     @Override
     public List<String> postConditionSet() {
@@ -119,6 +139,46 @@ public class SpecConfigImpl implements SpecConfig {
             } else if ("VMAXA".equals(opcode) || "VMINA".equals(opcode)
                     || "VMAX".equals(opcode) || "VMIN".equals(opcode)) {
                 postCondition = postCondState.allVecPostSet();
+            } else if ("VADD".equals(opcode)) {
+                if (preCondState.getInstruction().getSourceRegister().get(1).charAt(0) == 'R') {
+                    postCondition = postCondState.vaddQRPostSet();
+                }
+                // TODO:postCondition = postCondState.vaddQQPostSet();
+            } else if ("VSUB".equals(opcode)) {
+                if (preCondState.getInstruction().getSourceRegister().get(1).charAt(0) == 'R') {
+                    postCondition = postCondState.vsubQRPostSet();
+                } else {
+                    postCondition = postCondState.vsubQQPostSet();
+                }
+            } else if ("VMUL".equals(opcode)) {
+                if (preCondState.getInstruction().getSourceRegister().get(1).charAt(0) == 'R') {
+                    postCondition = postCondState.vmulQRPostSet();
+                } else {
+                    //postCondition = postCondState.vmulQQPostSet();
+                }
+            } else if ("VSHR".equals(opcode)) {
+                postCondition = postCondState.vshrQImmPostSet();
+            } else if ("VSHL".equals(opcode)) {
+                postCondition = postCondState.vshlQImmPostSet();
+            } else if ("VORR".equals(opcode)) {
+                if (preCondState.getInstruction().getDatatype() == null) {
+                    postCondition = postCondState.vorrQQPostSet();
+                }
+                // 立即数
+            } else if ("VAND".equals(opcode)) {
+                postCondition = postCondState.vandQQPostSet();
+            } else if ("VDUP".equals(opcode)) {
+                postCondition = postCondState.vdupQRPostSet();
+            } else if ("VNEG".equals(opcode)) {
+                postCondition = postCondState.vnegQQPostSet();
+            } else if ("VMLA".equals(opcode)) {
+                postCondition = postCondState.vmlaQRPostSet();
+            } else if ("VRSHL".equals(opcode)) {
+                postCondition = postCondState.vrshlQQPostSet();
+            } else if ("VQADD".equals(opcode)) {    //fpscr
+                postCondition = postCondState.vqaddQQPostSet();
+            } else if ("VQRDMULH".equals(opcode)) { //fpscr
+                postCondition = postCondState.vqrdmulhQRPostSet();
             }
             // TODO: 其他指令相应处理
             // 都不匹配
@@ -239,6 +299,21 @@ public class SpecConfigImpl implements SpecConfig {
                 String curOpcode = "VMAXA".equals(opcode) ? "spec-vmaxa-once.k" :
                         ("VMINA".equals(opcode) ? "spec-vmina-once.k" :
                                 ("VMAX").equals(opcode) ? "spec-vmax-once.k" : "spec-vmin-once.k");
+                File file = new File(curPath + System.getProperty("file.separator") + curOpcode);
+                System.out.println(file.getName());
+                fos = new FileOutputStream(file);
+                makeFile(fos, total);
+                return file;
+            } else if ("VADD".equals(opcode) || "VSUB".equals(opcode) || "VMUL".equals(opcode)
+                    || "VAND".equals(opcode) || "VORR".equals(opcode) || "VDUP".equals(opcode)
+                    || "VNEG".equals(opcode) || "VSHR".equals(opcode) || "VSHL".equals(opcode)
+                    || "VRSHL".equals(opcode) || "VMLA".equals(opcode) || "VQADD".equals(opcode)
+                    || "VQRDMULH".equals(opcode)) {
+                StringBuilder moduleName = new StringBuilder();
+                moduleName.append("module SPEC-").append(opcode).append("-ONCE\n");
+                String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
+                        regStateSet + defaultReg + preCondition + endModule;
+                String curOpcode = "spec-" + opcode.toLowerCase() + "-once.k";
                 File file = new File(curPath + System.getProperty("file.separator") + curOpcode);
                 System.out.println(file.getName());
                 fos = new FileOutputStream(file);

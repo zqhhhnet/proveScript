@@ -19,13 +19,25 @@ public class SpecConfigTest {
     public static void main(String[] args) {
         ProveObject proveObject = new ProveObject();
         //String inst = "MOV R0, # B";
-        String inst = "VMOV.$8 Q0[3], R0";
+        //String inst = "VMUL.I8 Q1, Q1, R0";
+        //String inst = "VORR Q2, Q1, Q3";
+        String inst = "VRSHL.S8 Q2, Q0, Q1";
         List<String> insts = new ArrayList<>();
         insts.add(inst);
         proveObject.setInstructions(insts);
 
         Map<String, BigInteger[]> preMap = new HashMap<>();
+        //preMap.put("B", new BigInteger[]{BigInteger.ZERO, new BigInteger("30")});
         preMap.put("A", new BigInteger[]{BigInteger.ONE, new BigInteger("1561561651")});
+        /*preMap.put("A0", new BigInteger[]{BigInteger.ZERO, new BigInteger("232321")});
+        preMap.put("A1", new BigInteger[]{BigInteger.ZERO, new BigInteger("78424")});
+        preMap.put("A2", new BigInteger[]{BigInteger.ZERO, new BigInteger("683222")});
+        preMap.put("A3", new BigInteger[]{BigInteger.ZERO, new BigInteger("8232322")});*/
+        /*preMap.put("C", new BigInteger[]{BigInteger.ONE, new BigInteger("1455554345")});
+        preMap.put("C0", new BigInteger[]{BigInteger.ZERO, new BigInteger("2322321")});
+        preMap.put("C1", new BigInteger[]{BigInteger.ZERO, new BigInteger("7843")});
+        preMap.put("C2", new BigInteger[]{BigInteger.ZERO, new BigInteger("68222")});
+        preMap.put("C3", new BigInteger[]{BigInteger.ZERO, new BigInteger("3821322")});*/
         preMap.put("A000", new BigInteger[]{BigInteger.ZERO, new BigInteger("127")});
         preMap.put("A001", new BigInteger[]{BigInteger.ZERO, new BigInteger("76")});
         preMap.put("A002", new BigInteger[]{BigInteger.ZERO, new BigInteger("78")});
@@ -42,8 +54,8 @@ public class SpecConfigTest {
         preMap.put("A0013", new BigInteger[]{BigInteger.ZERO, new BigInteger("24")});
         preMap.put("A0014", new BigInteger[]{BigInteger.ZERO, new BigInteger("22")});
         preMap.put("A0015", new BigInteger[]{BigInteger.ZERO, new BigInteger("8")});
-        preMap.put("B", new BigInteger[]{BigInteger.ZERO, new BigInteger("30")});
-/*        preMap.put("C", new BigInteger[]{BigInteger.ONE, new BigInteger("1455554345")});
+        //preMap.put("B", new BigInteger[]{BigInteger.ZERO, new BigInteger("2")});
+        preMap.put("C", new BigInteger[]{BigInteger.ONE, new BigInteger("1455554345")});
         preMap.put("C000", new BigInteger[]{BigInteger.ZERO, new BigInteger("25")});
         preMap.put("C001", new BigInteger[]{BigInteger.ZERO, new BigInteger("45")});
         preMap.put("C002", new BigInteger[]{BigInteger.ZERO, new BigInteger("56")});
@@ -59,13 +71,13 @@ public class SpecConfigTest {
         preMap.put("C0012", new BigInteger[]{BigInteger.ZERO, new BigInteger("112")});
         preMap.put("C0013", new BigInteger[]{BigInteger.ZERO, new BigInteger("110")});
         preMap.put("C0014", new BigInteger[]{BigInteger.ZERO, new BigInteger("13")});
-        preMap.put("C0015", new BigInteger[]{BigInteger.ZERO, new BigInteger("12")});*/
+        preMap.put("C0015", new BigInteger[]{BigInteger.ZERO, new BigInteger("12")});
         proveObject.setPreCond(preMap);
 
         Map<String, String> RegMap = new HashMap<>();
         RegMap.put("Q0", "A");
-        RegMap.put("R0", "B");
-        //RegMap.put("Q3", "C");
+        //RegMap.put("R0", "B");
+        RegMap.put("Q1", "C");
         proveObject.setRegisterMap(RegMap);
         PreCondState preCondState = new PreCondState(proveObject);
         PostCondState postCondState = new PostCondState(proveObject);

@@ -4,6 +4,7 @@ import lombok.Data;
 import com.pojo.Instruction;
 import com.pojo.ProveObject;
 
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -30,6 +31,7 @@ public class PreCondState {
      * @return
      */
     public String simplePreSet() {
+        String preCondition = "";
         try {
             // 若出现instruction context为空 或者 目标操作数为空 的情况
             if (instruction == null || instruction.getDestinationRegister() == null) {
@@ -52,7 +54,7 @@ public class PreCondState {
                 }
                 // 当MOV的源操作数是立即数时，前置条件为空（验证程序中默认的范围，即当为32位寄存器值时，当立即数超出32位能表达的范围验证器不会判True）
                 // 只需验证其后置条件是否满足
-                return isValMov(instruction.getImm());
+                preCondition = isValMov(instruction.getImm());
             } else {
                 // 源操作数为寄存器
                 List<String> sourceRegister = instruction.getSourceRegister();
@@ -71,13 +73,16 @@ public class PreCondState {
                 // 当MOV的源操作数是寄存器时，需要再判断一次，若当前存储的是立即数（即源操作数的值也是立即数的情况），那还是设空，不是立即数就
                 // 设定范围
                 String value = registerMap.get(destinationRegister);
-                return isValMov(value);
+                preCondition = isValMov(value);
             }
+            proveObject.setRegisterMap(registerMap);
+            proveObject.setPreCond(preCond);
         } catch (InputMismatchException ex) {
             //System.err.println("输入内容为空，请重新输入！");
             ex.printStackTrace();
             return null;
         }
+        return preCondition;
     }
 
     /**
@@ -266,7 +271,9 @@ public class PreCondState {
             }
             String desRegister = instruction.getDestinationRegister();
             int size = Integer.parseInt(instruction.getDatatype().substring(1));
-            if ("VMAX".equals(instruction.getOpcode()) || "VMIN".equals(instruction.getOpcode())) {
+            if ("VMAX".equals(instruction.getOpcode()) || "VMIN".equals(instruction.getOpcode())
+                || "VSUB".equals(instruction.getOpcode()) || "VRSHL".equals(instruction.getOpcode())
+                    || "VQADD".equals(instruction.getOpcode())) {
                 if (instruction.getSourceRegister().size() < 2)
                     throw new RuntimeException("Number of Source Registers is less than 2");
                 preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size)
@@ -274,6 +281,79 @@ public class PreCondState {
             } else if ("VMAXA".equals(instruction.getOpcode()) || "VMINA".equals(instruction.getOpcode())) {
                 preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size)
                         + "\t\t\tandBool " + setSRegister(instruction.getDestinationRegister(), size) + "\n";
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+        }
+        return preCondition;
+    }
+
+    /**
+     * 无数据类型
+     * @return
+     */
+    public String allVecPreSetNoDataType() {
+        String preCondition = "";
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null) {
+                throw new RuntimeException("context is null");
+            }
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty()) {
+                throw new RuntimeException("Source register is null");
+            }
+            String desRegister = instruction.getDestinationRegister();
+            if ("VAND".equals(instruction.getOpcode()) || "VORR".equals(instruction.getOpcode())) {
+                if (instruction.getSourceRegister().size() < 2)
+                    throw new RuntimeException("Number of Source Registers is less than 2");
+                preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), 32)
+                        + "\t\t\tandBool " + setSRegister(instruction.getSourceRegister().get(1), 32) + "\n";
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+        }
+        return preCondition;
+    }
+
+    /**
+     * 源操作数是向量寄存器和通用寄存器
+     * @return
+     */
+    public String vecAndGeneralPreSet() {
+        String preCondition = "";
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null) {
+                throw new RuntimeException("context is null");
+            }
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty()) {
+                throw new RuntimeException("Source register is null");
+            }
+            int size = Integer.parseInt(instruction.getDatatype().substring(1));
+            if ("VADD".equals(instruction.getOpcode()) || "VSUB".equals(instruction.getOpcode())
+                    || "VMUL".equals(instruction.getOpcode()) || "VQRDMULH".equals(instruction.getOpcode())) {
+                if (instruction.getSourceRegister().size() < 2)
+                    throw new RuntimeException("Number of Source Registers is less than 2");
+                String desRegister = instruction.getSourceRegister().get(1);
+                preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size);
+                preCondition = setDesCond(preCondition, desRegister, size);
+            } else if ("VNEG".equals(instruction.getOpcode())) {
+                preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size);
+            } else if ("VSHR".equals(instruction.getOpcode()) || "VSHL".equals(instruction.getOpcode())) {
+                preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size);
+                if (instruction.getImm() != null && Character.isLetter(instruction.getImm().charAt(0))) {
+                    Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+                    preCondition = preCondition + "\t\t\tandBool " + instruction.getImm() + " >=Int " +
+                            preCond.get(instruction.getImm())[0] + " andBool " + instruction.getImm() +
+                            " <=Int " + preCond.get(instruction.getImm())[1] + "\n";
+                }
+            } else if ("VMLA".equals(instruction.getOpcode())) {
+                if (instruction.getSourceRegister().size() < 2)
+                    throw new RuntimeException("Number of Source Registers is less than 2");
+                String desRegister = instruction.getSourceRegister().get(1);
+                preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size);
+                if (!instruction.getDestinationRegister().equals(instruction.getSourceRegister().get(0))) {
+                    preCondition = preCondition + "\t\t\tandBool " + setSRegister(instruction.getDestinationRegister(), size);
+                }
+                preCondition = setDesCond(preCondition, desRegister, size);
             }
         } catch (RuntimeException ex) {
             ex.printStackTrace();
@@ -309,6 +389,13 @@ public class PreCondState {
         return preCondition;
     }
 
+    /**
+     * 通用寄存器的前置条件
+     * @param preSourceCond 源操作数的前置条件
+     * @param destinationRegister   目标通用寄存器
+     * @param size  数据类型长度
+     * @return  前置条件
+     */
     private String setDesCond(String preSourceCond, String destinationRegister, int size) {
         String desPreCond = null;
         Map<String, BigInteger[]> preCond = proveObject.getPreCond();
@@ -322,6 +409,7 @@ public class PreCondState {
         BigInteger[] bigIntegers = preCond.get(val);
         desPreCond = preSourceCond + "\t\t\tandBool " + val + " >=Int " + bigIntegers[0] +
                 " andBool " + val + " <=Int " + bigIntegers[1] + "\n";
+        proveObject.setPreCond(preCond);
         return desPreCond;
     }
 
@@ -420,5 +508,35 @@ public class PreCondState {
         return sourcePre.toString();
     }
 
-    
+    public String vdupRQPreSet() {
+        String preCondition = "";
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null) {
+                throw new RuntimeException("context is null");
+            }
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty()) {
+                throw new RuntimeException("Source register is null");
+            }
+            String sourceRegister = instruction.getSourceRegister().get(0);
+            // 无ISUF
+            int size = Integer.parseInt(instruction.getDatatype());
+            if ("VDUP".equals(instruction.getOpcode())) {
+                Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+                Map<String, String> registerMap = proveObject.getRegisterMap();
+                if (!registerMap.containsKey(sourceRegister))
+                    throw new InputMismatchException("目标寄存器无对应值，请重新设置");
+                String val = registerMap.get(sourceRegister);
+                if (val != null && preCond.get(val) == null) {
+                    preCond.put(val, new BigInteger[]{new BigInteger(val), new BigInteger(val)});
+                }
+                BigInteger[] bigIntegers = preCond.get(val);
+                preCondition = "\t\t\trequires " + val + " >=Int " + bigIntegers[0] +
+                        " andBool " + val + " <=Int " + bigIntegers[1] + "\n";
+                proveObject.setPreCond(preCond);
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+        }
+        return preCondition;
+    }
 }

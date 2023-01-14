@@ -6,10 +6,8 @@ import com.pojo.Instruction;
 import com.pojo.ProveObject;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Data
 public class PostCondState {
@@ -457,6 +455,453 @@ public class PostCondState {
     }
 
     /**
+     * 源操作数存在通用寄存器
+     * @return  后置条件
+     */
+    public List<String> vaddQRPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            String val = registerMap.get(sourceRegister2);
+            desCond.append("\t\t\t\"").append(sourceRegister2).append("\" |-> ").append("mi(32, ")
+                    .append(val).append(")\n");
+            if (desRegister.equals(sourceRegister1)) {
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    if (size == 32) {
+                        getVADDQRsRegToLeft(32, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                        String sub = "extractMInt(addMInt(mi(32, " + registerMap.get(sReg1) + "), mi(32, "
+                                + registerMap.get(sourceRegister2) + ")), ";
+                        sRegToRight.append("\t\t\t\t\tconcatenateMInt(").append(sub).append("0, 24), ")
+                                .append("addMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1))
+                                .append("), 24, 32), extractMInt(mi(32, ").append(registerMap.get(sourceRegister2))
+                                .append("), 24, 32)))\n");
+                    } else {
+                        getVADDQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                        sRegToRight = sRegToLeft;
+                    }
+                    sListTo.add(sRegToRight);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+
+                    for (String s : vals1) {
+                        BigInteger[] bigIntegers1 = preCond.get(s);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(s, new BigInteger[]{bigIntegers1[0].add(bigIntegers2[0]),
+                                bigIntegers1[1].add(bigIntegers2[1])});
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    if (size == 32) {
+                        getVADDQRsRegToLeft(32, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                        String sub = "extractMInt(addMInt(mi(32, " + registerMap.get(sReg1) + "), mi(32, "
+                                + registerMap.get(sourceRegister2) + ")), ";
+                        sRegToRight.append("\t\t\t\t\tconcatenateMInt(").append(sub).append("0, 24), ")
+                                .append("addMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1))
+                                .append("), 24, 32), extractMInt(mi(32, ").append(registerMap.get(sourceRegister2))
+                                .append("), 24, 32)))\n");
+                    } else {
+                        getVADDQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                        sRegToRight = sRegToLeft;
+                    }
+                    sListTo.add(sRegToRight);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(valsDes[j], new BigInteger[]{bigIntegers1[0].add(bigIntegers2[0]),
+                                bigIntegers1[1].add(bigIntegers2[1])});
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
+     * 源存在通用寄存器
+     * @return
+     */
+    public List<String> vsubQRPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            String val = registerMap.get(sourceRegister2);
+            desCond.append("\t\t\t\"").append(sourceRegister2).append("\" |-> ").append("mi(32, ")
+                    .append(val).append(")\n");
+            if (desRegister.equals(sourceRegister1)) {
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    getVSUBQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+
+                    for (String s : vals1) {
+                        BigInteger[] bigIntegers1 = preCond.get(s);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(s, new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
+                                bigIntegers1[1].subtract(bigIntegers2[0])});
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    getVSUBQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(valsDes[j], new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
+                                bigIntegers1[1].subtract(bigIntegers2[0])});
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
+     * 源皆为向量寄存器
+     * @return
+     */
+    public List<String> vsubQQPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+            // 第一个源操作数同时为目标操作数
+            if (desRegister.equals(sourceRegister1)) {
+                int index = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    String sReg2 = "S" + (index+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    getVSUBQQsRegToLeft(size, sRegToLeft, registerMap, sReg1, sReg2, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(vals1[j], new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
+                                bigIntegers1[1].subtract(bigIntegers2[0])});
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else if (desRegister.equals(sourceRegister2)) {   // 第二个源操作数同时为目标操作数
+                int index = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index+i);
+                    String sReg2 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg2, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    getVSUBQQsRegToLeft(size, sRegToLeft, registerMap, sReg1, sReg2, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(vals2[j], new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
+                                bigIntegers1[1].subtract(bigIntegers2[0])});
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                int index2 = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                setSourcePostCond(size, index2, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    String sReg2 = "S" + (index2+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    getVSUBQQsRegToLeft(size, sRegToLeft, registerMap, sReg1, sReg2, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(valsDes[j], new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
+                                bigIntegers1[1].subtract(bigIntegers2[0])});
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
      * 用于处理操作数都是向量寄存器的指令，once
      * @return
      */
@@ -477,27 +922,11 @@ public class PostCondState {
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
             String desRegister = instruction.getDestinationRegister();
-            StringBuilder desCond = new StringBuilder();
-            desCond.append("\t\t\t\"CONTROL\" |-> (mi(32, _:Int) => mi(32, 1))\n\t\t\t\"CONTROL_NS\" |-> (mi(32, _:Int) => mi(32, 1))\n ")
-                    .append("\t\t\t\"CONTROL_S\" |-> (mi(32, _:Int) => mi(32, 1))\n")
-                    .append("\t\t\t\"CPACR\" |-> (mi(32, _:Int) => mi(32, 3145728))\n")
-                    .append("\t\t\t\"CPACR_NS\" |-> (mi(32, _:Int) => mi(32, 3145728))\n")
-                    .append("\t\t\t\"CPACR_S\" |-> (mi(32, _:Int) => mi(32, 3145728))\n")
-                    .append("\t\t\t\"CPPWR\" |-> (mi(32, _:Int) => mi(32, 0))\n")
-                    .append("\t\t\t\"CPPWR_NS\" |-> (mi(32, _:Int) => mi(32, 0))\n")
-                    .append("\t\t\t\"CPPWR_S\" |-> (mi(32, _:Int) => mi(32, 0))\n")
-                    .append("\t\t\t\"EPSR\" |-> (mi(32, _:Int) => mi(32, 2048))\n")
-                    .append("\t\t\t\"FPCCR\" |-> (mi(32, _:Int) => mi(32, 0))\n")
-                    .append("\t\t\t\"FPCCR_NS\" |-> (mi(32, _:Int) => mi(32, 0))\n")
-                    .append("\t\t\t\"FPCCR_S\" |-> (mi(32, _:Int) => mi(32, 0))\n")
-                    .append("\t\t\t\"MVFR1\" |-> (mi(32, _:Int) => mi(32, 256))\n")
-                    .append("\t\t\t\"NSACR\" |-> (mi(32, _:Int) => mi(32, 1024))\n")
-                    .append("\t\t\t\"VPR\" |-> (mi(32, _:Int) => mi(32, 2048))\n")
-                    .append("\t\t\t\"RESULT64\" |-> mi(64, 0)\n");
+            StringBuilder desCond = preSet();
             Map<String, BigInteger[]> preCond = proveObject.getPreCond();
             sourcePostCond.clear();
 
-            // VMAX、VMIN需要判断目标寄存器是否为某一个源寄存器，若是，则需要利用 原 => 后
+            // VMAX、VMIN需要判断目标寄存器是否为某一个源寄存器，若是，则需要 原 => 后
             if ("VMAX".equals(instruction.getOpcode()) || "VMIN".equals(instruction.getOpcode())) {
                 int equalFlag = 0;
                 String sourceRegister1 = instruction.getSourceRegister().get(0);
@@ -528,7 +957,7 @@ public class PostCondState {
                             sReg1.append('S').append((indexDes+i));
                             sReg2.append('S').append((index+i));
                         }
-                        StringBuilder sRegTo = getToDesConca(sReg1.toString(), sReg2.toString(), size,
+                        StringBuilder sRegTo = getDesByCompElement(sReg1.toString(), sReg2.toString(), size,
                                 "VMAX".equals(instruction.getOpcode()) ? "<=Int" : ">=Int");
                         sListTo.add(sRegTo);
                         desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
@@ -596,7 +1025,7 @@ public class PostCondState {
                                 preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
                             } else if (size == 32) {
                                 String tmp = val + i;
-                                registerMap.put("S" + i, tmp);
+                                registerMap.put("S" + (indexDes + i), tmp);
                                 preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
                             }
                         }
@@ -623,7 +1052,7 @@ public class PostCondState {
                                     preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
                                 } else if (size == 32) {
                                     String tmp = val + i;
-                                    registerMap.put("S" + i, tmp);
+                                    registerMap.put("S" + (indexDes + i), tmp);
                                     preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
                                 }
                             }
@@ -631,12 +1060,12 @@ public class PostCondState {
                     }
 
                     for (int i = 0; i < 4; i++) {
-                        StringBuilder sRegFrom = new StringBuilder().append("\"mi(32, _:Int)\n");
+                        StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
                         StringBuilder sReg1 = new StringBuilder();
                         StringBuilder sReg2 = new StringBuilder();
                         sReg1.append('S').append((index1+i));
                         sReg2.append('S').append((index2+i));
-                        StringBuilder sRegTo = getToDesConca(sReg1.toString(), sReg2.toString(), size,
+                        StringBuilder sRegTo = getDesByCompElement(sReg1.toString(), sReg2.toString(), size,
                                 "VMAX".equals(instruction.getOpcode()) ? "<=Int" : ">=Int");
                         sListTo.add(sRegTo);
                         desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
@@ -725,6 +1154,27 @@ public class PostCondState {
         return postCondition;
     }
 
+    private StringBuilder preSet() {
+        StringBuilder pre = new StringBuilder();
+        pre.append("\t\t\t\"CONTROL\" |-> (mi(32, _:Int) => mi(32, 1))\n\t\t\t\"CONTROL_NS\" |-> (mi(32, _:Int) => mi(32, 1))\n ")
+                .append("\t\t\t\"CONTROL_S\" |-> (mi(32, _:Int) => mi(32, 1))\n")
+                .append("\t\t\t\"CPACR\" |-> (mi(32, _:Int) => mi(32, 3145728))\n")
+                .append("\t\t\t\"CPACR_NS\" |-> (mi(32, _:Int) => mi(32, 3145728))\n")
+                .append("\t\t\t\"CPACR_S\" |-> (mi(32, _:Int) => mi(32, 3145728))\n")
+                .append("\t\t\t\"CPPWR\" |-> (mi(32, _:Int) => mi(32, 0))\n")
+                .append("\t\t\t\"CPPWR_NS\" |-> (mi(32, _:Int) => mi(32, 0))\n")
+                .append("\t\t\t\"CPPWR_S\" |-> (mi(32, _:Int) => mi(32, 0))\n")
+                .append("\t\t\t\"EPSR\" |-> (mi(32, _:Int) => mi(32, 2048))\n")
+                .append("\t\t\t\"FPCCR\" |-> (mi(32, _:Int) => mi(32, 0))\n")
+                .append("\t\t\t\"FPCCR_NS\" |-> (mi(32, _:Int) => mi(32, 0))\n")
+                .append("\t\t\t\"FPCCR_S\" |-> (mi(32, _:Int) => mi(32, 0))\n")
+                .append("\t\t\t\"MVFR1\" |-> (mi(32, _:Int) => mi(32, 256))\n")
+                .append("\t\t\t\"NSACR\" |-> (mi(32, _:Int) => mi(32, 1024))\n")
+                .append("\t\t\t\"VPR\" |-> (mi(32, _:Int) => mi(32, 2048))\n")
+                .append("\t\t\t\"RESULT64\" |-> mi(64, 0)\n");
+        return pre;
+    }
+
     /**
      * 获取绝对值时，两个元素对比的后置条件
      * @param sReg1 源操作数元素1
@@ -758,14 +1208,14 @@ public class PostCondState {
     }
 
     /**
-     * 获取浮点寄存器中，每对元素的比较情况，对应后置条件
+     * 获取浮点寄存器 S 中，每对元素的比较情况，对应后置条件
      * @param sReg1 对应第一个源操作数的浮点寄存器
      * @param sReg2 对应第二个源操作数的浮点寄存器
      * @param width 每个元素的位宽
      * @param cmpMode   比较模式，取最大还是取最小
      * @return  返回 S 对应的后置条件
      */
-    private StringBuilder getToDesConca(String sReg1, String sReg2, int width, String cmpMode) {
+    private StringBuilder getDesByCompElement(String sReg1, String sReg2, int width, String cmpMode) {
         StringBuilder res = new StringBuilder();
         String[] vals1 = proveObject.getRegisterMap().get(sReg1).split(":");
         String[] vals2 = proveObject.getRegisterMap().get(sReg2).split(":");
@@ -834,7 +1284,7 @@ public class PostCondState {
             }
         } else if (reg.charAt(0) == 'S') {
             if (width == 32) {
-                concaVal.append("mi(32, ").append(proveObject.getRegisterMap().get(reg));
+                concaVal.append("mi(32, ").append(proveObject.getRegisterMap().get(reg)).append(")");
             } else {
                 String[] vals = proveObject.getRegisterMap().get(reg).split(":");
                 for (int i = 0; i < vals.length; i++) {
@@ -852,6 +1302,12 @@ public class PostCondState {
         return concaVal;
     }
 
+    /**
+     * 设置源向量操作数的后置条件
+     * @param size
+     * @param index
+     * @param sourceReg
+     */
     private void setSourcePostCond(int size, int index, String sourceReg) {
         // 当size为32时，即每个元素都是32位，直接对应浮点寄存器的值，因此可以直接映射
         if (size == 32) {
@@ -970,7 +1426,7 @@ public class PostCondState {
                 normalize(sourceRange0, datatype, size);
                 normalize(sourceRange1, datatype, size);
                 // 分情况讨论，当为带符号数时
-                BigInteger[] range = getRange(sourceRange0, sourceRange1, datatype);
+                BigInteger[] range = getMULRange(sourceRange0, sourceRange1, datatype);
                 desLower = desLower.add(range[0]);
                 desHigher = desHigher.add(range[1]);
             } else if (size == 16 || size == 8) {
@@ -989,7 +1445,7 @@ public class PostCondState {
                     // 同上
                     normalize(sourceRange0, datatype, size);
                     normalize(sourceRange1, datatype, size);
-                    BigInteger[] range = getRange(sourceRange0, sourceRange1, datatype);
+                    BigInteger[] range = getMULRange(sourceRange0, sourceRange1, datatype);
                     freshB = freshB.add(range[0]);
                     freshH = freshH.add(range[1]);
                 }
@@ -1043,7 +1499,7 @@ public class PostCondState {
      * @param datatype
      * @return
      */
-    private BigInteger[] getRange(BigInteger[] sourceRange0, BigInteger[] sourceRange1, String datatype) {
+    private BigInteger[] getMULRange(BigInteger[] sourceRange0, BigInteger[] sourceRange1, String datatype) {
         BigInteger freshH, freshB;
         if (datatype.charAt(0) == 'S') {
             // 上界都为负数
@@ -1367,5 +1823,2721 @@ public class PostCondState {
             lower = sourceRange[0].compareTo(desRange[0]) <= 0 ? desRange[0] : sourceRange[0];
         }
         return new BigInteger[]{lower, upper};
+    }
+
+    private void getVADDQRsRegToLeft(int size, StringBuilder sRegToLeft, Map<String, String> registerMap,
+                                        String sReg1, String sourceRegister2, String[] vals1) {
+
+        if (size == 32) {
+            sRegToLeft.append("\t\t\t\t\taddMInt(mi(32, ").append(registerMap.get(sReg1))
+                    .append("), mi(32, ").append(registerMap.get(sourceRegister2)).append("))\n");
+        } else if (size == 16) {
+            String sub = "extractMInt(mi(32, " + registerMap.get(sourceRegister2) + "), 16, 32)";
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(").append("addMInt(mi(16, ")
+                    .append(vals1[0]).append("), ")
+                    .append(sub).append("), addMInt(mi(16, ").append(vals1[1])
+                    .append("), ").append(sub).append("))\n");
+        } else if (size == 8) {
+            String sub = "extractMInt(mi(32, " + registerMap.get(sourceRegister2) + "), 24, 32)";
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(").append("addMInt(mi(8, ")
+                    .append(vals1[0]).append("), ")
+                    .append(sub).append("), ").append("concatenateMInt(")
+                    .append("addMInt(mi(8, ").append(vals1[1])
+                    .append("), ").append(sub).append("), ")
+                    .append("concatenateMInt(")
+                    .append("addMInt(mi(8, ").append(vals1[2])
+                    .append("), ").append(sub).append("), ")
+                    .append("addMInt(mi(8, ").append(vals1[3])
+                    .append("), ").append(sub).append("))))\n");
+        }
+
+    }
+
+    private void getVSUBQRsRegToLeft(int size, StringBuilder sRegToLeft, Map<String, String> registerMap,
+                                   String sReg1, String sourceRegister2, String[] vals1) {
+        if (size == 32) {
+            sRegToLeft.append("\t\t\t\t\tsubMInt(mi(32, ").append(registerMap.get(sReg1))
+                    .append("), mi(32, ").append(registerMap.get(sourceRegister2)).append("))\n");
+        } else if (size == 16) {
+            String sub = "extractMInt(mi(32, " + registerMap.get(sourceRegister2) + "), 16, 32)";
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(").append("subMInt(mi(16, ")
+                    .append(vals1[0]).append("), ")
+                    .append(sub).append("), subMInt(mi(16, ").append(vals1[1])
+                    .append("), ").append(sub).append("))\n");
+        } else if (size == 8) {
+            String sub = "extractMInt(mi(32, " + registerMap.get(sourceRegister2) + "), 24, 32)";
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(").append("subMInt(mi(8, ")
+                    .append(vals1[0]).append("), ")
+                    .append(sub).append("), ").append("concatenateMInt(")
+                    .append("subMInt(mi(8, ").append(vals1[1])
+                    .append("), ").append(sub).append("), ")
+                    .append("concatenateMInt(")
+                    .append("subMInt(mi(8, ").append(vals1[2])
+                    .append("), ").append(sub).append("), ")
+                    .append("subMInt(mi(8, ").append(vals1[3])
+                    .append("), ").append(sub).append("))))\n");
+        }
+    }
+
+    private void getVMULQRsRegToLeft(int size, StringBuilder sRegToLeft, Map<String, String> registerMap,
+                                     String sReg1, String sourceRegister2, String[] vals1) {
+        if (size == 32) {
+            sRegToLeft.append("\t\t\t\t\textractMInt(mi(64, svalueMInt(mi(32, ").append(registerMap.get(sReg1))
+                    .append(")) *Int svalueMInt(mi(32, ").append(registerMap.get(sourceRegister2))
+                    .append("))), 32, 64)");
+        } else if (size == 16) {
+            String sub = "extractMInt(mi(32, " + registerMap.get(sourceRegister2) + "), 16, 32)";
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                    .append("extractMInt(mi(32, svalueMInt(mi(16, ").append(vals1[0])
+                    .append(")) *Int svalueMInt(").append(sub).append(")), 16, 32), ")
+                    .append("extractMInt(mi(32, svalueMInt(mi(16, ").append(vals1[1])
+                    .append(")) *Int svalueMInt(").append(sub).append(")), 16, 32))")
+                    .append("\n");
+        } else if (size == 8) {
+            String sub = "extractMInt(mi(32, " + registerMap.get(sourceRegister2) + "), 24, 32)";
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                    .append("extractMInt(mi(16, svalueMInt(mi(8, ").append(vals1[0])
+                    .append(")) *Int svalueMInt(").append(sub).append(")), 8, 16), ")
+                    .append("concatenateMInt(")
+                    .append("extractMInt(mi(16, svalueMInt(mi(8, ").append(vals1[1])
+                    .append(")) *Int svalueMInt(").append(sub).append(")), 8, 16), ")
+                    .append("concatenateMInt(")
+                    .append("extractMInt(mi(16, svalueMInt(mi(8, ").append(vals1[2])
+                    .append(")) *Int svalueMInt(").append(sub).append(")), 8, 16), ")
+                    .append("extractMInt(mi(16, svalueMInt(mi(8, ").append(vals1[3])
+                    .append(")) *Int svalueMInt(").append(sub).append(")), 8, 16)")
+                    .append(")))\n");
+        }
+    }
+
+    /**
+     * 源向量  相减
+     * @param size
+     * @param sRegToLeft
+     * @param registerMap
+     * @param sReg1 被减
+     * @param sReg2 减
+     * @param vals1
+     * @param vals2
+     */
+    private void getVSUBQQsRegToLeft(int size, StringBuilder sRegToLeft, Map<String, String> registerMap,
+                                     String sReg1, String sReg2, String[] vals1, String[] vals2) {
+        if (size == 32) {
+            sRegToLeft.append("\t\t\t\t\tsubMInt(mi(32, ").append(registerMap.get(sReg1))
+                    .append("), mi(32, ").append(registerMap.get(sReg2)).append("))\n");
+        } else if (size == 16) {
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                    .append("subMInt(mi(16, ").append(vals1[0]).append("), ")
+                    .append("mi(16, ").append(vals2[0]).append(")), ")
+                    .append("subMInt(mi(16, ").append(vals1[1]).append("), ")
+                    .append("mi(16, ").append(vals2[1]).append(")))\n");
+        } else if (size == 8) {
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                    .append("subMInt(mi(8, ").append(vals1[0]).append("), ")
+                    .append("mi(8, ").append(vals2[0]).append(")), ")
+                    .append("concatenateMInt(")
+                    .append("subMInt(mi(8, ").append(vals1[1]).append("), ")
+                    .append("mi(8, ").append(vals2[1]).append(")), ")
+                    .append("concatenateMInt(")
+                    .append("subMInt(mi(8, ").append(vals1[2]).append("), ")
+                    .append("mi(8, ").append(vals2[2]).append(")), ")
+                    .append("subMInt(mi(8, ").append(vals1[3]).append("), ")
+                    .append("mi(8, ").append(vals2[3]).append("))")
+                    .append(")))\n");
+        }
+    }
+
+    /**
+     * VMUL Q R
+     * @return
+     */
+    public List<String> vmulQRPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            String val = registerMap.get(sourceRegister2);
+            desCond.append("\t\t\t\"").append(sourceRegister2).append("\" |-> ").append("mi(32, ")
+                    .append(val).append(")\n");
+            if (desRegister.equals(sourceRegister1)) {
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    getVMULQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+
+                    for (String s : vals1) {
+                        BigInteger[] bigIntegers1 = preCond.get(s);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(s, new BigInteger[]{
+                                bigIntegers1[0].multiply(bigIntegers2[0]).compareTo(bigIntegers1[1].multiply(bigIntegers2[0])) > 0
+                                        ? (bigIntegers1[1].multiply(bigIntegers2[0]).compareTo(bigIntegers1[0].multiply(bigIntegers2[1])) > 0
+                                            ? bigIntegers1[0].multiply(bigIntegers2[1]) : bigIntegers1[1].multiply(bigIntegers2[0]))
+                                        : (bigIntegers1[0].multiply(bigIntegers2[0]).compareTo(bigIntegers1[0].multiply(bigIntegers2[1])) > 0
+                                        ? bigIntegers1[0].multiply(bigIntegers2[1]) : bigIntegers1[0].multiply(bigIntegers2[0])),
+                                bigIntegers1[1].multiply(bigIntegers2[1]).compareTo(bigIntegers1[0].multiply(bigIntegers2[0])) > 0
+                                        ? bigIntegers1[1].multiply(bigIntegers2[1]) : bigIntegers1[0].multiply(bigIntegers2[0])});
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    getVMULQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(valsDes[j], new BigInteger[]{
+                                bigIntegers1[0].multiply(bigIntegers2[0]).compareTo(bigIntegers1[1].multiply(bigIntegers2[0])) > 0
+                                        ? (bigIntegers1[1].multiply(bigIntegers2[0]).compareTo(bigIntegers1[0].multiply(bigIntegers2[1])) > 0
+                                        ? bigIntegers1[0].multiply(bigIntegers2[1]) : bigIntegers1[1].multiply(bigIntegers2[0]))
+                                        : (bigIntegers1[0].multiply(bigIntegers2[0]).compareTo(bigIntegers1[0].multiply(bigIntegers2[1])) > 0
+                                        ? bigIntegers1[0].multiply(bigIntegers2[1]) : bigIntegers1[0].multiply(bigIntegers2[0])),
+                                bigIntegers1[1].multiply(bigIntegers2[1]).compareTo(bigIntegers1[0].multiply(bigIntegers2[0])) > 0
+                                        ? bigIntegers1[1].multiply(bigIntegers2[1]) : bigIntegers1[0].multiply(bigIntegers2[0])});
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
+     * VAND Q Q
+     * @return
+     */
+    public List<String> vandQQPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            int size = 32;
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+            // 第一个源操作数同时为目标操作数
+            if (desRegister.equals(sourceRegister1)) {
+                int index = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    String sReg2 = "S" + (index+i);
+                    StringBuilder sRegFrom = conca(sReg1, 1, 32, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    //String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    //String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    sRegToLeft.append("\t\t\t\t\tandMInt(mi(32, ").append(registerMap.get(sReg1))
+                            .append("), mi(32, ").append(registerMap.get(sReg2)).append("))\n");
+                    sListTo.add(sRegToLeft);
+                    sRegToRight.append("\t\t\t\t\tconcatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 0, 8),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 0, 8)), ")
+                            .append("concatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 8, 16),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 8, 16)), ")
+                            .append("concatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 16, 24),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 16, 24)), ")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 24, 32),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 24, 32))")
+                            .append(")))\n");
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    BigInteger[] bigIntegers1 = preCond.get(registerMap.get(sReg1));
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sReg2));
+                    preCond.put(registerMap.get(sReg1), new BigInteger[]{
+                            bigIntegers1[0].compareTo(bigIntegers2[0]) > 0 ? bigIntegers2[0] : bigIntegers1[0],
+                            bigIntegers1[1].compareTo(bigIntegers2[1]) > 0 ? bigIntegers2[1] : bigIntegers1[1]
+                    });
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else if (desRegister.equals(sourceRegister2)) {   // 第二个源操作数同时为目标操作数
+                int index = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index+i);
+                    String sReg2 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg2, 1, 32, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    sRegToLeft.append("\t\t\t\t\tandMInt(mi(32, ").append(registerMap.get(sReg1))
+                            .append("), mi(32, ").append(registerMap.get(sReg2)).append("))\n");
+                    sListTo.add(sRegToLeft);
+                    sRegToRight.append("\t\t\t\t\tconcatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 0, 8),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 0, 8)), ")
+                            .append("concatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 8, 16),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 8, 16)), ")
+                            .append("concatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 16, 24),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 16, 24)), ")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 24, 32),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 24, 32))")
+                            .append(")))\n");
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    BigInteger[] bigIntegers1 = preCond.get(registerMap.get(sReg1));
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sReg2));
+                    preCond.put(registerMap.get(sReg2), new BigInteger[]{
+                            bigIntegers1[0].compareTo(bigIntegers2[0]) > 0 ? bigIntegers2[0] : bigIntegers1[0],
+                            bigIntegers1[1].compareTo(bigIntegers2[1]) > 0 ? bigIntegers2[1] : bigIntegers1[1]
+                    });
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                int index2 = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                setSourcePostCond(size, index2, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                if (!registerMap.containsKey(desRegister)) {
+                    String valNew = "V" + desRegister + "_set";
+                    registerMap.put(desRegister, valNew);
+                    for (int i = 0; i < 4; i++) {
+                        String tmp = valNew + i;
+                        registerMap.put("S" + (indexDes+i), tmp);
+                        preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                    }
+                } else {
+                    String valNew = registerMap.get(desRegister);
+                    for (int i = 0; i < 4; i++) {
+                        String tmp = valNew + i;
+                        registerMap.put("S" + (indexDes+i), tmp);
+                        preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                    }
+                }
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    String sReg2 = "S" + (index2+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    sRegToLeft.append("\t\t\t\t\tandMInt(mi(32, ").append(registerMap.get(sReg1))
+                            .append("), mi(32, ").append(registerMap.get(sReg2)).append("))\n");
+                    sListTo.add(sRegToLeft);
+                    sRegToRight.append("\t\t\t\t\tconcatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 0, 8),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 0, 8)), ")
+                            .append("concatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 8, 16),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 8, 16)), ")
+                            .append("concatenateMInt(")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 16, 24),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 16, 24)), ")
+                            .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 24, 32),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 24, 32))")
+                            .append(")))\n");
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    BigInteger[] bigIntegers1 = preCond.get(registerMap.get(sReg1));
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sReg2));
+                    preCond.put(registerMap.get("S" + (indexDes+i)), new BigInteger[]{
+                            bigIntegers1[0].compareTo(bigIntegers2[0]) > 0 ? bigIntegers2[0] : bigIntegers1[0],
+                            bigIntegers1[1].compareTo(bigIntegers2[1]) > 0 ? bigIntegers2[1] : bigIntegers1[1]
+                    });
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
+     * VORR Q Q
+     * @return
+     */
+    public List<String> vorrQQPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            int size = 32;
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+            // 第一个源操作数同时为目标操作数
+            if (desRegister.equals(sourceRegister1)) {
+                int index = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    String sReg2 = "S" + (index+i);
+                    StringBuilder sRegFrom = conca(sReg1, 1, 32, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    //String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    //String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    sRegToLeft.append("\t\t\t\t\torMInt(mi(32, ").append(registerMap.get(sReg1))
+                            .append("), mi(32, ").append(registerMap.get(sReg2)).append("))\n");
+                    sListTo.add(sRegToLeft);
+                    sRegToRight.append("\t\t\t\t\tconcatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 0, 8),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 0, 8)), ")
+                            .append("concatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 8, 16),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 8, 16)), ")
+                            .append("concatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 16, 24),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 16, 24)), ")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 24, 32),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 24, 32))")
+                            .append(")))\n");
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    BigInteger[] bigIntegers1 = preCond.get(registerMap.get(sReg1));
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sReg2));
+                    preCond.put(registerMap.get(sReg1), new BigInteger[]{
+                            bigIntegers1[0].or(bigIntegers2[0]),
+                            getRightRangeOr(bigIntegers1, bigIntegers2)
+                    });
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else if (desRegister.equals(sourceRegister2)) {   // 第二个源操作数同时为目标操作数
+                int index = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index+i);
+                    String sReg2 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg2, 1, 32, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    sRegToLeft.append("\t\t\t\t\torMInt(mi(32, ").append(registerMap.get(sReg1))
+                            .append("), mi(32, ").append(registerMap.get(sReg2)).append("))\n");
+                    sListTo.add(sRegToLeft);
+                    sRegToRight.append("\t\t\t\t\tconcatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 0, 8),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 0, 8)), ")
+                            .append("concatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 8, 16),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 8, 16)), ")
+                            .append("concatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 16, 24),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 16, 24)), ")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 24, 32),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 24, 32))")
+                            .append(")))\n");
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    BigInteger[] bigIntegers1 = preCond.get(registerMap.get(sReg1));
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sReg2));
+                    preCond.put(registerMap.get(sReg2), new BigInteger[]{
+                            bigIntegers1[0].or(bigIntegers2[0]),
+                            getRightRangeOr(bigIntegers1, bigIntegers2)
+                    });
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                int index2 = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                setSourcePostCond(size, index2, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                if (!registerMap.containsKey(desRegister)) {
+                    String valNew = "V" + desRegister + "_set";
+                    registerMap.put(desRegister, valNew);
+                    for (int i = 0; i < 4; i++) {
+                        String tmp = valNew + i;
+                        registerMap.put("S" + (indexDes+i), tmp);
+                        preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                    }
+                } else {
+                    String valNew = registerMap.get(desRegister);
+                    for (int i = 0; i < 4; i++) {
+                        String tmp = valNew + i;
+                        registerMap.put("S" + (indexDes+i), tmp);
+                        preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                    }
+                }
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    String sReg2 = "S" + (index2+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    sRegToLeft.append("\t\t\t\t\torMInt(mi(32, ").append(registerMap.get(sReg1))
+                            .append("), mi(32, ").append(registerMap.get(sReg2)).append("))\n");
+                    sListTo.add(sRegToLeft);
+                    sRegToRight.append("\t\t\t\t\tconcatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 0, 8),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 0, 8)), ")
+                            .append("concatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 8, 16),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 8, 16)), ")
+                            .append("concatenateMInt(")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 16, 24),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 16, 24)), ")
+                            .append("orMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 24, 32),")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 24, 32))")
+                            .append(")))\n");
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    BigInteger[] bigIntegers1 = preCond.get(registerMap.get(sReg1));
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sReg2));
+                    preCond.put(registerMap.get("S" + (indexDes+i)), new BigInteger[]{
+                            bigIntegers1[0].or(bigIntegers2[0]),
+                            getRightRangeOr(bigIntegers1, bigIntegers2)
+                    });
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
+     * 获取 Or 右边界
+     * @param bigIntegers1
+     * @param bigIntegers2
+     * @return
+     */
+    private BigInteger getRightRangeOr(BigInteger[] bigIntegers1, BigInteger[] bigIntegers2) {
+        String bigHigher1 = bigIntegers1[1].toString(2);
+        String bigHigher2 = bigIntegers2[1].toString(2);
+        if (bigIntegers1[1].compareTo(bigIntegers2[1]) > 0) {
+            int leftOne2 = bigHigher2.length() - bigHigher2.indexOf("1");
+            int loc = 0, cnt = 0;
+            for (int j = 0; j < bigHigher1.length(); j++) {
+                if (bigHigher1.charAt(j) == '1') {
+                    cnt++;
+                    if (cnt == 2) {
+                        loc = bigHigher1.length() - j;
+                        break;
+                    }
+                }
+            }
+            if (loc == 0 || leftOne2 > loc) {
+                bigIntegers1[1] = bigIntegers1[1].or(bigIntegers2[1]);
+            } else {
+                bigIntegers1[1] = bigIntegers1[1].or(BigInteger.valueOf(2).pow(leftOne2-1)
+                        .subtract(BigInteger.ONE));
+            }
+            return bigIntegers1[1];
+        } else {
+            int leftOne1 = bigHigher1.length() - bigHigher1.indexOf("1");
+            int loc = 0, cnt = 0;
+            for (int j = 0; j < bigHigher2.length(); j++) {
+                if (bigHigher2.charAt(j) == '1') {
+                    cnt++;
+                    if (cnt == 2) {
+                        loc = bigHigher2.length() - j;
+                        break;
+                    }
+                }
+            }
+            if (loc == 0 || leftOne1 > loc) {
+                bigIntegers2[1] = bigIntegers2[1].or(bigIntegers1[1]);
+            } else {
+                bigIntegers2[1] = bigIntegers2[1].or(BigInteger.valueOf(2).pow(leftOne1-1)
+                        .subtract(BigInteger.ONE));
+            }
+            return bigIntegers2[1];
+        }
+    }
+
+    /**
+     * VUDP Q R
+     * @return
+     */
+
+    public List<String> vdupQRPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype);
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String val = registerMap.get(sourceRegister1);
+            desCond.append("\t\t\t\"").append(sourceRegister1).append("\" |-> ").append("mi(32, ")
+                    .append(val).append(")\n");
+
+            // 设置S
+            List<StringBuilder> sListTo = new ArrayList<>();
+            int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+            // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+            // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+            if (!registerMap.containsKey(desRegister)) {
+                String valNew = "V" + desRegister + "_set";
+                registerMap.put(desRegister, valNew);
+                valNew = size == 32 ? valNew : (size == 16 ? valNew + "0" : valNew + "00");
+                for (int i = 0; i < 4; i++) {
+                    if (size == 8) {
+                        String tmp1 = valNew + (i * 4);
+                        String tmp2 = valNew + (i * 4 + 1);
+                        String tmp3 = valNew + (i * 4 + 2);
+                        String tmp4 = valNew + (i * 4 + 3);
+                        registerMap.put("S" + (indexDes + i), tmp4 + ":" + tmp3 + ":" + tmp2 + ":" + tmp1);
+                        preCond.put(tmp1, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                        preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                        preCond.put(tmp3, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                        preCond.put(tmp4, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                    } else if (size == 16) {
+                        String tmp1 = valNew + (i * 2);
+                        String tmp2 = valNew + (i * 2 + 1);
+                        registerMap.put("S" + (indexDes + i), tmp2 + ":" + tmp1);
+                        preCond.put(tmp1, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                        preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                    } else if (size == 32) {
+                        String tmp = valNew + i;
+                        registerMap.put("S" + (indexDes + i), tmp);
+                        preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                    }
+                }
+            } else {
+                int len = registerMap.get("S" + indexDes).split(":").length;
+                if (len != 32 / size) {
+                    String valNew = registerMap.get(desRegister);
+                    for (int i = 0; i < 4; i++) {
+                        if (size == 8) {
+                            String tmp1 = valNew + (i * 4);
+                            String tmp2 = valNew + (i * 4 + 1);
+                            String tmp3 = valNew + (i * 4 + 2);
+                            String tmp4 = valNew + (i * 4 + 3);
+                            registerMap.put("S" + (indexDes + i), tmp4 + ":" + tmp3 + ":" + tmp2 + ":" + tmp1);
+                            preCond.put(tmp1, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                            preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                            preCond.put(tmp3, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                            preCond.put(tmp4, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                        } else if (size == 16) {
+                            String tmp1 = valNew + (i * 2);
+                            String tmp2 = valNew + (i * 2 + 1);
+                            registerMap.put("S" + (indexDes + i), tmp2 + ":" + tmp1);
+                            preCond.put(tmp1, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                            preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                        } else if (size == 32) {
+                            String tmp = valNew + i;
+                            registerMap.put("S" + (indexDes + i), tmp);
+                            preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < 4; i++) {
+                StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                StringBuilder sRegToLeft = new StringBuilder();
+                if (size == 32) {
+                    sRegToLeft.append("\t\t\t\t\tmi(32, ").append(registerMap.get(sourceRegister1)).append(")\n");
+                } else if (size == 16) {
+                    sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sourceRegister1))
+                            .append("), 16, 32), ")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sourceRegister1))
+                            .append("), 16, 32))\n");
+                } else if (size == 8) {
+                    sRegToLeft.append("concatenateMInt(")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sourceRegister1))
+                            .append("), 24, 32), ")
+                            .append("concatenateMInt(")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sourceRegister1))
+                            .append("), 24, 32), ")
+                            .append("concatenateMInt(")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sourceRegister1))
+                            .append("), 24, 32), ")
+                            .append("extractMInt(mi(32, ").append(registerMap.get(sourceRegister1))
+                            .append("), 24, 32)")
+                            .append(")))\n");
+                }
+                sListTo.add(sRegToLeft);
+                desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                        .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                        .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                // 重设目标寄存器的值范围
+                String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+                BigInteger[] bigIntegers1 = preCond.get(registerMap.get(sourceRegister1));
+
+                for (int j = 0; j < valsDes.length; j++) {
+                    preCond.put(valsDes[j], new BigInteger[]{
+                            bigIntegers1[0],
+                            bigIntegers1[1]
+                            });
+                }
+            }
+
+            // 设置临时变量
+            desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+            // 设置Q
+            StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+            for (int i = 3; i >= 0; i--) {
+                if (i > 0)
+                    qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                else
+                    qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+            }
+            desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
+     * VNEG Q Q
+     * @return
+     */
+    public List<String> vnegQQPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            BigInteger dataLowerestBound = BigInteger.valueOf(2).pow(size - 1).multiply(BigInteger.valueOf(-1));
+            BigInteger dataHighestBound = BigInteger.valueOf(2).pow(size - 1).subtract(BigInteger.ONE);
+            if (desRegister.equals(sourceRegister1)) {
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    if (size == 32) {
+                        sRegToLeft.append("\t\t\t\t\t")
+                                .append("mi(32, -1 *Int svalueMInt(mi(32, " + registerMap.get(sReg1) + "))")
+                                .append(")\n");
+                    } else if (size == 16) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(16, -1 *Int " + vals1[0])
+                                .append("), ")
+                                .append(preCond.get(vals1[1])[0].compareTo(BigInteger.ONE) <= 0 ?
+                                        "mi(16, -1 *Int " + vals1[1] : "extractMInt(mi(32, -1 *Int " + vals1[1] + "), 16, 32")
+                                .append("))\n");
+                    } else if (size == 8) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(8, -1 *Int " + vals1[0])
+                                .append("), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, -1 *Int " + vals1[1])
+                                .append("), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, -1 *Int " + vals1[2])
+                                .append("), ")
+                                .append(preCond.get(vals1[3])[0].compareTo(BigInteger.ONE) <= 0 ?
+                                        "mi(8, -1 *Int " + vals1[3] : "extractMInt(mi(32, -1 *Int " + vals1[3] + "), 24, 32")
+                                .append(")")
+                                .append(")))\n");
+                    }
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+
+                    for (String s : vals1) {
+                        BigInteger[] bigIntegers1 = preCond.get(s);
+
+                        preCond.put(s, new BigInteger[]{
+                                bigIntegers1[1].multiply(BigInteger.valueOf(-1)),
+                                bigIntegers1[0].compareTo(dataLowerestBound) == 0 ?
+                                        dataHighestBound :
+                                        bigIntegers1[0].multiply(BigInteger.valueOf(-1))
+                        });
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    if (size == 32) {
+                        sRegToLeft.append("\t\t\t\t\t")
+                                .append("mi(32, -1 *Int svalueMInt(mi(32, " + registerMap.get(sReg1) + "))")
+                                .append(")\n");
+                    } else if (size == 16) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(16, -1 *Int " + vals1[0])
+                                .append("), ")
+                                .append(preCond.get(vals1[1])[0].compareTo(BigInteger.ONE) <= 0 ?
+                                        "mi(16, -1 *Int " + vals1[1] : "extractMInt(mi(32, -1 *Int " + vals1[1] + "), 16, 32")
+                                .append("))\n");
+                    } else if (size == 8) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(8, -1 *Int " + vals1[0])
+                                .append("), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, -1 *Int " + vals1[1])
+                                .append("), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, -1 *Int " + vals1[2])
+                                .append("), ")
+                                .append(preCond.get(vals1[3])[0].compareTo(BigInteger.ONE) <= 0 ?
+                                        "mi(8, -1 *Int " + vals1[3] : "extractMInt(mi(32, -1 *Int " + vals1[3] + "), 24, 32")
+                                .append(")")
+                                .append(")))\n");
+                    }
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(valsDes[j], new BigInteger[]{
+                                bigIntegers1[1].multiply(BigInteger.valueOf(-1)),
+                                bigIntegers1[0].compareTo(dataLowerestBound) == 0 ?
+                                        dataHighestBound :
+                                        bigIntegers1[0].multiply(BigInteger.valueOf(-1))
+                        });
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
+     * VSHR Q Imm
+     * @return
+     */
+    public List<String> vshrQImmPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String imm = instruction.getImm();
+            String signMode = instruction.getDatatype().charAt(0) == 'S' ? "svalueMInt" : "uvalueMInt";
+            if (desRegister.equals(sourceRegister1)) {
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    if (size == 32) {
+                        sRegToLeft.append("\t\t\t\t\t")
+                                .append("mi(32, " + signMode + "(mi(32, " + registerMap.get(sReg1) + "))")
+                                .append(" >>Int ").append(imm)
+                                .append(")\n");
+                    } else if (size == 16) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(16, " + signMode + "(mi(16, " + vals1[0] + "))")
+                                .append(" >>Int ").append(imm).append("), ")
+                                .append("mi(16, " + signMode + "(mi(16, " + vals1[1] + "))")
+                                .append(" >>Int ").append(imm)
+                                .append("))\n");
+                    } else if (size == 8) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(8, " + signMode + "(mi(8, " + vals1[0] + "))")
+                                .append(" >>Int ").append(imm).append("), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, " + signMode + "(mi(8, " + vals1[1] + "))")
+                                .append(" >>Int ").append(imm).append("), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, " + signMode + "(mi(8, " + vals1[2] + "))")
+                                .append(" >>Int ").append(imm).append("), ")
+                                .append("mi(8, " + signMode + "(mi(8, " + vals1[3] + "))")
+                                .append(" >>Int ").append(imm).append(")")
+                                .append(")))\n");
+                    }
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] immRange = preCond.get(imm);
+                    for (String s : vals1) {
+                        BigInteger[] bigIntegers1 = preCond.get(s);
+
+                        preCond.put(s, new BigInteger[]{
+                                bigIntegers1[0].compareTo(BigInteger.ONE) >= 0 ?
+                                        bigIntegers1[0].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[0].toString()))) :
+                                        bigIntegers1[0].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[1].toString()))),
+                                bigIntegers1[1].compareTo(BigInteger.ONE) >= 0 ?
+                                        bigIntegers1[1].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[0].toString()))) :
+                                        bigIntegers1[1].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[1].toString())))
+                        });
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    if (size == 32) {
+                        sRegToLeft.append("\t\t\t\t\t")
+                                .append("mi(32, " + signMode + "(mi(32, " + registerMap.get(sReg1) + "))")
+                                .append(" >>Int ").append(imm)
+                                .append(")\n");
+                    } else if (size == 16) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(16, " + signMode + "(mi(16, " + vals1[0] + "))")
+                                .append(" >>Int ").append(imm).append("), ")
+                                .append("mi(16, " + signMode + "(mi(16, " + vals1[1] + "))")
+                                .append(" >>Int ").append(imm)
+                                .append("))\n");
+                    } else if (size == 8) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(8, " + signMode + "(mi(8, " + vals1[0] + "))")
+                                .append(" >>Int ").append(imm).append("), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, " + signMode + "(mi(8, " + vals1[1] + "))")
+                                .append(" >>Int ").append(imm).append("), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, " + signMode + "(mi(8, " + vals1[2] + "))")
+                                .append(" >>Int ").append(imm).append("), ")
+                                .append("mi(8, " + signMode + "(mi(8, " + vals1[3] + "))")
+                                .append(" >>Int ").append(imm).append(")")
+                                .append(")))\n");
+                    }
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    BigInteger[] immRange = preCond.get(imm);
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(valsDes[j]);
+
+                        preCond.put(valsDes[j], new BigInteger[]{
+                                bigIntegers1[0].compareTo(BigInteger.ONE) >= 0 ?
+                                        bigIntegers1[0].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[0].toString()))) :
+                                        bigIntegers1[0].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[1].toString()))),
+                                bigIntegers1[1].compareTo(BigInteger.ONE) >= 0 ?
+                                        bigIntegers1[1].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[0].toString()))) :
+                                        bigIntegers1[1].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[1].toString())))
+                        });
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    /**
+     * VSHL Q Imm
+     * @return
+     */
+    public List<String> vshlQImmPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String imm = instruction.getImm();
+            String signMode = instruction.getDatatype().charAt(0) == 'S' ? "svalueMInt" : "uvalueMInt";
+            if (desRegister.equals(sourceRegister1)) {
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    if (size == 32) {
+                        sRegToLeft.append("\t\t\t\t\t")
+                                .append("mi(32, (" + signMode + "(mi(32, " + registerMap.get(sReg1) + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 4294967295")
+                                .append(")\n");
+                    } else if (size == 16) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(16, (" + signMode + "(mi(16, " + vals1[0] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 65535), ")
+                                .append("mi(16, (" + signMode + "(mi(16, " + vals1[1] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 65535)")
+                                .append(")\n");
+                    } else if (size == 8) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(8, (" + signMode + "(mi(8, " + vals1[0] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 255), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, (" + signMode + "(mi(8, " + vals1[1] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 255), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, (" + signMode + "(mi(8, " + vals1[2] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 255), ")
+                                .append("mi(8, (" + signMode + "(mi(8, " + vals1[3] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 255)")
+                                .append(")))\n");
+                    }
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] immRange = preCond.get(imm);
+                    int immLeft = Integer.parseInt(immRange[0].toString());
+                    int immRight = Integer.parseInt(immRange[1].toString());
+                    for (String s : vals1) {
+                        BigInteger[] bigIntegers1 = preCond.get(s);
+                        normalize(bigIntegers1, datatype, size);
+                        BigInteger[] desRange = getVSHLRange(datatype, bigIntegers1, size, immLeft, immRight);
+
+                        preCond.put(s, desRange);
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    if (size == 32) {
+                        sRegToLeft.append("\t\t\t\t\t")
+                                .append("mi(32, (" + signMode + "(mi(32, " + registerMap.get(sReg1) + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 4294967295")
+                                .append(")\n");
+                    } else if (size == 16) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(16, (" + signMode + "(mi(16, " + vals1[0] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 65535), ")
+                                .append("mi(16, (" + signMode + "(mi(16, " + vals1[1] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 65535)")
+                                .append(")\n");
+                    } else if (size == 8) {
+                        sRegToLeft.append("\t\t\t\t\tconcatenateMInt(")
+                                .append("mi(8, (" + signMode + "(mi(8, " + vals1[0] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 255), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, (" + signMode + "(mi(8, " + vals1[1] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 255), ")
+                                .append("concatenateMInt(")
+                                .append("mi(8, (" + signMode + "(mi(8, " + vals1[2] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 255), ")
+                                .append("mi(8, (" + signMode + "(mi(8, " + vals1[3] + "))")
+                                .append(" <<Int ").append(imm).append(") &Int 255)")
+                                .append(")))\n");
+                    }
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+                    // 重设目标寄存器的值范围
+                    BigInteger[] immRange = preCond.get(imm);
+                    int immLeft = Integer.parseInt(immRange[0].toString());
+                    int immRight = Integer.parseInt(immRange[1].toString());
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        BigInteger[] desRange = getVSHLRange(datatype, bigIntegers1, size, immLeft, immRight);
+
+                        preCond.put(valsDes[j], desRange);
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+
+    private BigInteger[] getVSHLRange(String datatype, BigInteger[] bigIntegers1, int size, int immLeft, int immRight) {
+        BigInteger[] desRange = new BigInteger[2];
+        if (datatype.charAt(0) == 'S') {
+            BigInteger pow = BigInteger.valueOf(2).pow(size - immRight - 1);
+            BigInteger bigInteger = BigInteger.valueOf(2).pow(size - immLeft - 1);
+            BigInteger subtract = BigInteger.valueOf(2).pow(size - 1).subtract(BigInteger.ONE);
+            if (bigIntegers1[0].compareTo(BigInteger.ONE) < 0) {
+                BigInteger multiply = BigInteger.valueOf(2).pow(size - 1).multiply(BigInteger.valueOf(-1));
+                if (bigIntegers1[0].compareTo(
+                        pow.multiply(BigInteger.valueOf(-1))) > 0) {
+                    desRange[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2).pow(immRight));
+                } else {
+                    desRange[0] = multiply;
+                }
+                if (bigIntegers1[1].compareTo(BigInteger.ONE) < 0) {
+                    if (bigIntegers1[1].compareTo(
+                            bigInteger.multiply(BigInteger.valueOf(-1))) > 0) {
+                        desRange[1] = bigIntegers1[1].multiply(BigInteger.valueOf(2).pow(immLeft));
+                    } else {
+                        desRange[1] = multiply;
+                    }
+                } else {
+                    if (bigIntegers1[1].compareTo(
+                            pow) < 0) {
+                        desRange[1] = bigIntegers1[1].multiply(BigInteger.valueOf(2).pow(immRight));
+                    } else {
+                        desRange[1] = subtract;
+                    }
+                }
+            } else {
+                if (bigIntegers1[0].compareTo(
+                        bigInteger) < 0) {
+                    desRange[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2).pow(immLeft));
+                    if (bigIntegers1[1].compareTo(pow) < 0) {
+                        desRange[1] = bigIntegers1[1].multiply(BigInteger.valueOf(2).pow(immRight));
+                    } else {
+                        desRange[1] = subtract;
+                    }
+                } else {
+                    desRange[0] = BigInteger.ZERO;
+                    desRange[1] = BigInteger.ZERO;
+                }
+            }
+        } else {
+            // 无符号
+            if (bigIntegers1[0].compareTo(
+                    BigInteger.valueOf(2).pow(size - immLeft)) < 0) {
+                desRange[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2).pow(immLeft));
+                if (bigIntegers1[1].compareTo(
+                        BigInteger.valueOf(2).pow(size - immRight)) < 0) {
+                    desRange[1] = bigIntegers1[1].multiply(BigInteger.valueOf(2).pow(immRight)).subtract(BigInteger.ONE);
+                } else {
+                    desRange[1] = BigInteger.valueOf(2).pow(immRight).subtract(BigInteger.ONE);
+                }
+            } else {
+                desRange[0] = BigInteger.ZERO;
+                desRange[1] = BigInteger.ZERO;
+            }
+        }
+        return desRange;
+    }
+
+    /**
+     * VRSHL Q Q
+     * @return
+     */
+    public List<String> vrshlQQPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+            String signMode = instruction.getDatatype().charAt(0) == 'S' ? "svalueMInt" : "uvalueMInt";
+            // 第一个源操作数同时为目标操作数
+            if (desRegister.equals(sourceRegister1)) {
+                int index = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    String sReg2 = "S" + (index+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    String[] vals2 = registerMap.get(sReg2).split(":");
+                    getVRSHLSub(size, sRegToLeft, signMode, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegers2, datatype, size);
+                        BigInteger[] desRange = getVRSHLRange(bigIntegers1, bigIntegers2);
+                        preCond.put(vals1[j], desRange);
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else if (desRegister.equals(sourceRegister2)) {   // 第二个源操作数同时为目标操作数
+                int index = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index+i);
+                    String sReg2 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg2, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    getVRSHLSub(size, sRegToLeft, signMode, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegers2, datatype, size);
+                        BigInteger[] desRange = getVRSHLRange(bigIntegers1, bigIntegers2);
+                        preCond.put(vals2[j], desRange);
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                int index2 = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                setSourcePostCond(size, index2, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    String sReg2 = "S" + (index2+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    String[] vals2 = registerMap.get(sReg2).split(":");
+                    getVRSHLSub(size, sRegToLeft, signMode, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegers2, datatype, size);
+                        BigInteger[] desRange = getVRSHLRange(bigIntegers1, bigIntegers2);
+                        preCond.put(valsDes[j], desRange);
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    private void getVRSHLSub(int size, StringBuilder sRegToLeft, String signMode, String[] vals1, String[] vals2) {
+        if (size == 32) {
+            String sub = "svalueMInt(extractMInt(mi(32, " + vals2[0] + "), 24, 32))";
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("ifMInt (").append(sub).append(" >=Int 0) then ")
+                    .append("mi(32, (" + signMode + "(mi(32, " + vals1[0] + ")) <<Int ")
+                    .append(sub).append(") &Int 4294967295) ")
+                    .append(" else ")
+                    .append("mi(32, ((" + signMode + "(mi(32, " + vals1[0] + ")) +Int ")
+                    .append("(1 <<Int (-1 *Int ").append(sub).append(" -Int 1))) >>Int ")
+                    .append("(-1 *Int ").append(sub).append(")) &Int 4294967295)")
+                    .append("\n");
+        } else if (size == 16) {
+            String sub = "svalueMInt(extractMInt(mi(16, ";
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (").append(sub).append(vals2[0]).append("), 8, 16)) >=Int 0) then ")
+                    .append("mi(16, (" + signMode + "(mi(16, " + vals1[0] + ")) <<Int ")
+                    .append(sub).append(vals2[0]).append("), 8, 16))) &Int 65535) ")
+                    .append(" else ")
+                    .append("mi(16, ((" + signMode + "(mi(16, " + vals1[0] + ")) +Int ")
+                    .append("(1 <<Int (-1 *Int ").append(sub).append(vals2[0]).append("), 8, 16)) -Int 1))) >>Int ")
+                    .append("(-1 *Int ").append(sub).append(vals2[0]).append("), 8, 16)))) &Int 65535), ")
+                    .append("ifMInt (").append(sub).append(vals2[1]).append("), 8, 16)) >=Int 0) then ")
+                    .append("mi(16, (" + signMode + "(mi(16, " + vals1[1] + ")) <<Int ")
+                    .append(sub).append(vals2[1]).append("), 8, 16))) &Int 65535) ")
+                    .append(" else ")
+                    .append("mi(16, ((" + signMode + "(mi(16, " + vals1[1] + ")) +Int ")
+                    .append("(1 <<Int (-1 *Int ").append(sub).append(vals2[1]).append("), 8, 16)) -Int 1))) >>Int ")
+                    .append("(-1 *Int ").append(sub).append(vals2[1]).append("), 8, 16)))) &Int 65535)")
+                    .append(")\n");
+        } else if (size == 8) {
+            String sub = "svalueMInt(mi(8, ";
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (").append(sub).append(vals2[0]).append(")) >=Int 0) then ")
+                    .append("mi(8, (" + signMode + "(mi(8, " + vals1[0] + ")) <<Int ")
+                    .append(sub).append(vals2[0]).append("))) &Int 255) ")
+                    .append(" else ")
+                    .append("mi(8, ((" + signMode + "(mi(8, " + vals1[0] + ")) +Int ")
+                    .append("(1 <<Int (-1 *Int ").append(sub).append(vals2[0]).append(")) -Int 1))) >>Int ")
+                    .append("(-1 *Int ").append(sub).append(vals2[0]).append(")))) &Int 255), ")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (").append(sub).append(vals2[1]).append(")) >=Int 0) then ")
+                    .append("mi(8, (" + signMode + "(mi(8, " + vals1[1] + ")) <<Int ")
+                    .append(sub).append(vals2[1]).append("))) &Int 255) ")
+                    .append(" else ")
+                    .append("mi(8, ((" + signMode + "(mi(8, " + vals1[1] + ")) +Int ")
+                    .append("(1 <<Int (-1 *Int ").append(sub).append(vals2[1]).append(")) -Int 1))) >>Int ")
+                    .append("(-1 *Int ").append(sub).append(vals2[1]).append(")))) &Int 255), ")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (").append(sub).append(vals2[2]).append(")) >=Int 0) then ")
+                    .append("mi(8, (" + signMode + "(mi(8, " + vals1[2] + ")) <<Int ")
+                    .append(sub).append(vals2[2]).append("))) &Int 255) ")
+                    .append(" else ")
+                    .append("mi(8, ((" + signMode + "(mi(8, " + vals1[2] + ")) +Int ")
+                    .append("(1 <<Int (-1 *Int ").append(sub).append(vals2[2]).append(")) -Int 1))) >>Int ")
+                    .append("(-1 *Int ").append(sub).append(vals2[2]).append(")))) &Int 255), ")
+                    .append("ifMInt (").append(sub).append(vals2[3]).append(")) >=Int 0) then ")
+                    .append("mi(8, (" + signMode + "(mi(8, " + vals1[3] + ")) <<Int ")
+                    .append(sub).append(vals2[3]).append("))) &Int 255) ")
+                    .append(" else ")
+                    .append("mi(8, ((" + signMode + "(mi(8, " + vals1[3] + ")) +Int ")
+                    .append("(1 <<Int (-1 *Int ").append(sub).append(vals2[3]).append(")) -Int 1))) >>Int ")
+                    .append("(-1 *Int ").append(sub).append(vals2[3]).append(")))) &Int 255)")
+                    .append(")))\n");
+        }
+    }
+
+    /**
+     * VMLA Q R
+     * @return
+     */
+    public List<String> vmlaQRPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String signMode = datatype.charAt(0) == 'S' ? "svalueMInt" : "uvalueMInt";
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            String val = registerMap.get(sourceRegister2);
+            desCond.append("\t\t\t\"").append(sourceRegister2).append("\" |-> ").append("mi(32, ")
+                    .append(val).append(")\n");
+            if (desRegister.equals(sourceRegister1)) {
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    getVMLASub(size, signMode, val, vals1, vals1, sRegToLeft);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+                    normalize(bigIntegers2, datatype, size);
+
+                    for (String s : vals1) {
+                        BigInteger[] bigIntegers1 = preCond.get(s);
+                        normalize(bigIntegers1, datatype, size);
+                        BigInteger[] mulRange = getMULRange(bigIntegers1, bigIntegers2, datatype);
+                        preCond.put(s, new BigInteger[]{
+                                bigIntegers1[0].add(mulRange[0]),
+                                bigIntegers1[1].add(mulRange[1])
+                        });
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    String sReg2 = "S" + (indexDes + i);
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    String[] vals2 = registerMap.get(sReg2).split(":");
+                    //String sRegFrom = "mi(32, " + vals2[i] + ")\n";
+                    StringBuilder sRegFrom = conca(sReg2, 32 / size, size, new StringBuilder());
+                    getVMLASub(size, signMode, val, vals1, vals2, sRegToLeft);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+                    normalize(bigIntegers2, datatype, size);
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegersDes = preCond.get(valsDes[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegersDes, datatype, size);
+                        BigInteger[] mulRange = getMULRange(bigIntegers1, bigIntegers2, datatype);
+                        preCond.put(valsDes[j], new BigInteger[]{
+                                mulRange[0].add(bigIntegersDes[0]),
+                                mulRange[1].add(bigIntegersDes[1])
+                        });
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    private void setVecDefaultPreCondAndRegisterMap(Map<String, String> registerMap, Map<String, BigInteger[]> preCond,
+                                                    String desRegister, int size, int indexDes) {
+        if (!registerMap.containsKey(desRegister)) {
+            String valNew = "V" + desRegister + "_set";
+            registerMap.put(desRegister, valNew);
+            valNew = size == 32 ? valNew : (size == 16 ? valNew + "0" : valNew + "00");
+            for (int i = 0; i < 4; i++) {
+                if (size == 8) {
+                    String tmp1 = valNew + (i * 4);
+                    String tmp2 = valNew + (i * 4 + 1);
+                    String tmp3 = valNew + (i * 4 + 2);
+                    String tmp4 = valNew + (i * 4 + 3);
+                    registerMap.put("S" + (indexDes + i), tmp4 + ":" + tmp3 + ":" + tmp2 + ":" + tmp1);
+                    preCond.put(tmp1, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                    preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                    preCond.put(tmp3, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                    preCond.put(tmp4, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                } else if (size == 16) {
+                    String tmp1 = valNew + (i * 2);
+                    String tmp2 = valNew + (i * 2 + 1);
+                    registerMap.put("S" + (indexDes + i), tmp2 + ":" + tmp1);
+                    preCond.put(tmp1, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                    preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                } else if (size == 32) {
+                    String tmp = valNew + i;
+                    registerMap.put("S" + (indexDes + i), tmp);
+                    preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                }
+            }
+        } else {
+            int len = registerMap.get("S" + indexDes).split(":").length;
+            if (len != 32 / size) {
+                String valNew = registerMap.get(desRegister);
+                for (int i = 0; i < 4; i++) {
+                    if (size == 8) {
+                        String tmp1 = valNew + (i * 4);
+                        String tmp2 = valNew + (i * 4 + 1);
+                        String tmp3 = valNew + (i * 4 + 2);
+                        String tmp4 = valNew + (i * 4 + 3);
+                        registerMap.put("S" + (indexDes + i), tmp4 + ":" + tmp3 + ":" + tmp2 + ":" + tmp1);
+                        preCond.put(tmp1, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                        preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                        preCond.put(tmp3, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                        preCond.put(tmp4, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                    } else if (size == 16) {
+                        String tmp1 = valNew + (i * 2);
+                        String tmp2 = valNew + (i * 2 + 1);
+                        registerMap.put("S" + (indexDes + i), tmp2 + ":" + tmp1);
+                        preCond.put(tmp1, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                        preCond.put(tmp2, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                    } else if (size == 32) {
+                        String tmp = valNew + i;
+                        registerMap.put("S" + (indexDes + i), tmp);
+                        preCond.put(tmp, new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+                    }
+                }
+            }
+        }
+    }
+
+    private void getVMLASub(int size, String signMode, String val, String[] vals1, String[] vals2, StringBuilder sRegToLeft) {
+        if (size == 32) {
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("extractMInt(mi(64, ").append(signMode).append("(mi(32, ").append(vals1[0])
+                    .append(")) *Int ").append(signMode).append("(mi(32, ").append(val).append("))")
+                    .append(" +Int ").append(signMode).append("(mi(32, ").append(vals2[0])
+                    .append("))), 32, 64)\n");
+        } else if (size == 16) {
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("extractMInt(mi(32, ").append(signMode).append("(mi(16, ").append(vals1[0])
+                    .append(")) *Int ").append(signMode).append("(extractMInt(mi(32, ").append(val)
+                    .append("), 16, 32))")
+                    .append(" +Int ").append(signMode).append("(mi(16, ").append(vals2[0])
+                    .append("))), 16, 32), ")
+                    .append("extractMInt(mi(32, ").append(signMode).append("(mi(16, ").append(vals1[1])
+                    .append(")) *Int ").append(signMode).append("(extractMInt(mi(32, ").append(val)
+                    .append("), 16, 32))")
+                    .append(" +Int ").append(signMode).append("(mi(16, ").append(vals2[1])
+                    .append("))), 16, 32)")
+                    .append(")\n");
+        } else if (size == 8) {
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("extractMInt(mi(16, ").append(signMode).append("(mi(8, ").append(vals1[0])
+                    .append(")) *Int ").append(signMode).append("(extractMInt(mi(32, ").append(val)
+                    .append("), 24, 32))")
+                    .append(" +Int ").append(signMode).append("(mi(8, ").append(vals2[0])
+                    .append("))), 8, 16), ")
+                    .append("concatenateMInt(")
+                    .append("extractMInt(mi(16, ").append(signMode).append("(mi(8, ").append(vals1[1])
+                    .append(")) *Int ").append(signMode).append("(extractMInt(mi(32, ").append(val)
+                    .append("), 24, 32))")
+                    .append(" +Int ").append(signMode).append("(mi(8, ").append(vals2[1])
+                    .append("))), 8, 16), ")
+                    .append("concatenateMInt(")
+                    .append("extractMInt(mi(16, ").append(signMode).append("(mi(8, ").append(vals1[2])
+                    .append(")) *Int ").append(signMode).append("(extractMInt(mi(32, ").append(val)
+                    .append("), 24, 32))")
+                    .append(" +Int ").append(signMode).append("(mi(8, ").append(vals2[2])
+                    .append("))), 8, 16), ")
+                    .append("extractMInt(mi(16, ").append(signMode).append("(mi(8, ").append(vals1[3])
+                    .append(")) *Int ").append(signMode).append("(extractMInt(mi(32, ").append(val)
+                    .append("), 24, 32))")
+                    .append(" +Int ").append(signMode).append("(mi(8, ").append(vals2[3])
+                    .append("))), 8, 16)")
+                    .append(")))\n");
+        }
+    }
+
+    /**
+     * VQADD Q Q
+     * @return
+     */
+    public List<String> vqaddQQPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String signMode = datatype.charAt(0) == 'S' ? "svalueMInt" : "uvalueMInt";
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+            // 第一个源操作数同时为目标操作数
+            if (desRegister.equals(sourceRegister1)) {
+                int index = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    String sReg2 = "S" + (index+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    String[] vals2 = registerMap.get(sReg2).split(":");
+                    // 修改sRegToLeft
+                    getVQADDsRegToLeft(size, signMode, datatype, vals1, vals2, sRegToLeft);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    if (i == 3) {
+                        getVQADDFPSCR(size, signMode, datatype, desCond, vals1, vals2);
+                    }
+                    BigInteger[] cmpRange = new BigInteger[2];
+                    if (datatype.charAt(0) == 'S') {
+                        cmpRange[0] = BigInteger.valueOf(-1 * (1L << (size-1)));
+                        cmpRange[1] = BigInteger.valueOf(1L << (size-1));
+                    } else {
+                        cmpRange[0] = BigInteger.ZERO;
+                        cmpRange[1] = BigInteger.valueOf(1L << size);
+                    }
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegers2, datatype, size);
+                        BigInteger[] desRange = getVQADDDesRange(bigIntegers1, bigIntegers2, cmpRange);
+                        preCond.put(vals1[j], desRange);
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else if (desRegister.equals(sourceRegister2)) {   // 第二个源操作数同时为目标操作数
+                int index = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index+i);
+                    String sReg2 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg2, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    String[] vals2 = registerMap.get(sReg2).split(":");
+                    getVQADDsRegToLeft(size, signMode, datatype, vals1, vals2, sRegToLeft);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    if (i == 3) {
+                        getVQADDFPSCR(size, signMode, datatype, desCond, vals1, vals2);
+                    }
+
+                    BigInteger[] cmpRange = new BigInteger[2];
+                    if (datatype.charAt(0) == 'S') {
+                        cmpRange[0] = BigInteger.valueOf(-1 * (1L << (size-1)));
+                        cmpRange[1] = BigInteger.valueOf(1L << (size-1));
+                    } else {
+                        cmpRange[0] = BigInteger.ZERO;
+                        cmpRange[1] = BigInteger.valueOf(1L << size);
+                    }
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegers2, datatype, size);
+                        BigInteger[] desRange = getVQADDDesRange(bigIntegers1, bigIntegers2, cmpRange);
+                        preCond.put(vals2[j], desRange);
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                int index2 = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                setSourcePostCond(size, index2, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    String sReg2 = "S" + (index2+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    String[] vals2 = registerMap.get(sReg2).split(":");
+                    getVQADDsRegToLeft(size, signMode, datatype, vals1, vals2, sRegToLeft);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    if (i == 3) {
+                        getVQADDFPSCR(size, signMode, datatype, desCond, vals1, vals2);
+                    }
+                    // 重设目标寄存器的值范围
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    BigInteger[] cmpRange = new BigInteger[2];
+                    if (datatype.charAt(0) == 'S') {
+                        cmpRange[0] = BigInteger.valueOf(-1 * (1L << (size-1)));
+                        cmpRange[1] = BigInteger.valueOf(1L << (size-1));
+                    } else {
+                        cmpRange[0] = BigInteger.ZERO;
+                        cmpRange[1] = BigInteger.valueOf(1L << size);
+                    }
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegers2, datatype, size);
+                        BigInteger[] desRange = getVQADDDesRange(bigIntegers1, bigIntegers2, cmpRange);
+                        preCond.put(valsDes[j], desRange);
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    private void getVQADDsRegToLeft(int size, String signMode, String datatype, String[] vals1, String[] vals2,
+                                    StringBuilder sRegToLeft) {
+        if (size == 32) {
+            String sub = signMode + "(mi(32, ";
+            String[] thres = datatype.charAt(0) == 'S' ? new String[]{"-2147483648", "2147483647"}
+                    : new String[]{"0", "4294967295"};
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("ifMInt (").append(sub).append(vals1[0])
+                    .append(")) +Int ")
+                    .append(sub).append(vals2[0]).append(")) >Int ").append(thres[1])
+                    .append(") then mi(32, ").append(thres[1]).append(") else ifMInt (")
+                    .append(sub).append(vals1[0]).append(")) +Int ").append(sub).append(vals2[0])
+                    .append(")) <Int ").append(thres[0]).append(") then mi(32, ").append(thres[0])
+                    .append(") else ")
+                    .append("mi(32, ").append(sub).append(vals1[0]).append(")) +Int ")
+                    .append(sub).append(vals2[0]).append(")))\n");
+        } else if (size == 16) {
+            String sub = signMode + "(mi(16, ";
+            String[] thres = datatype.charAt(0) == 'S' ? new String[]{"-32768", "32767"}
+                    : new String[]{"0", "65535"};
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (").append(sub).append(vals1[0])
+                    .append(")) +Int ")
+                    .append(sub).append(vals2[0]).append(")) >Int ").append(thres[1])
+                    .append(") then mi(16, ").append(thres[1]).append(") else ifMInt (")
+                    .append(sub).append(vals1[0]).append(")) +Int ").append(sub).append(vals2[0])
+                    .append(")) <Int ").append(thres[0]).append(") then mi(16, ").append(thres[0])
+                    .append(") else ")
+                    .append("mi(16, ").append(sub).append(vals1[0]).append(")) +Int ")
+                    .append(sub).append(vals2[0]).append("))), ")
+                    .append("ifMInt (").append(sub).append(vals1[1])
+                    .append(")) +Int ")
+                    .append(sub).append(vals2[1]).append(")) >Int ").append(thres[1])
+                    .append(") then mi(16, ").append(thres[1]).append(") else ifMInt (")
+                    .append(sub).append(vals1[1]).append(")) +Int ").append(sub).append(vals2[1])
+                    .append(")) <Int ").append(thres[0]).append(") then mi(16, ").append(thres[0])
+                    .append(") else ")
+                    .append("mi(16, ").append(sub).append(vals1[1]).append(")) +Int ")
+                    .append(sub).append(vals2[1]).append(")))")
+                    .append(")\n");
+        } else if (size == 8) {
+            String sub = signMode + "(mi(8, ";
+            String[] thres = datatype.charAt(0) == 'S' ? new String[]{"-128", "127"}
+                    : new String[]{"0", "255"};
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (").append(sub).append(vals1[0])
+                    .append(")) +Int ")
+                    .append(sub).append(vals2[0]).append(")) >Int ").append(thres[1])
+                    .append(") then mi(8, ").append(thres[1]).append(") else ifMInt (")
+                    .append(sub).append(vals1[0]).append(")) +Int ").append(sub).append(vals2[0])
+                    .append(")) <Int ").append(thres[0]).append(") then mi(8, ").append(thres[0])
+                    .append(") else ")
+                    .append("mi(8, ").append(sub).append(vals1[0]).append(")) +Int ")
+                    .append(sub).append(vals2[0]).append("))), ")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (").append(sub).append(vals1[1])
+                    .append(")) +Int ")
+                    .append(sub).append(vals2[1]).append(")) >Int ").append(thres[1])
+                    .append(") then mi(8, ").append(thres[1]).append(") else ifMInt (")
+                    .append(sub).append(vals1[1]).append(")) +Int ").append(sub).append(vals2[1])
+                    .append(")) <Int ").append(thres[0]).append(") then mi(8, ").append(thres[0])
+                    .append(") else ")
+                    .append("mi(8, ").append(sub).append(vals1[1]).append(")) +Int ")
+                    .append(sub).append(vals2[1]).append("))), ")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (").append(sub).append(vals1[2])
+                    .append(")) +Int ")
+                    .append(sub).append(vals2[2]).append(")) >Int ").append(thres[1])
+                    .append(") then mi(8, ").append(thres[1]).append(") else ifMInt (")
+                    .append(sub).append(vals1[2]).append(")) +Int ").append(sub).append(vals2[2])
+                    .append(")) <Int ").append(thres[0]).append(") then mi(8, ").append(thres[0])
+                    .append(") else ")
+                    .append("mi(8, ").append(sub).append(vals1[2]).append(")) +Int ")
+                    .append(sub).append(vals2[2]).append("))), ")
+                    .append("ifMInt (").append(sub).append(vals1[3])
+                    .append(")) +Int ")
+                    .append(sub).append(vals2[3]).append(")) >Int ").append(thres[1])
+                    .append(") then mi(8, ").append(thres[1]).append(") else ifMInt (")
+                    .append(sub).append(vals1[3]).append(")) +Int ").append(sub).append(vals2[3])
+                    .append(")) <Int ").append(thres[0]).append(") then mi(8, ").append(thres[0])
+                    .append(") else ")
+                    .append("mi(8, ").append(sub).append(vals1[3]).append(")) +Int ")
+                    .append(sub).append(vals2[3]).append(")))")
+                    .append(")))\n");
+        }
+    }
+
+    private void getVQADDFPSCR(int size, String signMode, String datatype, StringBuilder desCond,
+                               String[] vals1, String[] vals2) {
+        if (size == 32) {
+            String sub = signMode + "(mi(32, ";
+            String[] thres = datatype.charAt(0) == 'S' ? new String[]{"-2147483648", "2147483647"}
+                    : new String[]{"0", "4294967295"};
+            desCond.append("\t\t\t\"FPSCR\" |-> (mi(32, 50331648) => ").append("ifMInt ((").append(sub)
+                    .append(vals1[0]).append("))").append(" +Int ").append(sub).append(vals2[0])
+                    .append(")) >Int ").append(thres[1]).append(") orBool (").append(sub)
+                    .append(vals1[0]).append("))").append(" +Int ").append(sub).append(vals2[0])
+                    .append(")) <Int").append(thres[0]).append("))").append(" then \n")
+                    .append("\t\t\t\tplugInMask(mi(32, 50331648), mi(1, 1), 27)\n")
+                    .append("\t\t\t else \n")
+                    .append("\t\t\t\tmi(32, 50331648))\n");
+        } else if (size == 16) {
+            String sub = signMode + "(mi(16, ";
+            String[] thres = datatype.charAt(0) == 'S' ? new String[]{"-32768", "32767"}
+                    : new String[]{"0", "65535"};
+            desCond.append("\t\t\t\"FPSCR\" |-> (mi(32, 50331648) => ").append(" ifMInt ")
+                    .append("((").append(sub)
+                    .append(vals1[1]).append("))").append(" +Int ").append(sub).append(vals2[1])
+                    .append(")) >Int ").append(thres[1]).append(") orBool (").append(sub)
+                    .append(vals1[1]).append("))").append(" +Int ").append(sub).append(vals2[1])
+                    .append(")) <Int ").append(thres[0]).append(") orBool (").append(sub)
+                    .append(vals1[0]).append("))").append(" +Int ").append(sub).append(vals2[0])
+                    .append(")) >Int ").append(thres[1]).append(") orBool (").append(sub)
+                    .append(vals1[0]).append("))").append(" +Int ").append(sub).append(vals2[0])
+                    .append(")) <Int ").append(thres[0]).append("))")
+                    .append(" then \n")
+                    .append("\t\t\t\tplugInMask(mi(32, 50331648), mi(1, 1), 27)\n")
+                    .append("\t\t\t else \n")
+                    .append("\t\t\t\tmi(32, 50331648))\n");
+        } else if (size == 8) {
+            String sub = signMode + "(mi(8, ";
+            String[] thres = datatype.charAt(0) == 'S' ? new String[]{"-128", "127"}
+                    : new String[]{"0", "255"};
+            desCond.append("\t\t\t\"FPSCR\" |-> (mi(32, 50331648) => ").append(" ifMInt ")
+                    .append("((").append(sub)
+                    .append(vals1[3]).append("))").append(" +Int ").append(sub).append(vals2[3])
+                    .append(")) >Int ").append(thres[1]).append(") orBool (").append(sub)
+                    .append(vals1[3]).append("))").append(" +Int ").append(sub).append(vals2[3])
+                    .append(")) <Int ").append(thres[0]).append(") orBool (").append(sub)
+                    .append(vals1[2]).append("))").append(" +Int ").append(sub).append(vals2[2])
+                    .append(")) >Int ").append(thres[1]).append(") orBool (").append(sub)
+                    .append(vals1[2]).append("))").append(" +Int ").append(sub).append(vals2[2])
+                    .append(")) <Int ").append(thres[0]).append(") orBool (").append(sub)
+                    .append(vals1[1]).append("))").append(" +Int ").append(sub).append(vals2[1])
+                    .append(")) >Int ").append(thres[1]).append(") orBool (").append(sub)
+                    .append(vals1[1]).append("))").append(" +Int ").append(sub).append(vals2[1])
+                    .append(")) <Int ").append(thres[0]).append(") orBool (").append(sub)
+                    .append(vals1[0]).append("))").append(" +Int ").append(sub).append(vals2[0])
+                    .append(")) >Int ").append(thres[1]).append(") orBool (").append(sub)
+                    .append(vals1[0]).append("))").append(" +Int ").append(sub).append(vals2[0])
+                    .append(")) <Int ").append(thres[0]).append("))")
+                    .append(" then \n")
+                    .append("\t\t\t\tplugInMask(mi(32, 50331648), mi(1, 1), 27)\n")
+                    .append("\t\t\t else \n")
+                    .append("\t\t\t\tmi(32, 50331648))\n");
+        }
+    }
+
+    private BigInteger[] getVQADDDesRange(BigInteger[] bigIntegers1, BigInteger[] bigIntegers2, BigInteger[] cmpRange) {
+        BigInteger[] desRange = new BigInteger[2];
+        if (bigIntegers1[0].add(bigIntegers2[0]).compareTo(cmpRange[0]) < 0) {
+            desRange[0] = cmpRange[0];
+            if (bigIntegers1[1].add(bigIntegers2[1]).compareTo(cmpRange[0]) < 0) {
+                desRange[1] = cmpRange[0];
+            } else if (bigIntegers1[1].add(bigIntegers2[1]).compareTo(cmpRange[1]) >= 0) {
+                desRange[1] = cmpRange[1];
+            } else {
+                desRange[1] = bigIntegers1[1].add(bigIntegers2[1]);
+            }
+        } else if (bigIntegers1[0].add(bigIntegers2[0]).compareTo(cmpRange[1]) >= 0) {
+            desRange[0] = cmpRange[1];
+            desRange[1] = cmpRange[1];
+        } else {
+            desRange[0] = bigIntegers1[0].add(bigIntegers2[0]);
+            if (bigIntegers1[1].add(bigIntegers2[1]).compareTo(cmpRange[1]) >= 0) {
+                desRange[1] = cmpRange[1];
+            } else {
+                desRange[1] = bigIntegers1[1].add(bigIntegers2[1]);
+            }
+        }
+        return desRange;
+    }
+
+    /**
+     * VQRDMULH Q R
+     * @return
+     */
+    public List<String> vqrdmulhQRPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            String val = registerMap.get(sourceRegister2);
+            desCond.append("\t\t\t\"").append(sourceRegister2).append("\" |-> ").append("mi(32, ")
+                    .append(val).append(")\n");
+            String sub = "svalueMInt(mi(" + size + ", ";
+            if (desRegister.equals(sourceRegister1)) {
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    getVQRDMULHsRegToLeft(size, sub, val, vals1, sRegToLeft);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    if (i == 3) {
+                        getVQRDMULHFPSCR(size, sub, val, vals1, desCond);
+                    }
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+
+                    for (String s : vals1) {
+                        BigInteger[] bigIntegers1 = preCond.get(s);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegers2, datatype, size);
+
+                        bigIntegers1[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2));
+                        bigIntegers1[1] = bigIntegers2[0].multiply(BigInteger.valueOf(2));
+                        BigInteger[] mulRange = getMULRange(bigIntegers1, bigIntegers2, datatype);
+                        mulRange[0] = mulRange[0].add(BigInteger.valueOf(1L << (size-1))).divide(BigInteger.valueOf(1L << size));
+                        mulRange[1] = mulRange[1].add(BigInteger.valueOf(1L << (size-1))).divide(BigInteger.valueOf(1L << size));
+                        preCond.put(s, mulRange);
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1).split(":");
+                    getVQRDMULHsRegToLeft(size, sub, val, vals1, sRegToLeft);
+                    sListTo.add(sRegToLeft);
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToLeft).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    BigInteger[] bigIntegers2 = preCond.get(registerMap.get(sourceRegister2));
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    if (i == 3) {
+                        getVQRDMULHFPSCR(size, sub, val, vals1, desCond);
+                    }
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        normalize(bigIntegers1, datatype, size);
+                        normalize(bigIntegers2, datatype, size);
+
+                        bigIntegers1[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2));
+                        bigIntegers1[1] = bigIntegers2[0].multiply(BigInteger.valueOf(2));
+                        BigInteger[] mulRange = getMULRange(bigIntegers1, bigIntegers2, datatype);
+                        mulRange[0] = mulRange[0].add(BigInteger.valueOf(1L << (size-1))).divide(BigInteger.valueOf(1L << size));
+                        mulRange[1] = mulRange[1].add(BigInteger.valueOf(1L << (size-1))).divide(BigInteger.valueOf(1L << size));
+                        preCond.put(valsDes[j], mulRange);
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    private void getVQRDMULHsRegToLeft(int size, String sub, String val, String[] vals1, StringBuilder sRegToLeft) {
+        if (size == 32) {
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub).append(val).append(")) +Int 2147483648) >>Int 32) >Int 2147483647)")
+                    .append(" then ")
+                    .append("mi(32, 2147483647)")
+                    .append(" else ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub).append(val).append(")) +Int 2147483648) >>Int 32) <Int -2147483648)")
+                    .append(" then ")
+                    .append("mi(32, -2147483648)")
+                    .append(" else ")
+                    .append("mi(32, ((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub).append(val).append(")) +Int 2147483648) >>Int 32))")
+                    .append("\n");
+        } else if (size == 16) {
+            String sub2 = "svalueMInt(extractMInt(mi(32, " + val + "), 16, 32))";
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub2).append(" +Int 32768) >>Int 16) >Int 32767)")
+                    .append(" then ")
+                    .append("mi(16, 32767)")
+                    .append(" else ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub2).append(" +Int 32768) >>Int 16) <Int -32768)")
+                    .append(" then ")
+                    .append("mi(16, -32768)")
+                    .append(" else ")
+                    .append("mi(16, ((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub2).append(" +Int 32768) >>Int 16)), ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[1]).append(")) *Int ")
+                    .append(sub2).append(" +Int 32768) >>Int 16) >Int 32767)")
+                    .append(" then ")
+                    .append("mi(16, 32767)")
+                    .append(" else ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[1]).append(")) *Int ")
+                    .append(sub2).append(" +Int 32768) >>Int 16) <Int -32768)")
+                    .append(" then ")
+                    .append("mi(16, -32768)")
+                    .append(" else ")
+                    .append("mi(16, ((2 *Int ").append(sub).append(vals1[1]).append(")) *Int ")
+                    .append(sub2).append(" +Int 32768) >>Int 16))")
+                    .append(")\n");
+        } else if (size == 8) {
+            String sub2 = "svalueMInt(extractMInt(mi(32, " + val + "), 24, 32))";
+            sRegToLeft.append("\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8) >Int 127)")
+                    .append(" then ")
+                    .append("mi(8, 127)")
+                    .append(" else ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8) <Int -128)")
+                    .append(" then ")
+                    .append("mi(8, -128)")
+                    .append(" else ")
+                    .append("mi(8, ((2 *Int ").append(sub).append(vals1[0]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8)), ")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[1]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8) >Int 127)")
+                    .append(" then ")
+                    .append("mi(8, 127)")
+                    .append(" else ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[1]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8) <Int -128)")
+                    .append(" then ")
+                    .append("mi(8, -128)")
+                    .append(" else ")
+                    .append("mi(8, ((2 *Int ").append(sub).append(vals1[1]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8)), ")
+                    .append("concatenateMInt(")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[2]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8) >Int 127)")
+                    .append(" then ")
+                    .append("mi(8, 127)")
+                    .append(" else ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[2]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8) <Int -128)")
+                    .append(" then ")
+                    .append("mi(8, -128)")
+                    .append(" else ")
+                    .append("mi(8, ((2 *Int ").append(sub).append(vals1[2]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8)), ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[3]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8) >Int 127)")
+                    .append(" then ")
+                    .append("mi(8, 127)")
+                    .append(" else ")
+                    .append("ifMInt (((2 *Int ").append(sub).append(vals1[3]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8) <Int -128)")
+                    .append(" then ")
+                    .append("mi(8, -128)")
+                    .append(" else ")
+                    .append("mi(8, ((2 *Int ").append(sub).append(vals1[3]).append(")) *Int ")
+                    .append(sub2).append(" +Int 128) >>Int 8))")
+                    .append(")))\n");
+        }
+    }
+
+    private void getVQRDMULHFPSCR(int size, String sub, String val, String[] vals1, StringBuilder desCond) {
+        if (size == 32) {
+            desCond.append("\n\t\t\t\"FPSCR\" |-> (mi(32, 50331648) => ")
+                    .append("ifMInt (").append("(((2 *Int ").append(sub).append(vals1[0])
+                    .append(")) *Int ").append(sub).append(val).append(")) +Int 2147483648) >>Int 32)")
+                    .append(" >Int 2147483647) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[0])
+                    .append(")) *Int ").append(sub).append(val).append(")) +Int 2147483648) >>Int 32)")
+                    .append(" <Int -2147483648) ")
+                    .append(")")
+                    .append(" then ")
+                    .append("plugInMask(mi(32, 50331648), mi(1, 1), 27)")
+                    .append(" else ").append("mi(32, 50331648))\n");
+        } else if (size == 16) {
+            String sub2 = "svalueMInt(extractMInt(mi(32, " + val + "), 16, 32))";
+            desCond.append("\n\t\t\t\"FPSCR\" |-> (mi(32, 50331648) => ")
+                    .append("ifMInt (").append("(((2 *Int ").append(sub).append(vals1[1])
+                    .append(")) *Int ").append(sub2).append(" +Int 32768) >>Int 16)")
+                    .append(" >Int 32767) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[1])
+                    .append(")) *Int ").append(sub2).append(" +Int 32768) >>Int 16)")
+                    .append(" <Int -32768) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[0])
+                    .append(")) *Int ").append(sub2).append(" +Int 32768) >>Int 16)")
+                    .append(" >Int 32767) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[0])
+                    .append(")) *Int ").append(sub2).append(" +Int 32768) >>Int 16)")
+                    .append(" <Int -32768) ")
+                    .append(")")
+                    .append(" then ")
+                    .append("plugInMask(mi(32, 50331648), mi(1, 1), 27)")
+                    .append(" else ").append("mi(32, 50331648))\n");
+        } else if (size == 8) {
+            String sub2 = "svalueMInt(extractMInt(mi(32, " + val + "), 24, 32))";
+            desCond.append("\n\t\t\t\"FPSCR\" |-> (mi(32, 50331648) => ")
+                    .append("ifMInt (").append("(((2 *Int ").append(sub).append(vals1[3])
+                    .append(")) *Int ").append(sub2).append(" +Int 128) >>Int 8)")
+                    .append(" >Int 127) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[3])
+                    .append(")) *Int ").append(sub2).append(" +Int 128) >>Int 8)")
+                    .append(" <Int -128) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[2])
+                    .append(")) *Int ").append(sub2).append(" +Int 128) >>Int 8)")
+                    .append(" >Int 127) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[2])
+                    .append(")) *Int ").append(sub2).append(" +Int 128) >>Int 8)")
+                    .append(" <Int -128) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[1])
+                    .append(")) *Int ").append(sub2).append(" +Int 128) >>Int 8)")
+                    .append(" >Int 127) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[1])
+                    .append(")) *Int ").append(sub2).append(" +Int 128) >>Int 8)")
+                    .append(" <Int -128) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[0])
+                    .append(")) *Int ").append(sub2).append(" +Int 128) >>Int 8)")
+                    .append(" >Int 127) ")
+                    .append(" orBool ")
+                    .append("(((2 *Int ").append(sub).append(vals1[0])
+                    .append(")) *Int ").append(sub2).append(" +Int 128) >>Int 8)")
+                    .append(" <Int -128) ")
+                    .append(")")
+                    .append(" then ")
+                    .append("plugInMask(mi(32, 50331648), mi(1, 1), 27)")
+                    .append(" else ").append("mi(32, 50331648))\n");
+        }
+    }
+
+    private BigInteger[] getVRSHLRange(BigInteger[] bigIntegers1, BigInteger[] bigIntegers2) {
+        if (bigIntegers1[0].compareTo(BigInteger.ZERO) < 0) {
+            if (bigIntegers2[1].compareTo(BigInteger.ZERO) < 0) {
+                bigIntegers1[0] = bigIntegers1[0]
+                        .add(BigInteger.valueOf(2).pow(Integer.parseInt(
+                                bigIntegers2[1].abs().subtract(BigInteger.ONE).toString())))
+                        .divide(BigInteger.valueOf(2).pow(Integer.parseInt(bigIntegers2[1].abs().toString())));
+            } else {
+                bigIntegers1[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2)
+                        .pow(Integer.parseInt(bigIntegers2[1].abs().toString())));
+            }
+        } else {
+            if (bigIntegers2[0].compareTo(BigInteger.ZERO) < 0) {
+                bigIntegers1[0] = bigIntegers1[0]
+                        .add(BigInteger.valueOf(2).pow(Integer.parseInt(
+                                bigIntegers2[0].abs().subtract(BigInteger.ONE).toString())))
+                        .divide(BigInteger.valueOf(2).pow(Integer.parseInt(bigIntegers2[0].abs().toString())));
+            } else {
+                bigIntegers1[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2)
+                        .pow(Integer.parseInt(bigIntegers2[0].abs().toString())));
+            }
+        }
+        if (bigIntegers1[1].compareTo(BigInteger.ZERO) < 0) {
+            if (bigIntegers2[0].compareTo(BigInteger.ZERO) < 0) {
+                bigIntegers1[1] = bigIntegers1[1]
+                        .add(BigInteger.valueOf(2).pow(Integer.parseInt(
+                                bigIntegers2[0].abs().subtract(BigInteger.ONE).toString())))
+                        .divide(BigInteger.valueOf(2).pow(Integer.parseInt(bigIntegers2[0].abs().toString())));
+            } else {
+                bigIntegers1[1] = bigIntegers1[1].multiply(BigInteger.valueOf(2)
+                        .pow(Integer.parseInt(bigIntegers2[0].abs().toString())));
+            }
+        } else {
+            if (bigIntegers2[1].compareTo(BigInteger.ZERO) < 0) {
+                bigIntegers1[1] = bigIntegers1[1]
+                        .add(BigInteger.valueOf(2).pow(Integer.parseInt(
+                                bigIntegers2[1].abs().subtract(BigInteger.ONE).toString())))
+                        .divide(BigInteger.valueOf(2).pow(Integer.parseInt(bigIntegers2[1].abs().toString())));
+            } else {
+                bigIntegers1[1] = bigIntegers1[1].multiply(BigInteger.valueOf(2)
+                        .pow(Integer.parseInt(bigIntegers2[1].abs().toString())));
+            }
+        }
+        return new BigInteger[]{bigIntegers1[0], bigIntegers1[1]};
     }
 }

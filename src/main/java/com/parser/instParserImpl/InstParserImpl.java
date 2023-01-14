@@ -8,12 +8,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InstParserImpl implements InstParser {
-    //                                       1           2         3     4                    5                6                            7                        8                              9                         10
-    private final String instPattern = "^[ ]*([A-Z]+)[ ]*([\\.][ ]*([SUF$](8|16|32|64)+))*[ ]*([RQSD][0-9]{1,2}(\\[[0-9]{1,2}\\])*)[ ]*,[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))[ ]*,?[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))?[ ]*";
+    //                                       1           2         3            4                    5                6                            7                        8                              9                         10
+    private final String instPattern = "^[ ]*([A-Z]+)[ ]*([\\.][ ]*([SUF$I]{0,1}(8|16|32|64)+))*[ ]*([RQSD][0-9]{1,2}(\\[[0-9]{1,2}\\])*)[ ]*,[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))[ ]*,?[ ]*([RQSD][0-9]{1,2}|[#][ ]*([A-Za-z]+\\d*|\\d+))?[ ]*";
 
-    private final Set<String> instTable = new HashSet<>(Arrays.asList("MOV", "VMOV", "VMAX", "VMAXA", "VMAXV", "VMAXAV", "VMAXNM", "VMAXNMV", "VMAXNMA", "VMAXNMAV",
-            "VMIN", "VMINV", "VMINA", "VMINAV", "VMINNM", "VMINNMA", "VMINNMV", "VMINNMAV", "VMLAV"));
-    private final Set<String> dataTypeTable = new HashSet<>(Arrays.asList("S8", "S16", "S32", "U8", "U16", "U32", "F16", "F32", "F64"));
+    private final Set<String> instTable = new HashSet<>(Arrays.asList("MOV", "VMOV", "VMAX", "VMAXA", "VMAXV", "VMAXAV",
+            "VMAXNM", "VMAXNMV", "VMAXNMA", "VMAXNMAV", "VMIN", "VMINV", "VMINA", "VMINAV", "VMINNM", "VMINNMA",
+            "VMINNMV", "VMINNMAV", "VMLAV", "VADD", "VSUB", "VMUL", "VSHR", "VSHL", "VORR", "VAND", "VQADD",
+            "VDUP", "VNEG", "VMLA", "VRSHL", "VQRDMULH"));
+    private final Set<String> dataTypeTable = new HashSet<>(Arrays.asList("S8", "S16", "S32", "U8", "U16", "U32", "F16",
+            "F32", "F64", "I8", "I16", "I32"));
     private final Set<String> RegisterTable = new HashSet<>(Arrays.asList("R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8",
             "R9", "R10", "R11", "R12", "R13", "S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11",
             "S12", "S13", "S14", "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22", "S23", "S24", "S25", "S26",
@@ -33,7 +36,7 @@ public class InstParserImpl implements InstParser {
                     throw new RuntimeException();
                 instruction.setOpcode(matcher.group(1));
                 // 判断数据类型是否为空，并是否有效
-                if (matcher.group(3) != null && (dataTypeTable.contains(matcher.group(3)) || matcher.group(3).matches("^[$](8|16|32)"))) {
+                if (matcher.group(3) != null && (dataTypeTable.contains(matcher.group(3)) || matcher.group(3).matches("^[$]{0,1}(8|16|32)"))) {
                     instruction.setDatatype(matcher.group(3));
                 } else if (matcher.group(3) != null)
                     throw new RuntimeException();

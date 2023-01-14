@@ -101,14 +101,15 @@ public class ProgramState {
             destinationRegister[0] = (char)(destinationRegister[0] + 32);
             StringBuilder inst = new StringBuilder();
             inst.append("\t\t\tmemloc(mi(32, 0)) |-> storedInstr( ");
-            if ("VMAXV".equals(instruction.getOpcode()) || "VMINV".equals(instruction.getOpcode())) {
+            String opcode = instruction.getOpcode();
+            if ("VMAXV".equals(opcode) || "VMINV".equals(opcode)) {
                 char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
                 sourceRegister[0] = (char)(sourceRegister[0] + 32);
-                int cmpMode = "VMAXV".equals(instruction.getOpcode()) ? 0 : 1;
+                int cmpMode = "VMAXV".equals(opcode) ? 0 : 1;
                 inst.append("cmp . ").append(instruction.getDatatype()).append(' ')
                         .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister))
                         .append(", # ").append(cmpMode).append(", # ").append(beat).append(", # 0, .Operands)\n");
-            } else if ("VMLAV".equals(instruction.getOpcode())) {
+            } else if ("VMLAV".equals(opcode)) {
                 char[] sourceRegister0 = instruction.getSourceRegister().get(0).toCharArray();
                 char[] sourceRegister1 = instruction.getSourceRegister().get(1).toCharArray();
                 sourceRegister0[0] = (char) (sourceRegister0[0] + 32);
@@ -116,27 +117,47 @@ public class ProgramState {
                 inst.append("maa . ").append(instruction.getDatatype()).append(' ').append(String.valueOf(destinationRegister))
                         .append(", ").append(String.valueOf(sourceRegister0)).append(", ").append(String.valueOf(sourceRegister1))
                         .append(", # ").append(beat).append(", Operands)\n");
-            } else if ("VMAXAV".equals(instruction.getOpcode()) || "VMINAV".equals(instruction.getOpcode())) {
+            } else if ("VMAXAV".equals(opcode) || "VMINAV".equals(opcode)) {
                 char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
                 sourceRegister[0] = (char)(sourceRegister[0] + 32);
-                int cmpMode = "VMAXAV".equals(instruction.getOpcode()) ? 0 : 1;
+                int cmpMode = "VMAXAV".equals(opcode) ? 0 : 1;
                 inst.append("cmpAbs . ").append(instruction.getDatatype()).append(' ')
                         .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister))
                         .append(", # ").append(cmpMode).append(", # ").append(beat).append(", .Operands)\n");
-            } else if ("VMAX".equals(instruction.getOpcode()) || "VMIN".equals(instruction.getOpcode())) {
+            } else if ("VMAX".equals(opcode) || "VMIN".equals(opcode)
+                    || "VADD".equals(opcode) || "VSUB".equals(opcode)
+                    || "VMUL".equals(opcode) || "VRSHL".equals(opcode)
+                    || "VMLA".equals(opcode) || "VQADD".equals(opcode)
+                    || "VQRDMULH".equals(opcode)) {
                 char[] sourceRegister1 = instruction.getSourceRegister().get(0).toCharArray();
                 char[] sourceRegister2 = instruction.getSourceRegister().get(1).toCharArray();
                 sourceRegister1[0] = (char)(sourceRegister1[0] + 32);
                 sourceRegister2[0] = (char)(sourceRegister2[0] + 32);
-                inst.append(instruction.getOpcode()).append(" . ").append(instruction.getDatatype()).append(' ')
+                inst.append(opcode).append(" . ").append(instruction.getDatatype()).append(' ')
                         .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister1))
                         .append(", ").append(String.valueOf(sourceRegister2)).append(", .Operands)\n");
-            } else if ("VMAXA".equals(instruction.getOpcode()) || "VMINA".equals(instruction.getOpcode())) {
+            } else if ("VMAXA".equals(opcode) || "VMINA".equals(opcode)
+                    || "VDUP".equals(opcode) || "VNEG".equals(opcode)) {
                 char[] sourceRegister = instruction.getSourceRegister().get(0).toCharArray();
                 sourceRegister[0] = (char)(sourceRegister[0] + 32);
-                inst.append(instruction.getOpcode()).append(" . ").append(instruction.getDatatype()).append(' ')
+                inst.append(opcode).append(" . ").append(instruction.getDatatype()).append(' ')
                         .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister))
                         .append(", .Operands)\n");
+            } else if ("VAND".equals(opcode) || "VORR".equals(opcode)) {
+                char[] sourceRegister1 = instruction.getSourceRegister().get(0).toCharArray();
+                char[] sourceRegister2 = instruction.getSourceRegister().get(1).toCharArray();
+                sourceRegister1[0] = (char)(sourceRegister1[0] + 32);
+                sourceRegister2[0] = (char)(sourceRegister2[0] + 32);
+                inst.append(opcode).append(' ').append(String.valueOf(destinationRegister))
+                        .append(", ").append(String.valueOf(sourceRegister1))
+                        .append(", ").append(String.valueOf(sourceRegister2))
+                        .append(", .Operands)\n");
+            } else if ("VSHR".equals(opcode) || "VSHL".equals(opcode)) {
+                char[] sourceRegister1 = instruction.getSourceRegister().get(0).toCharArray();
+                sourceRegister1[0] = (char)(sourceRegister1[0] + 32);
+                inst.append(opcode).append(" . ").append(instruction.getDatatype()).append(' ')
+                        .append(String.valueOf(destinationRegister)).append(", ").append(String.valueOf(sourceRegister1))
+                        .append(", # ").append(instruction.getImm()).append(", .Operands)\n");
             }
             instList.add(inst.toString());
             return instList;
