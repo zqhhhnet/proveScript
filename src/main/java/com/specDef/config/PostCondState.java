@@ -912,7 +912,8 @@ public class PostCondState {
         // 设置临时寄存器
         List<String> postCondition = new ArrayList<>();
         try {
-            checkException();
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
             if (sourcePostCond == null || sourcePostCond.isEmpty()) {
                 sourcePostCond = new ArrayList<>();
             }
@@ -958,7 +959,7 @@ public class PostCondState {
                             sReg2.append('S').append((index+i));
                         }
                         StringBuilder sRegTo = getDesByCompElement(sReg1.toString(), sReg2.toString(), size,
-                                "VMAX".equals(instruction.getOpcode()) ? "<=Int" : ">=Int");
+                                "VMAX".equals(instruction.getOpcode()) ? "<=Int" : ">=Int", datatype);
                         sListTo.add(sRegTo);
                         desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
                                 .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegTo)
@@ -1005,6 +1006,7 @@ public class PostCondState {
                     if (!registerMap.containsKey(desRegister)) {
                         String val = "V" + desRegister + "_set";
                         registerMap.put(desRegister, val);
+                        preCond.put(val, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
                         val = size == 32 ? val : (size == 16 ? val + "0" : val + "00");
                         for (int i = 0; i < 4; i++) {
                             if (size == 8) {
@@ -1066,7 +1068,7 @@ public class PostCondState {
                         sReg1.append('S').append((index1+i));
                         sReg2.append('S').append((index2+i));
                         StringBuilder sRegTo = getDesByCompElement(sReg1.toString(), sReg2.toString(), size,
-                                "VMAX".equals(instruction.getOpcode()) ? "<=Int" : ">=Int");
+                                "VMAX".equals(instruction.getOpcode()) ? "<=Int" : ">=Int", datatype);
                         sListTo.add(sRegTo);
                         desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
                                 .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegTo)
@@ -1215,17 +1217,25 @@ public class PostCondState {
      * @param cmpMode   比较模式，取最大还是取最小
      * @return  返回 S 对应的后置条件
      */
-    private StringBuilder getDesByCompElement(String sReg1, String sReg2, int width, String cmpMode) {
+    private StringBuilder getDesByCompElement(String sReg1, String sReg2, int width, String cmpMode, String datatype) {
         StringBuilder res = new StringBuilder();
         String[] vals1 = proveObject.getRegisterMap().get(sReg1).split(":");
         String[] vals2 = proveObject.getRegisterMap().get(sReg2).split(":");
+        String signMode = datatype.charAt(0) == 'S' ? "svalueMInt" : "uvalueMInt";
         for (int i = 0; i < vals1.length; i++) {
             if (i < vals1.length - 1) {
-                res.append("concatenateMInt(ifMInt (").append(vals2[i]).append(" ").append(cmpMode).append(" ").append(vals1[i])
+                res.append("concatenateMInt(ifMInt (")
+                        .append(signMode).append("(mi(").append(width).append(", ").append(vals2[i]).append(")) ")
+                        .append(cmpMode).append(" ")
+                        .append(signMode).append("(mi(").append(width).append(", ").append(vals1[i]).append(")) ")
                         .append(") then (mi(").append(width).append(", ").append(vals1[i]).append(")) else mi(")
                         .append(width).append(", ").append(vals2[i]).append(") ,");
             } else {
-                res.append(" ifMInt (").append(vals2[i]).append(" ").append(cmpMode).append(" ").append(vals1[i]).append(") then mi(")
+                res.append(" ifMInt (")
+                        .append(signMode).append("(mi(").append(width).append(", ").append(vals2[i]).append(")) ")
+                        .append(cmpMode).append(" ")
+                        .append(signMode).append("(mi(").append(width).append(", ").append(vals1[i]).append(")) ")
+                        .append(") then mi(")
                         .append(width).append(", ").append(vals1[i]).append(") else mi(").append(width).append(", ")
                         .append(vals2[i]).append(")");
             }
@@ -3688,6 +3698,7 @@ public class PostCondState {
         if (!registerMap.containsKey(desRegister)) {
             String valNew = "V" + desRegister + "_set";
             registerMap.put(desRegister, valNew);
+            preCond.put(valNew, new BigInteger[]{BigInteger.ZERO, BigInteger.ONE});
             valNew = size == 32 ? valNew : (size == 16 ? valNew + "0" : valNew + "00");
             for (int i = 0; i < 4; i++) {
                 if (size == 8) {

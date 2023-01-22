@@ -400,8 +400,13 @@ public class PreCondState {
         String desPreCond = null;
         Map<String, BigInteger[]> preCond = proveObject.getPreCond();
         Map<String, String> registerMap = proveObject.getRegisterMap();
-        if (!registerMap.containsKey(destinationRegister))
-            throw new InputMismatchException("目标寄存器无对应值，请重新设置");
+        if (!registerMap.containsKey(destinationRegister)) {
+            if ("VMLAV".equals(instruction.getOpcode())) {
+                registerMap.put(destinationRegister, "0");
+                preCond.put("0", new BigInteger[]{BigInteger.ZERO, BigInteger.ZERO});
+            } else
+                throw new InputMismatchException("目标寄存器无对应值，请重新设置");
+        }
         String val = registerMap.get(destinationRegister);
         if (val != null && preCond.get(val) == null) {
             preCond.put(val, new BigInteger[]{new BigInteger(val), new BigInteger(val)});
@@ -409,6 +414,7 @@ public class PreCondState {
         BigInteger[] bigIntegers = preCond.get(val);
         desPreCond = preSourceCond + "\t\t\tandBool " + val + " >=Int " + bigIntegers[0] +
                 " andBool " + val + " <=Int " + bigIntegers[1] + "\n";
+        proveObject.setRegisterMap(registerMap);
         proveObject.setPreCond(preCond);
         return desPreCond;
     }

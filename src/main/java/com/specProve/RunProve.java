@@ -161,8 +161,8 @@ public class RunProve {
                     + "include" + System.getProperty("file.separator") + "z3" + System.getProperty("file.separator")
                     + "basic.smt2", null);*/
             result = proveObject.getSmtPrelude() == null ? specProve.executeSpecProve("kprove "
-                    + specFile.getName() + " --z3-impl-timeout 15000", null) :
-                    specProve.executeSpecProve("kprove " + specFile.getName() + " --z3-impl-timeout 15000 " +
+                    + specFile.getName() + " --z3-impl-timeout 200000", null) :
+                    specProve.executeSpecProve("kprove " + specFile.getName() + " --z3-impl-timeout 200000 " +
                             "--smt-prelude " + proveObject.getSmtPrelude(), null);
 
             long oneInstTimeEnd = System.currentTimeMillis();
