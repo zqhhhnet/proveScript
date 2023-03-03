@@ -10,6 +10,7 @@ import java.util.Map;
 public class ProveObject {
     // 前置条件
     private Map<String, BigInteger[]> preCond;
+    // 改为依据数据类型进行设置
     // 后置条件
     private Map<String, BigInteger[]> postCond;
     // 程序指令
@@ -22,4 +23,6 @@ public class ProveObject {
     private Map<Integer, Integer> fpFlagMap;
     // 用于存储smt-prelude 的路径，用户手动设置对应k中basic.smt2的路径： 如，~/K_ROOT/k-distribution/include/z3/basic.smt2
     private String smtPrelude;
+    // 被验证程序安全的中间或最终结果
+    private List<String> safetyElement;
 }

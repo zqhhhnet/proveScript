@@ -2,6 +2,7 @@ package com.parser.fileParserImpl;
 
 import com.parser.FileParser;
 import com.pojo.ProveObject;
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class FileParserImpl implements FileParser {
             String line;
             List<String> instList = new ArrayList<>();
             Map<String, BigInteger[]> preConditions = new HashMap<>();
-            Map<String, BigInteger[]> postConditions = new HashMap<>();
+            List<String> postConditions = new ArrayList<>();
             boolean valid = true;
             while ((line = br.readLine()) != null) {
                 if (line.matches("^start.*")) {
@@ -76,14 +77,13 @@ public class FileParserImpl implements FileParser {
                                 throw new InputMismatchException("前置条件获取失败");
                             }
                         } else {
-                            BigInteger[] range = new BigInteger[2];
-                            String tag = getTag(line, range);
-                            if (tag != null) {
-                                postConditions.put(tag, range);
-                            } else {
+                            // 检索 [x1, x2] / [x1, x2) / (x1, x2] / (x1, x2) / (_, x2] / ...
+                            // 其中"_"代表该界无限制，为无穷
+                            /*postConditions = getSafetyRange(line);
+                            if (postConditions.size() != 2) {
                                 valid = false;
-                                throw new InputMismatchException("后置条件获取失败");
-                            }
+                                throw new InputMismatchException("后置条件设置异常，获取失败");
+                            }*/
                         }
                     }
                 }
@@ -91,7 +91,7 @@ public class FileParserImpl implements FileParser {
             if (valid == false) {
                 throw new InputMismatchException();
             }
-            proveObject.setPostCond(postConditions);
+            //proveObject.setPostCond(postConditions);
             proveObject.setPreCond(preConditions);
             proveObject.setRegisterMap(new HashMap<>());
             return proveObject;
@@ -102,6 +102,37 @@ public class FileParserImpl implements FileParser {
             System.err.println("输入范围非法 或 验证程序为空，请重新输入");
             return null;
         }
+    }
+
+    private List<String> getSafetyRange(String line) {
+        List<String> ret = new ArrayList<>();
+        Pattern pattern = Pattern.compile("[ ]*([\\[|\\(])(_|-?\\d+)[ ]*,[ ]*(_|-?\\d+)([\\]|\\)])[ ]*");
+        Matcher m = pattern.matcher(line);
+        if (m.find()) {
+            String leftB = m.group(1);
+            String numL = m.group(2);
+            String numR = m.group(3);
+            String rightB = m.group(4);
+            if ("_".equals(numL)) {
+                ret.add("_");
+            } else {
+                if ("[".equals(leftB)) {
+                    ret.add("c:" + numL);
+                } else {
+                    ret.add("u:" + numL);
+                }
+            }
+            if ("_".equals(numR)) {
+                ret.add("_");
+            } else {
+                if ("]".equals(rightB)) {
+                    ret.add("c:" + numR);
+                } else {
+                    ret.add("u:" + numR);
+                }
+            }
+        }
+        return ret;
     }
 
     /**

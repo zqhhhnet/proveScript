@@ -24,4 +24,6 @@ public interface SpecConfig {
     SpecContext specSet(SpecContext specContext);
 
     File setSpecFile(SpecContext specContext, int count);
+
+    String safetyPropertySet();
 }

@@ -21,7 +21,7 @@ public class SpecConfigTest {
         //String inst = "MOV R0, # B";
         //String inst = "VMUL.I8 Q1, Q1, R0";
         //String inst = "VORR Q2, Q1, Q3";
-        String inst = "VMLAV.S8 R0, Q0, Q1";
+        String inst = "VADD.I8 Q0, Q0, Q1";
         List<String> insts = new ArrayList<>();
         insts.add(inst);
         proveObject.setInstructions(insts);
@@ -102,6 +102,9 @@ public class SpecConfigTest {
         for (String s : specContext.getPostCondition()) {
             System.out.print(s);
         }
+        System.out.println("Ensures: ");
+        String safetyToEnsures = specContext.getSafetyToEnsures();
+        System.out.println("   #  " + safetyToEnsures);
         File file = specConfig.setSpecFile(specContext, 0);
         System.out.println(file);
     }

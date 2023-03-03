@@ -12,4 +12,6 @@ public class SpecContext {
     private List<String> postCondition;
     // 验证的程序包含的指令
     private List<String> instList;
+    // 安全属性
+    private String safetyToEnsures;
 }

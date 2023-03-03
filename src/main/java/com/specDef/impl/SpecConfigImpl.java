@@ -1,5 +1,7 @@
 package com.specDef.impl;
 
+import com.pojo.Instruction;
+import com.pojo.ProveObject;
 import com.specDef.config.PostCondState;
 import com.pojo.SpecContext;
 import com.specDef.SpecConfig;
@@ -12,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -142,6 +145,8 @@ public class SpecConfigImpl implements SpecConfig {
             } else if ("VADD".equals(opcode)) {
                 if (preCondState.getInstruction().getSourceRegister().get(1).charAt(0) == 'R') {
                     postCondition = postCondState.vaddQRPostSet();
+                } else {
+                    postCondition = postCondState.vaddQQPostSet();
                 }
                 // TODO:postCondition = postCondState.vaddQQPostSet();
             } else if ("VSUB".equals(opcode)) {
@@ -189,6 +194,22 @@ public class SpecConfigImpl implements SpecConfig {
         }
     }
 
+    @Override
+    public String safetyPropertySet() {
+        // 获取需要安全验证的元素以及所要验证的后置条件范围
+        // 安全属性的范围根据指令数据类型进行限制
+        // 有数据类型则按照数据类型的范围，无数据类型，则按照beat的范围
+        ProveObject proveObject = postCondState.getProveObject();
+        Instruction instruction = postCondState.getInstruction();
+        List<String> safetyElement = proveObject.getSafetyElement();
+        StringBuilder safetyQuery = new StringBuilder();
+        if (safetyElement == null || safetyElement.isEmpty()) {
+            return "";
+        } else {
+            return safetySet();
+        }
+    }
+
     /**
      * 总接口，把所有的解析结果存到specContext
      * @param specContext
@@ -205,9 +226,11 @@ public class SpecConfigImpl implements SpecConfig {
             List<String> programSet = programSet(specContext);
             if (programSet == null || programSet.isEmpty())
                 throw new RuntimeException("程序设置为空");
+            String safetySet = safetyPropertySet();
             specContext.setInstList(programSet);
             specContext.setPostCondition(postConditionSet);
             specContext.setPreCondition(preConditionSet);
+            specContext.setSafetyToEnsures(safetySet);
             return specContext;
         } catch (RuntimeException ex) {
             ex.printStackTrace();
@@ -239,6 +262,7 @@ public class SpecConfigImpl implements SpecConfig {
             String codeMap = "\t\t\tcode (\n" + String.join("", specContext.getInstList()) + "\t\t\t)\n";
             String regStateSet = String.join("", specContext.getPostCondition());
             String preCondition = specContext.getPreCondition();
+            String safetyToEnsures = specContext.getSafetyToEnsures();
             if ("MOV".equals(opcode) || "VMOV".equals(opcode)) {
                 String moduleName = "MOV".equals(opcode) ? "module SPEC-MOV-MODE\n" : (
                         preCondState.getInstruction().getDatatype() == null ? "module SPEC-VMOV-MODE\n" :
@@ -261,7 +285,7 @@ public class SpecConfigImpl implements SpecConfig {
                 StringBuilder moduleName = new StringBuilder();
                 moduleName.append("module SPEC-").append(opcode).append("-MODE").append('-').append(count).append('\n');
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
-                        regStateSet + defaultReg + preCondition + endModule;
+                        regStateSet + defaultReg + preCondition + "\n" + safetyToEnsures + endModule;
                 String curOpcode = "VMAXV".equals(opcode) ? "spec-vmaxv-mode-" : "spec-vminv-mode-";
                 File file = new File(curPath + System.getProperty("file.separator") + curOpcode + count + ".k");
                 System.out.println(file.getName());
@@ -272,7 +296,7 @@ public class SpecConfigImpl implements SpecConfig {
                 StringBuilder moduleName = new StringBuilder();
                 moduleName.append("module SPEC-").append(opcode).append("-MODE").append('-').append(count).append('\n');
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
-                        regStateSet + defaultReg + preCondition + endModule;
+                        regStateSet + defaultReg + preCondition + "\n" + safetyToEnsures + endModule;
                 File file = new File(curPath + System.getProperty("file.separator") + "spec-vmlav-mode-" + count + ".k");
                 System.out.println(file.getName());
                 fos = new FileOutputStream(file);
@@ -282,7 +306,7 @@ public class SpecConfigImpl implements SpecConfig {
                 StringBuilder moduleName = new StringBuilder();
                 moduleName.append("module SPEC-").append(opcode).append("-MODE").append('-').append(count).append('\n');
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
-                        regStateSet + defaultReg + preCondition + endModule;
+                        regStateSet + defaultReg + preCondition + "\n" + safetyToEnsures + endModule;
                 String curOpcode = "VMAXAV".equals(opcode) ? "spec-vmaxav-mode-" : "spec-vminav-mode-";
                 File file = new File(curPath + System.getProperty("file.separator") + curOpcode + count
                         + ".k");
@@ -295,7 +319,7 @@ public class SpecConfigImpl implements SpecConfig {
                 StringBuilder moduleName = new StringBuilder();
                 moduleName.append("module SPEC-").append(opcode).append("-ONCE\n");
                 String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
-                        regStateSet + defaultReg + preCondition + endModule;
+                        regStateSet + defaultReg + preCondition + "\n" + safetyToEnsures + endModule;
                 String curOpcode = "VMAXA".equals(opcode) ? "spec-vmaxa-once.k" :
                         ("VMINA".equals(opcode) ? "spec-vmina-once.k" :
                                 ("VMAX").equals(opcode) ? "spec-vmax-once.k" : "spec-vmin-once.k");
@@ -311,8 +335,14 @@ public class SpecConfigImpl implements SpecConfig {
                     || "VQRDMULH".equals(opcode)) {
                 StringBuilder moduleName = new StringBuilder();
                 moduleName.append("module SPEC-").append(opcode).append("-ONCE\n");
-                String total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
+                String total = "";
+                if ("VQADD".equals(opcode) || "VQRDMULH".equals(opcode)) {
+                    total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
                         regStateSet + defaultReg + preCondition + endModule;
+                } else {
+                    total = fileRef + moduleName + moduleImportRuleTillInstList + codeMap + endInstListAndRegStateBegin +
+                            regStateSet + defaultReg + preCondition + "\n" + safetyToEnsures + endModule;
+                }
                 String curOpcode = "spec-" + opcode.toLowerCase() + "-once.k";
                 File file = new File(curPath + System.getProperty("file.separator") + curOpcode);
                 System.out.println(file.getName());
@@ -340,5 +370,81 @@ public class SpecConfigImpl implements SpecConfig {
         byte[] bytes = total.getBytes(StandardCharsets.UTF_8);
         fos.write(bytes);
         fos.flush();
+    }
+
+    private String safetySet() {
+        Instruction instruction = postCondState.getInstruction();
+        List<String> safetyElement = postCondState.getProveObject().getSafetyElement();
+        StringBuilder safetyQuery = new StringBuilder();
+        safetyQuery.append("\t\t\t\tensures ");
+        if (instruction.getDatatype() == null) {
+            int i = 0;
+            for (String s : safetyElement) {
+                if (i == 0) {
+                    safetyQuery.append(s).append(" >=Int 0 andBool ").append(s).append(" <Int (2 ^Int 32) ");
+                    i = 1;
+                } else {
+                    safetyQuery.append(" andBool ").append(s).append(" >=Int 0 andBool ").append(s)
+                            .append(" <Int (2 ^Int 32) ");
+                }
+            }
+            safetyQuery.append("\n");
+        } else {
+            int i = 0;
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            if (datatype.charAt(0) == 'S') {
+                String sBound = size == 8 ? "128" : (size == 16 ? "32768" : "2147483648");
+                for (String s : safetyElement) {
+                    if (i == 0) {
+                        safetyQuery.append(s).append(" >=Int -").append(sBound).append(" andBool ")
+                                .append(s).append(" <Int ").append(sBound);
+                        i = 1;
+                    } else {
+                        safetyQuery.append(" andBool ").append(s).append(" >=Int -").append(sBound).append(" andBool ")
+                                .append(s).append(" <Int ").append(sBound);
+                    }
+                }
+            } else if (datatype.charAt(0) == 'U') {
+                String uBound = size == 8 ? "256" : (size == 16 ? "65536" : "4294967296");
+                for (String s : safetyElement) {
+                    if (i == 0) {
+                        safetyQuery.append(s).append(" >=Int 0 andBool ").append(s).append(" <Int ").append(uBound);
+                        i = 1;
+                    } else {
+                        safetyQuery.append(" andBool ").append(s).append(" >=Int 0 andBool ")
+                                .append(s).append(" <Int ").append(uBound);
+                    }
+                }
+            } else if (datatype.charAt(0) == 'I') {
+                String sBound = size == 8 ? "128" : (size == 16 ? "32768" : "2147483648");
+                String uBound = size == 8 ? "256" : (size == 16 ? "65536" : "4294967296");
+                safetyQuery.append("(");
+                for (String s : safetyElement) {
+                    if (i == 0) {
+                        safetyQuery.append(s).append(" >=Int -").append(sBound).append(" andBool ")
+                                .append(s).append(" <Int ").append(sBound);
+                        i = 1;
+                    } else {
+                        safetyQuery.append(" andBool ").append(s).append(" >=Int -").append(sBound).append(" andBool ")
+                                .append(s).append(" <Int ").append(sBound);
+                    }
+                }
+                i = 0;
+                safetyQuery.append(") orBool (");
+                for (String s : safetyElement) {
+                    if (i == 0) {
+                        safetyQuery.append(s).append(" >=Int 0 andBool ").append(s).append(" <Int ").append(uBound);
+                        i = 1;
+                    } else {
+                        safetyQuery.append(" andBool ").append(s).append(" >=Int 0 andBool ")
+                                .append(s).append(" <Int ").append(uBound);
+                    }
+                }
+                safetyQuery.append(")");
+            }
+            safetyQuery.append("\n");
+        }
+        return safetyQuery.toString();
     }
 }

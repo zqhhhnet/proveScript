@@ -273,7 +273,7 @@ public class PreCondState {
             int size = Integer.parseInt(instruction.getDatatype().substring(1));
             if ("VMAX".equals(instruction.getOpcode()) || "VMIN".equals(instruction.getOpcode())
                 || "VSUB".equals(instruction.getOpcode()) || "VRSHL".equals(instruction.getOpcode())
-                    || "VQADD".equals(instruction.getOpcode())) {
+                    || "VQADD".equals(instruction.getOpcode()) || "VADD".equals(instruction.getOpcode())) {
                 if (instruction.getSourceRegister().size() < 2)
                     throw new RuntimeException("Number of Source Registers is less than 2");
                 preCondition = "\t\t\trequires " + setSRegister(instruction.getSourceRegister().get(0), size)
@@ -448,7 +448,7 @@ public class PreCondState {
                             .append(" <=Int ").append(bigIntegers[1]).append("\n");
                 } else {
                     sourcePre.append("\t\t\tandBool ").append(cur).append(" >=Int ").append(bigIntegers[0])
-                            .append(" andBool ").append(cur).append(" >=Int ").append(bigIntegers[1]).append("\n");
+                            .append(" andBool ").append(cur).append(" <=Int ").append(bigIntegers[1]).append("\n");
                 }
             }
         } else if (size == 16) {

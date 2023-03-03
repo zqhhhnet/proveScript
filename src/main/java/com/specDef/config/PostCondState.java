@@ -205,6 +205,11 @@ public class PostCondState {
             if (sourcePostCond == null || sourcePostCond.isEmpty()) {
                 sourcePostCond = new ArrayList<>();
             }
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty())
+                safetyElement = new ArrayList<>();
+            else
+                safetyElement.clear();
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -241,7 +246,7 @@ public class PostCondState {
             if (size == 32) {
                 String sourceVal = registerMap.get(sourceReg);
                 sRegVal.append(sourceVal).append(beat);
-                desCond.append("ifMInt (").append("absInt(").append(sourceVal).append(") ").append(cmpMode).append(" uvalueMInt(")
+                desCond.append("ifMInt (").append("absInt(").append(sRegVal).append(") ").append(cmpMode).append(" uvalueMInt(")
                         .append("mi(32, ").append(val).append("))) then mi(32, ").append(val).append(") else mi(32, ")
                         .append("absInt(").append(sRegVal).append(")))\n");
                 BigInteger[] sourceRange = preCond.get(sRegVal.toString());
@@ -266,6 +271,11 @@ public class PostCondState {
             } else {
                 throw new InputMismatchException("数据类型非法，请检查");
             }
+            // 存储该阶段被验证的元素
+            safetyElement.add(val);
+            safetyElement.add(sRegVal.toString());
+            proveObject.setSafetyElement(safetyElement);
+
             StringBuilder newVal = new StringBuilder();
             newVal.append(preTmp).append(oldVal).append(beat);
             preCond.put(newVal.toString(), newDesRange);
@@ -340,6 +350,12 @@ public class PostCondState {
             }
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -426,6 +442,12 @@ public class PostCondState {
             } else {
                 throw new InputMismatchException("数据类型非法，请检查");
             }
+
+            // 存储该阶段被验证的元素
+            safetyElement.add(val);
+            safetyElement.add(sRegVal.toString());
+            proveObject.setSafetyElement(safetyElement);
+
             StringBuilder newVal = new StringBuilder();
             newVal.append(preTmp).append(oldVal).append(beat);
             preCond.put(newVal.toString(), elementRange);
@@ -467,6 +489,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -490,7 +520,14 @@ public class PostCondState {
                     StringBuilder sRegToLeft = new StringBuilder();
                     StringBuilder sRegToRight = new StringBuilder();
                     String[] vals1 = registerMap.get(sReg1.toString()).split(":");
-                    if (size == 32) {
+                    String[] vals2 = registerMap.get(sourceRegister2).split(":");
+                    getVADDQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                    sListTo.add(sRegToLeft);
+                    if (size == 8)
+                        sRegToRight = sRegToLeft;
+                    else
+                        getVADDQRsRegToRight(size, sRegToRight, vals1, vals2);
+                    /*if (size == 32) {
                         getVADDQRsRegToLeft(32, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
                         String sub = "extractMInt(addMInt(mi(32, " + registerMap.get(sReg1) + "), mi(32, "
                                 + registerMap.get(sourceRegister2) + ")), ";
@@ -501,8 +538,7 @@ public class PostCondState {
                     } else {
                         getVADDQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
                         sRegToRight = sRegToLeft;
-                    }
-                    sListTo.add(sRegToRight);
+                    }*/
                     desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
                             .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
                             .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
@@ -517,6 +553,7 @@ public class PostCondState {
 
                         preCond.put(s, new BigInteger[]{bigIntegers1[0].add(bigIntegers2[0]),
                                 bigIntegers1[1].add(bigIntegers2[1])});
+                        safetyElement.add(registerMap.get(sourceRegister2) + " +Int " + s);
                     }
                 }
                 // 设置临时变量
@@ -549,7 +586,16 @@ public class PostCondState {
                     StringBuilder sRegToLeft = new StringBuilder();
                     StringBuilder sRegToRight = new StringBuilder();
                     String[] vals1 = registerMap.get(sReg1.toString()).split(":");
-                    if (size == 32) {
+                    String[] vals2 = registerMap.get(sourceRegister2).split(":");
+                    getVADDQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
+                    sListTo.add(sRegToLeft);
+
+                    if (size == 8)
+                        sRegToRight = sRegToLeft;
+                    else
+                        getVADDQRsRegToRight(size, sRegToRight, vals1, vals2);
+
+                    /*if (size == 32) {
                         getVADDQRsRegToLeft(32, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
                         String sub = "extractMInt(addMInt(mi(32, " + registerMap.get(sReg1) + "), mi(32, "
                                 + registerMap.get(sourceRegister2) + ")), ";
@@ -561,7 +607,8 @@ public class PostCondState {
                         getVADDQRsRegToLeft(size, sRegToLeft, registerMap, sReg1, sourceRegister2, vals1);
                         sRegToRight = sRegToLeft;
                     }
-                    sListTo.add(sRegToRight);
+                    sListTo.add(sRegToRight);*/
+
                     desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
                             .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
                             .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
@@ -577,6 +624,7 @@ public class PostCondState {
 
                         preCond.put(valsDes[j], new BigInteger[]{bigIntegers1[0].add(bigIntegers2[0]),
                                 bigIntegers1[1].add(bigIntegers2[1])});
+                        safetyElement.add(registerMap.get(sourceRegister2) + " +Int " + vals1[j]);
                     }
                 }
 
@@ -592,6 +640,9 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+
+            proveObject.setSafetyElement(safetyElement);
+
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -614,6 +665,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -652,6 +711,7 @@ public class PostCondState {
 
                         preCond.put(s, new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
                                 bigIntegers1[1].subtract(bigIntegers2[0])});
+                        safetyElement.add(s + " -Int " + registerMap.get(sourceRegister2));
                     }
                 }
                 // 设置临时变量
@@ -700,6 +760,7 @@ public class PostCondState {
 
                         preCond.put(valsDes[j], new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
                                 bigIntegers1[1].subtract(bigIntegers2[0])});
+                        safetyElement.add(vals1[j] + " -Int " + registerMap.get(sourceRegister2));
                     }
                 }
 
@@ -715,6 +776,9 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+
+            proveObject.setSafetyElement(safetyElement);
+
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -737,6 +801,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -779,6 +851,7 @@ public class PostCondState {
 
                         preCond.put(vals1[j], new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
                                 bigIntegers1[1].subtract(bigIntegers2[0])});
+                        safetyElement.add(vals1[j] + " -Int " + vals2[j]);
                     }
                 }
                 // 设置临时变量
@@ -823,6 +896,7 @@ public class PostCondState {
 
                         preCond.put(vals2[j], new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
                                 bigIntegers1[1].subtract(bigIntegers2[0])});
+                        safetyElement.add(vals1[j] + " -Int " + vals2[j]);
                     }
                 }
                 // 设置临时变量
@@ -877,6 +951,7 @@ public class PostCondState {
 
                         preCond.put(valsDes[j], new BigInteger[]{bigIntegers1[0].subtract(bigIntegers2[1]),
                                 bigIntegers1[1].subtract(bigIntegers2[0])});
+                        safetyElement.add(vals1[j] + " -Int " + vals2[j]);
                     }
                 }
 
@@ -892,6 +967,9 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+
+            proveObject.setSafetyElement(safetyElement);
+
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -919,6 +997,14 @@ public class PostCondState {
             }
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -975,6 +1061,8 @@ public class PostCondState {
                             normalize(bigIntegers2, datatype, size);
                             BigInteger[] elementRange = getElementRange(bigIntegers1, bigIntegers2);
                             preCond.put(equalFlag == 2 ? vals2[j] : vals1[j], elementRange);
+                            safetyElement.add(vals1[j]);
+                            safetyElement.add(vals2[j]);
                         }
                     }
                     // 设置临时变量
@@ -1086,6 +1174,8 @@ public class PostCondState {
                             normalize(bigIntegers2, datatype, size);
                             BigInteger[] elementRange = getElementRange(bigIntegers1, bigIntegers2);
                             preCond.put(valDes[j], elementRange);
+                            safetyElement.add(vals1[j]);
+                            safetyElement.add(vals2[j]);
                         }
                     }
                     // 设置临时变量
@@ -1132,6 +1222,8 @@ public class PostCondState {
                         normalize(bigIntegers2, datatype, size);
                         BigInteger[] elementRange = getAbsDesRange(bigIntegers1, bigIntegers2[0], bigIntegers2[1]);
                         preCond.put(vals2[j], elementRange);
+                        safetyElement.add(vals1[j]);
+                        safetyElement.add(vals2[j]);
                     }
                 }
                 // 设置临时变量
@@ -1147,6 +1239,9 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+
+            proveObject.setSafetyElement(safetyElement);
+
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -1365,6 +1460,14 @@ public class PostCondState {
             if (sourcePostCond == null || sourcePostCond.isEmpty()) {
                 sourcePostCond = new ArrayList<>();
             }
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -1439,6 +1542,7 @@ public class PostCondState {
                 BigInteger[] range = getMULRange(sourceRange0, sourceRange1, datatype);
                 desLower = desLower.add(range[0]);
                 desHigher = desHigher.add(range[1]);
+                safetyElement.add(formula.toString());
             } else if (size == 16 || size == 8) {
                 int index = beat * 32 / size;
                 String sourceVal0 = registerMap.get(instruction.getSourceRegister().get(0));
@@ -1466,6 +1570,7 @@ public class PostCondState {
                         .append(")) then (").append("extractMInt(mi(64, ").append(formula).append("), 32, 64)) else (undefMInt32))\n");
                 desLower = desLower.add(freshB);
                 desHigher = desHigher.add(freshH);
+                safetyElement.add(formula.toString());
             } else {
                 throw new InputMismatchException("数据类型非法，请检查");
             }
@@ -1473,6 +1578,7 @@ public class PostCondState {
             newVal.append(preTmp).append(oldVal).append(beat);
             preCond.put(newVal.toString(), new BigInteger[] {desLower, desHigher});
             registerMap.put(destinationRegister, newVal.toString());
+            proveObject.setSafetyElement(safetyElement);
             proveObject.setRegisterMap(registerMap);
             proveObject.setPreCond(preCond);
             postCondition.add(desCond.toString());
@@ -1490,12 +1596,19 @@ public class PostCondState {
      */
     private void normalize(BigInteger[] range, String datatype, int size) {
         if (datatype.charAt(0) == 'S') {
-            if (range[1].compareTo(BigInteger.valueOf((1L << (size - 1)) - 1)) > 0) {
+            if (range[0].compareTo(BigInteger.valueOf((1L << (size - 1)) - 1)) > 0) {
+                range[0] = BigInteger.valueOf(-(1L<<(size-1)));
+                range[1] = range[1].subtract(BigInteger.valueOf(1L<<(size)));
+            } else if (range[1].compareTo(BigInteger.valueOf((1L << (size - 1)) - 1)) > 0) {
                 range[0] = BigInteger.valueOf(-(1L<<(size-1)));
                 range[1] = BigInteger.valueOf((1L<<(size-1))-1);
             }
         } else {
-            if (range[0].compareTo(BigInteger.ZERO) < 0) {
+            if (range[1].compareTo(BigInteger.ZERO) < 0) {
+                range[0] = range[0].add(BigInteger.valueOf(1L << (size))).compareTo(BigInteger.ZERO) < 0 ?
+                        BigInteger.ZERO : range[0].add(BigInteger.valueOf(1L << size));
+                range[1] = range[1].add(BigInteger.valueOf(1L << size));
+            } else if (range[0].compareTo(BigInteger.ZERO) < 0) {
                 range[0] = BigInteger.ZERO;
                 range[1] = BigInteger.valueOf((1L<<size)-1);
             }
@@ -1970,6 +2083,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -2014,6 +2135,7 @@ public class PostCondState {
                                         ? bigIntegers1[0].multiply(bigIntegers2[1]) : bigIntegers1[0].multiply(bigIntegers2[0])),
                                 bigIntegers1[1].multiply(bigIntegers2[1]).compareTo(bigIntegers1[0].multiply(bigIntegers2[0])) > 0
                                         ? bigIntegers1[1].multiply(bigIntegers2[1]) : bigIntegers1[0].multiply(bigIntegers2[0])});
+                        safetyElement.add(s + " *Int " + registerMap.get(sourceRegister2));
                     }
                 }
                 // 设置临时变量
@@ -2068,6 +2190,7 @@ public class PostCondState {
                                         ? bigIntegers1[0].multiply(bigIntegers2[1]) : bigIntegers1[0].multiply(bigIntegers2[0])),
                                 bigIntegers1[1].multiply(bigIntegers2[1]).compareTo(bigIntegers1[0].multiply(bigIntegers2[0])) > 0
                                         ? bigIntegers1[1].multiply(bigIntegers2[1]) : bigIntegers1[0].multiply(bigIntegers2[0])});
+                        safetyElement.add(vals1[j] + " *Int " + registerMap.get(sourceRegister2));
                     }
                 }
 
@@ -2083,6 +2206,9 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+
+            proveObject.setSafetyElement(safetyElement);
+
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -2105,6 +2231,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             int size = 32;
             Map<String, String> registerMap = proveObject.getRegisterMap();
             Map<String, BigInteger[]> preCond = proveObject.getPreCond();
@@ -2157,6 +2291,8 @@ public class PostCondState {
                             bigIntegers1[0].compareTo(bigIntegers2[0]) > 0 ? bigIntegers2[0] : bigIntegers1[0],
                             bigIntegers1[1].compareTo(bigIntegers2[1]) > 0 ? bigIntegers2[1] : bigIntegers1[1]
                     });
+                    safetyElement.add(registerMap.get(sReg1));
+                    safetyElement.add(registerMap.get(sReg2));
                 }
                 // 设置临时变量
                 desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
@@ -2199,7 +2335,6 @@ public class PostCondState {
                             .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 24, 32),")
                             .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 24, 32))")
                             .append(")))\n");
-                    sListTo.add(sRegToLeft);
                     desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
                             .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
                             .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
@@ -2210,6 +2345,8 @@ public class PostCondState {
                             bigIntegers1[0].compareTo(bigIntegers2[0]) > 0 ? bigIntegers2[0] : bigIntegers1[0],
                             bigIntegers1[1].compareTo(bigIntegers2[1]) > 0 ? bigIntegers2[1] : bigIntegers1[1]
                     });
+                    safetyElement.add(registerMap.get(sReg1));
+                    safetyElement.add(registerMap.get(sReg2));
                 }
                 // 设置临时变量
                 desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
@@ -2275,7 +2412,6 @@ public class PostCondState {
                             .append("andMInt(extractMInt(mi(32, ").append(registerMap.get(sReg1)).append("), 24, 32),")
                             .append("extractMInt(mi(32, ").append(registerMap.get(sReg2)).append("), 24, 32))")
                             .append(")))\n");
-                    sListTo.add(sRegToLeft);
                     desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
                             .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
                             .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
@@ -2286,6 +2422,8 @@ public class PostCondState {
                             bigIntegers1[0].compareTo(bigIntegers2[0]) > 0 ? bigIntegers2[0] : bigIntegers1[0],
                             bigIntegers1[1].compareTo(bigIntegers2[1]) > 0 ? bigIntegers2[1] : bigIntegers1[1]
                     });
+                    safetyElement.add(sReg1);
+                    safetyElement.add(sReg2);
                 }
 
                 // 设置临时变量
@@ -2300,6 +2438,9 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+
+            proveObject.setSafetyElement(safetyElement);
+
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -2322,6 +2463,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             int size = 32;
             Map<String, String> registerMap = proveObject.getRegisterMap();
             Map<String, BigInteger[]> preCond = proveObject.getPreCond();
@@ -2374,6 +2523,8 @@ public class PostCondState {
                             bigIntegers1[0].or(bigIntegers2[0]),
                             getRightRangeOr(bigIntegers1, bigIntegers2)
                     });
+                    safetyElement.add(registerMap.get(sReg1));
+                    safetyElement.add(registerMap.get(sReg2));
                 }
                 // 设置临时变量
                 desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
@@ -2426,6 +2577,8 @@ public class PostCondState {
                             bigIntegers1[0].or(bigIntegers2[0]),
                             getRightRangeOr(bigIntegers1, bigIntegers2)
                     });
+                    safetyElement.add(registerMap.get(sReg1));
+                    safetyElement.add(registerMap.get(sReg2));
                 }
                 // 设置临时变量
                 desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
@@ -2501,6 +2654,8 @@ public class PostCondState {
                             bigIntegers1[0].or(bigIntegers2[0]),
                             getRightRangeOr(bigIntegers1, bigIntegers2)
                     });
+                    safetyElement.add(registerMap.get(sReg1));
+                    safetyElement.add(registerMap.get(sReg2));
                 }
 
                 // 设置临时变量
@@ -2515,6 +2670,9 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+
+            proveObject.setSafetyElement(safetyElement);
+
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -2588,6 +2746,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype);
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -2703,6 +2869,7 @@ public class PostCondState {
                             bigIntegers1[0],
                             bigIntegers1[1]
                             });
+                    safetyElement.add(registerMap.get(sourceRegister1));
                 }
             }
 
@@ -2717,6 +2884,8 @@ public class PostCondState {
                     qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
             }
             desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+
+            proveObject.setSafetyElement(safetyElement);
 
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
@@ -2740,6 +2909,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -2802,6 +2979,7 @@ public class PostCondState {
                                         dataHighestBound :
                                         bigIntegers1[0].multiply(BigInteger.valueOf(-1))
                         });
+                        safetyElement.add(s);
                     }
                 }
                 // 设置临时变量
@@ -2879,6 +3057,7 @@ public class PostCondState {
                                         dataHighestBound :
                                         bigIntegers1[0].multiply(BigInteger.valueOf(-1))
                         });
+                        safetyElement.add(vals1[j]);
                     }
                 }
 
@@ -2894,6 +3073,7 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+            proveObject.setSafetyElement(safetyElement);
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -2916,6 +3096,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -2980,6 +3168,7 @@ public class PostCondState {
                                         bigIntegers1[1].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[0].toString()))) :
                                         bigIntegers1[1].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[1].toString())))
                         });
+                        safetyElement.add(s);
                     }
                 }
                 // 设置临时变量
@@ -3048,7 +3237,7 @@ public class PostCondState {
 
                     BigInteger[] immRange = preCond.get(imm);
                     for (int j = 0; j < vals1.length; j++) {
-                        BigInteger[] bigIntegers1 = preCond.get(valsDes[j]);
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
 
                         preCond.put(valsDes[j], new BigInteger[]{
                                 bigIntegers1[0].compareTo(BigInteger.ONE) >= 0 ?
@@ -3058,6 +3247,7 @@ public class PostCondState {
                                         bigIntegers1[1].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[0].toString()))) :
                                         bigIntegers1[1].divide(BigInteger.valueOf(2).pow(Integer.parseInt(immRange[1].toString())))
                         });
+                        safetyElement.add(vals1[j]);
                     }
                 }
 
@@ -3073,6 +3263,7 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+            proveObject.setSafetyElement(safetyElement);
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -3095,6 +3286,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -3156,6 +3355,7 @@ public class PostCondState {
                         BigInteger[] desRange = getVSHLRange(datatype, bigIntegers1, size, immLeft, immRight);
 
                         preCond.put(s, desRange);
+                        safetyElement.add(s + " *Int (2 ^Int " + imm + ")");
                     }
                 }
                 // 设置临时变量
@@ -3231,6 +3431,7 @@ public class PostCondState {
                         BigInteger[] desRange = getVSHLRange(datatype, bigIntegers1, size, immLeft, immRight);
 
                         preCond.put(valsDes[j], desRange);
+                        safetyElement.add(vals1[j] + " *Int (2 ^Int " + imm + ")");
                     }
                 }
 
@@ -3246,6 +3447,7 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+            proveObject.setSafetyElement(safetyElement);
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -3320,6 +3522,7 @@ public class PostCondState {
 
     /**
      * VRSHL Q Q
+     * rotate
      * @return
      */
     public List<String> vrshlQQPostSet() {
@@ -3331,6 +3534,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -3372,6 +3583,7 @@ public class PostCondState {
                         normalize(bigIntegers2, datatype, size);
                         BigInteger[] desRange = getVRSHLRange(bigIntegers1, bigIntegers2);
                         preCond.put(vals1[j], desRange);
+                        safetyElement.add(vals1[j]);
                     }
                 }
                 // 设置临时变量
@@ -3414,6 +3626,7 @@ public class PostCondState {
                         normalize(bigIntegers2, datatype, size);
                         BigInteger[] desRange = getVRSHLRange(bigIntegers1, bigIntegers2);
                         preCond.put(vals2[j], desRange);
+                        safetyElement.add(vals1[j]);
                     }
                 }
                 // 设置临时变量
@@ -3467,6 +3680,7 @@ public class PostCondState {
                         normalize(bigIntegers2, datatype, size);
                         BigInteger[] desRange = getVRSHLRange(bigIntegers1, bigIntegers2);
                         preCond.put(valsDes[j], desRange);
+                        safetyElement.add(vals1[j]);
                     }
                 }
 
@@ -3482,6 +3696,7 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+            proveObject.setSafetyElement(safetyElement);
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -3573,6 +3788,14 @@ public class PostCondState {
                 sourcePostCond = new ArrayList<>();
             if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
                 throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
             String datatype = instruction.getDatatype();
             int size = Integer.parseInt(datatype.substring(1));
             Map<String, String> registerMap = proveObject.getRegisterMap();
@@ -3614,6 +3837,7 @@ public class PostCondState {
                                 bigIntegers1[0].add(mulRange[0]),
                                 bigIntegers1[1].add(mulRange[1])
                         });
+                        safetyElement.add(s + " *Int " + registerMap.get(sourceRegister2) + " +Int " + s);
                     }
                 }
                 // 设置临时变量
@@ -3669,6 +3893,7 @@ public class PostCondState {
                                 mulRange[0].add(bigIntegersDes[0]),
                                 mulRange[1].add(bigIntegersDes[1])
                         });
+                        safetyElement.add(vals1[j] + " *Int " + registerMap.get(sourceRegister2) + " +Int " + valsDes[j]);
                     }
                 }
 
@@ -3684,6 +3909,7 @@ public class PostCondState {
                 }
                 desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
             }
+            proveObject.setSafetyElement(safetyElement);
             proveObject.setPreCond(preCond);
             proveObject.setRegisterMap(registerMap);
             postCondition.add(desCond.toString());
@@ -3806,6 +4032,7 @@ public class PostCondState {
 
     /**
      * VQADD Q Q
+     * un
      * @return
      */
     public List<String> vqaddQQPostSet() {
@@ -4189,6 +4416,7 @@ public class PostCondState {
 
     /**
      * VQRDMULH Q R
+     * un
      * @return
      */
     public List<String> vqrdmulhQRPostSet() {
@@ -4241,7 +4469,7 @@ public class PostCondState {
                         normalize(bigIntegers2, datatype, size);
 
                         bigIntegers1[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2));
-                        bigIntegers1[1] = bigIntegers2[0].multiply(BigInteger.valueOf(2));
+                        bigIntegers1[1] = bigIntegers1[1].multiply(BigInteger.valueOf(2));
                         BigInteger[] mulRange = getMULRange(bigIntegers1, bigIntegers2, datatype);
                         mulRange[0] = mulRange[0].add(BigInteger.valueOf(1L << (size-1))).divide(BigInteger.valueOf(1L << size));
                         mulRange[1] = mulRange[1].add(BigInteger.valueOf(1L << (size-1))).divide(BigInteger.valueOf(1L << size));
@@ -4297,7 +4525,7 @@ public class PostCondState {
                         normalize(bigIntegers2, datatype, size);
 
                         bigIntegers1[0] = bigIntegers1[0].multiply(BigInteger.valueOf(2));
-                        bigIntegers1[1] = bigIntegers2[0].multiply(BigInteger.valueOf(2));
+                        bigIntegers1[1] = bigIntegers1[1].multiply(BigInteger.valueOf(2));
                         BigInteger[] mulRange = getMULRange(bigIntegers1, bigIntegers2, datatype);
                         mulRange[0] = mulRange[0].add(BigInteger.valueOf(1L << (size-1))).divide(BigInteger.valueOf(1L << size));
                         mulRange[1] = mulRange[1].add(BigInteger.valueOf(1L << (size-1))).divide(BigInteger.valueOf(1L << size));
@@ -4550,5 +4778,286 @@ public class PostCondState {
             }
         }
         return new BigInteger[]{bigIntegers1[0], bigIntegers1[1]};
+    }
+
+    /**
+     * VADD Q Q
+     * @return
+     */
+    public List<String> vaddQQPostSet() {
+        List<String> postCondition = new ArrayList<>();
+        try {
+            if (instruction == null || instruction.getDestinationRegister() == null)
+                throw new RuntimeException("指令或目标寄存器为空");
+            if (sourcePostCond == null || sourcePostCond.isEmpty())
+                sourcePostCond = new ArrayList<>();
+            if (instruction.getSourceRegister() == null || instruction.getSourceRegister().isEmpty())
+                throw new InputMismatchException("源操作数为空");
+
+            List<String> safetyElement = proveObject.getSafetyElement();
+            if (safetyElement == null || safetyElement.isEmpty()) {
+                safetyElement = new ArrayList<>();
+            } else {
+                safetyElement.clear();
+            }
+
+            String datatype = instruction.getDatatype();
+            int size = Integer.parseInt(datatype.substring(1));
+            Map<String, String> registerMap = proveObject.getRegisterMap();
+            Map<String, BigInteger[]> preCond = proveObject.getPreCond();
+            String desRegister = instruction.getDestinationRegister();
+            StringBuilder desCond = preSet();
+            sourcePostCond.clear();
+
+            String sourceRegister1 = instruction.getSourceRegister().get(0);
+            String sourceRegister2 = instruction.getSourceRegister().get(1);
+            int indexDes = Integer.parseInt(desRegister.substring(1)) * 4;
+            // 第一个源操作数同时为目标操作数
+            if (desRegister.equals(sourceRegister1)) {
+                int index = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (indexDes+i);
+                    String sReg2 = "S" + (index+i);
+                    StringBuilder sRegFrom = conca(sReg1, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    getVADDQQsRegToLeft(size, sRegToLeft, registerMap, sReg1, sReg2, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+
+                    if (size == 8)
+                        sRegToRight = sRegToLeft;
+                    else
+                        getVADDQQsRegToRight(size, sRegToRight, vals1, vals2);
+
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(vals1[j], new BigInteger[]{bigIntegers1[0].add(bigIntegers2[0]),
+                                bigIntegers1[1].add(bigIntegers2[1])});
+                        safetyElement.add(vals1[j] + " +Int " + vals2[j]);
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else if (desRegister.equals(sourceRegister2)) {   // 第二个源操作数同时为目标操作数
+                int index = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                // 源操作数初始
+                setSourcePostCond(size, index, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                List<StringBuilder> sListTo = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index+i);
+                    String sReg2 = "S" + (indexDes+i);
+                    StringBuilder sRegFrom = conca(sReg2, 32 / size, size, new StringBuilder());
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    getVADDQQsRegToLeft(size, sRegToLeft, registerMap, sReg1, sReg2, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+
+                    if (size == 8)
+                        sRegToRight = sRegToLeft;
+                    else
+                        getVADDQQsRegToRight(size, sRegToRight, vals1, vals2);
+
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(vals2[j], new BigInteger[]{bigIntegers1[0].add(bigIntegers2[0]),
+                                bigIntegers1[1].add(bigIntegers2[1])});
+                        safetyElement.add(vals1[j] + " +Int " + vals2[j]);
+                    }
+                }
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = conca(desRegister, 128 / size, size, new StringBuilder());
+                qRegFrom.append(" => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            } else {
+                int index1 = Integer.parseInt(sourceRegister1.substring(1)) * 4;
+                int index2 = Integer.parseInt(sourceRegister2.substring(1)) * 4;
+                setSourcePostCond(size, index1, sourceRegister1);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                setSourcePostCond(size, index2, sourceRegister2);
+                postCondition.addAll(sourcePostCond);
+                sourcePostCond.clear();
+                // 设置S
+                List<StringBuilder> sListTo = new ArrayList<>();
+                // 若目标寄存器中无初始值，则在registerMap和preCondMap中设定一个初始值，相当于初始化
+                // 命名规则为 vec + 当前向量寄存器的标识符 + '_' + set
+                setVecDefaultPreCondAndRegisterMap(registerMap, preCond, desRegister, size, indexDes);
+
+                for (int i = 0; i < 4; i++) {
+                    String sReg1 = "S" + (index1+i);
+                    String sReg2 = "S" + (index2+i);
+                    StringBuilder sRegFrom = new StringBuilder().append("mi(32, _:Int)\n");
+
+                    StringBuilder sRegToLeft = new StringBuilder();
+                    StringBuilder sRegToRight = new StringBuilder();
+                    String[] vals1 = registerMap.get(sReg1.toString()).split(":");
+                    String[] vals2 = registerMap.get(sReg2.toString()).split(":");
+                    getVADDQQsRegToLeft(size, sRegToLeft, registerMap, sReg1, sReg2, vals1, vals2);
+                    sListTo.add(sRegToLeft);
+
+                    if (size == 8)
+                        sRegToRight = sRegToLeft;
+                    else
+                        getVADDQQsRegToRight(size, sRegToRight, vals1, vals2);
+
+                    desCond.append("\n\t\t\t\"S").append(indexDes+i).append("\" |-> (").append(sRegFrom)
+                            .append("\n\t\t\t\t => \n").append("\t\t\t\tifMInt notBool IsUndef (").append(sRegToLeft)
+                            .append("\t\t\t\t) then ").append(sRegToRight).append("\t\t\t\telse undefMInt32)\n");
+
+                    // 重设目标寄存器的值范围
+                    String[] valsDes = registerMap.get("S" + (indexDes+i)).split(":");
+
+                    for (int j = 0; j < vals1.length; j++) {
+                        BigInteger[] bigIntegers1 = preCond.get(vals1[j]);
+                        BigInteger[] bigIntegers2 = preCond.get(vals2[j]);
+                        //normalize(bigIntegers1, datatype, size);
+                        //normalize(bigIntegers2, datatype, size);
+
+                        preCond.put(valsDes[j], new BigInteger[]{bigIntegers1[0].add(bigIntegers2[0]),
+                                bigIntegers1[1].add(bigIntegers2[1])});
+                        safetyElement.add(vals1[j] + " +Int " + vals2[j]);
+                    }
+                }
+
+                // 设置临时变量
+                desCond.append("\t\t\t\"RESULT\" |-> (mi(32, 0) => ").append(sListTo.get(3)).append("\t\t\t\t)\n");
+                // 设置Q
+                StringBuilder qRegFrom = new StringBuilder().append(" mi(128, _:Int) => ");
+                for (int i = 3; i >= 0; i--) {
+                    if (i > 0)
+                        qRegFrom.append("concatenateMInt(").append(sListTo.get(i)).append("\t\t\t\t,\n\t\t\t\t");
+                    else
+                        qRegFrom.append(sListTo.get(0)).append("\t\t\t\t))))\n");
+                }
+                desCond.append("\t\t\t\"").append(desRegister).append("\" |-> (").append(qRegFrom);
+            }
+            proveObject.setSafetyElement(safetyElement);
+            proveObject.setPreCond(preCond);
+            proveObject.setRegisterMap(registerMap);
+            postCondition.add(desCond.toString());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return postCondition;
+    }
+
+    private void getVADDQQsRegToLeft(int size, StringBuilder sRegToLeft, Map<String, String> registerMap,
+                                     String sReg1, String sourceRegister2, String[] vals1, String[] vals2) {
+
+        if (size == 32) {
+            sRegToLeft.append("\t\t\t\t\taddMInt(mi(32, ").append(registerMap.get(sReg1))
+                    .append("), mi(32, ").append(registerMap.get(sourceRegister2)).append("))\n");
+        } else if (size == 16) {
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(").append("addMInt(mi(16, ")
+                    .append(vals1[0]).append("), ").append("mi(16, ").append(vals2[0])
+                    .append(")").append("), addMInt(mi(16, ").append(vals1[1])
+                    .append("), ").append("mi(16, ").append(vals2[1]).append(")))\n");
+        } else if (size == 8) {
+            sRegToLeft.append("\t\t\t\t\tconcatenateMInt(").append("addMInt(mi(8, ")
+                    .append(vals1[0]).append("), ").append("mi(8, ").append(vals2[0])
+                    .append(")), ").append("concatenateMInt(")
+                    .append("addMInt(mi(8, ").append(vals1[1])
+                    .append("), ").append("mi(8, ").append(vals2[1]).append(")), ")
+                    .append("concatenateMInt(")
+                    .append("addMInt(mi(8, ").append(vals1[2])
+                    .append("), ").append("mi(8, ").append(vals2[2]).append(")), ")
+                    .append("addMInt(mi(8, ").append(vals1[3])
+                    .append("), ").append("mi(8, ").append(vals2[3]).append(")))))\n");
+        }
+    }
+
+    private void getVADDQQsRegToRight(int size, StringBuilder sRegToRight, String[] vals1, String[] vals2) {
+        if (size == 32) {
+            sRegToRight.append("\t\t\t\t\tconcatenateMInt(").append("extractMInt(addMInt(mi(32, ")
+                    .append(vals1[0]).append("), mi(32, ").append(vals2[0]).append(")), 0, 24), ")
+                    .append("addMInt(extractMInt(mi(32, ").append(vals1[0]).append("), 24, 32), ")
+                    .append("extractMInt(mi(32, ").append(vals2[0]).append("), 24, 32)))\n");
+            //concatenateMInt(extractMInt(addMInt(mi(32, D), mi(32, H)), 0, 24), addMInt(extractMInt(mi(32, D), 24, 32), extractMInt(mi(32, H), 24, 32)))
+        } else if (size == 16) {
+            sRegToRight.append("\t\t\t\t\tconcatenateMInt(")
+                    .append("extractMInt(addMInt(mi(16, ").append(vals1[0]).append("), mi(16, ").append(vals2[0])
+                    .append(")), 0, 8),\n\t\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("addMInt(extractMInt(mi(16, ").append(vals1[0]).append("), 8, 16), ")
+                    .append("extractMInt(mi(16, ").append(vals2[0]).append("), 8, 16)),\n\t\t\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("extractMInt(addMInt(mi(16, ").append(vals1[1]).append("), mi(16, ").append(vals2[1])
+                    .append(")), 0, 8), ")
+                    .append("addMInt(extractMInt(mi(16, ").append(vals1[1]).append("), 8, 16), ")
+                    .append("extractMInt(mi(16, ").append(vals2[1]).append("), 8, 16))").append(")))\n");
+        }
+    }
+
+    private void getVADDQRsRegToRight(int size, StringBuilder sRegToRight, String[] vals1, String[] vals2) {
+        if (size == 32) {
+            sRegToRight.append("\t\t\t\t\tconcatenateMInt(").append("extractMInt(addMInt(mi(32, ")
+                    .append(vals1[0]).append("), mi(32, ").append(vals2[0]).append(")), 0, 24), ")
+                    .append("addMInt(extractMInt(mi(32, ").append(vals1[0]).append("), 24, 32), ")
+                    .append("extractMInt(mi(32, ").append(vals2[0]).append("), 24, 32)))\n");
+        } else if (size == 16) {
+            String sub = "extractMInt(mi(32, " + vals2[0] + "), ";
+            sRegToRight.append("\t\t\t\t\tconcatenateMInt(")
+                    .append("extractMInt(addMInt(mi(16, ").append(vals1[0]).append("), ")
+                    .append(sub).append("16, 32")
+                    .append(")), 0, 8),\n\t\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("addMInt(extractMInt(mi(16, ").append(vals1[0]).append("), 8, 16), ")
+                    .append(sub).append(" 24, 32)),\n\t\t\t\t\t\t\t")
+                    .append("concatenateMInt(")
+                    .append("extractMInt(addMInt(mi(16, ").append(vals1[1]).append("), ")
+                    .append(sub).append("16, 32")
+                    .append(")), 0, 8), ")
+                    .append("addMInt(extractMInt(mi(16, ").append(vals1[1]).append("), 8, 16), ")
+                    .append(sub).append("24, 32))").append(")))\n");
+        }
     }
 }
