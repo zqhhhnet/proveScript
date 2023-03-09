@@ -390,58 +390,82 @@ public class SpecConfigImpl implements SpecConfig {
             }
             safetyQuery.append("\n");
         } else {
-            int i = 0;
             String datatype = instruction.getDatatype();
-            int size = Integer.parseInt(datatype.substring(1));
-            if (datatype.charAt(0) == 'S') {
-                String sBound = size == 8 ? "128" : (size == 16 ? "32768" : "2147483648");
+            int i = 0;
+            if ("VMLAV".equals(instruction.getOpcode())) {
                 for (String s : safetyElement) {
-                    if (i == 0) {
-                        safetyQuery.append(s).append(" >=Int -").append(sBound).append(" andBool ")
-                                .append(s).append(" <Int ").append(sBound);
-                        i = 1;
+                    if (datatype.charAt(0) == 'S') {
+                        if (i == 0) {
+                            safetyQuery.append(s).append(" >=Int -2147483648 andBool ").append(s).append(" <Int ")
+                                    .append("2147483648 ");
+                            i = 1;
+                        } else {
+                            safetyQuery.append(" andBool ").append(s).append(" >=Int -2147483648 andBool ")
+                                    .append(s).append(" <Int ").append("2147483648 ");
+                        }
                     } else {
-                        safetyQuery.append(" andBool ").append(s).append(" >=Int -").append(sBound).append(" andBool ")
-                                .append(s).append(" <Int ").append(sBound);
+                        if (i == 0) {
+                            safetyQuery.append(s).append(" >=Int 0 andBool ").append(s).append(" <Int ")
+                                    .append("4294967296 ");
+                            i = 1;
+                        } else {
+                            safetyQuery.append(" andBool ").append(s).append(" >=Int 0 andBool ")
+                                    .append(s).append(" <Int ").append("4294967296 ");
+                        }
                     }
                 }
-            } else if (datatype.charAt(0) == 'U') {
-                String uBound = size == 8 ? "256" : (size == 16 ? "65536" : "4294967296");
-                for (String s : safetyElement) {
-                    if (i == 0) {
-                        safetyQuery.append(s).append(" >=Int 0 andBool ").append(s).append(" <Int ").append(uBound);
-                        i = 1;
-                    } else {
-                        safetyQuery.append(" andBool ").append(s).append(" >=Int 0 andBool ")
-                                .append(s).append(" <Int ").append(uBound);
+            } else {
+                int size = Integer.parseInt(datatype.substring(1));
+                if (datatype.charAt(0) == 'S') {
+                    String sBound = size == 8 ? "128" : (size == 16 ? "32768" : "2147483648");
+                    for (String s : safetyElement) {
+                        if (i == 0) {
+                            safetyQuery.append(s).append(" >=Int -").append(sBound).append(" andBool ")
+                                    .append(s).append(" <Int ").append(sBound);
+                            i = 1;
+                        } else {
+                            safetyQuery.append(" andBool ").append(s).append(" >=Int -").append(sBound).append(" andBool ")
+                                    .append(s).append(" <Int ").append(sBound);
+                        }
                     }
-                }
-            } else if (datatype.charAt(0) == 'I') {
-                String sBound = size == 8 ? "128" : (size == 16 ? "32768" : "2147483648");
-                String uBound = size == 8 ? "256" : (size == 16 ? "65536" : "4294967296");
-                safetyQuery.append("(");
-                for (String s : safetyElement) {
-                    if (i == 0) {
-                        safetyQuery.append(s).append(" >=Int -").append(sBound).append(" andBool ")
-                                .append(s).append(" <Int ").append(sBound);
-                        i = 1;
-                    } else {
-                        safetyQuery.append(" andBool ").append(s).append(" >=Int -").append(sBound).append(" andBool ")
-                                .append(s).append(" <Int ").append(sBound);
+                } else if (datatype.charAt(0) == 'U') {
+                    String uBound = size == 8 ? "256" : (size == 16 ? "65536" : "4294967296");
+                    for (String s : safetyElement) {
+                        if (i == 0) {
+                            safetyQuery.append(s).append(" >=Int 0 andBool ").append(s).append(" <Int ").append(uBound);
+                            i = 1;
+                        } else {
+                            safetyQuery.append(" andBool ").append(s).append(" >=Int 0 andBool ")
+                                    .append(s).append(" <Int ").append(uBound);
+                        }
                     }
-                }
-                i = 0;
-                safetyQuery.append(") orBool (");
-                for (String s : safetyElement) {
-                    if (i == 0) {
-                        safetyQuery.append(s).append(" >=Int 0 andBool ").append(s).append(" <Int ").append(uBound);
-                        i = 1;
-                    } else {
-                        safetyQuery.append(" andBool ").append(s).append(" >=Int 0 andBool ")
-                                .append(s).append(" <Int ").append(uBound);
+                } else if (datatype.charAt(0) == 'I') {
+                    String sBound = size == 8 ? "128" : (size == 16 ? "32768" : "2147483648");
+                    String uBound = size == 8 ? "256" : (size == 16 ? "65536" : "4294967296");
+                    safetyQuery.append("(");
+                    for (String s : safetyElement) {
+                        if (i == 0) {
+                            safetyQuery.append(s).append(" >=Int -").append(sBound).append(" andBool ")
+                                    .append(s).append(" <Int ").append(sBound);
+                            i = 1;
+                        } else {
+                            safetyQuery.append(" andBool ").append(s).append(" >=Int -").append(sBound).append(" andBool ")
+                                    .append(s).append(" <Int ").append(sBound);
+                        }
                     }
+                    i = 0;
+                    safetyQuery.append(") orBool (");
+                    for (String s : safetyElement) {
+                        if (i == 0) {
+                            safetyQuery.append(s).append(" >=Int 0 andBool ").append(s).append(" <Int ").append(uBound);
+                            i = 1;
+                        } else {
+                            safetyQuery.append(" andBool ").append(s).append(" >=Int 0 andBool ")
+                                    .append(s).append(" <Int ").append(uBound);
+                        }
+                    }
+                    safetyQuery.append(")");
                 }
-                safetyQuery.append(")");
             }
             safetyQuery.append("\n");
         }
